@@ -35,8 +35,8 @@ def save_json(data, filename: str):
 
 
 if __name__ == "__main__":
-    # air_quality_data = extract_air_quality_data()
-    air_quality_data = load_json("air_quality.json")
+    air_quality_data = extract_air_quality_data()
+    # air_quality_data = load_json("air_quality.json")
 
     data_arr = air_quality_data["24hour_api_apims"]
     df = pd.DataFrame(data_arr[1:], columns=data_arr[0])
@@ -77,8 +77,7 @@ if __name__ == "__main__":
     # store_csv(df_locations_air_quality, "air_quality_test.csv")
     # store_csv(df_state_locations, "state_locations_test.csv")
 
-    # save_air_quality_bq(df_locations_air_quality)
-    save_state_locs_bq(df_state_locations)
+    save_air_quality_bq(df_locations_air_quality) # save air_quality data to bigquery
+    # save_state_locs_bq(df_state_locations)
     
-
     # print(len(df.axes[0]))  # num of rows
