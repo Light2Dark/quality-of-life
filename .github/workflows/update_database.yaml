@@ -37,7 +37,7 @@ jobs:
 
       - name: Run Script
         env:
-          PROJECT: ${{ secrets.PROJECT_ID }}
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
           DATASET: ${{ secrets.DATASET }}
           TABLE_STATE: ${{ secrets.TABLE_STATE }}
           TABLE_STATE_ID: ${{ secrets.TABLE_STATE_ID }}
