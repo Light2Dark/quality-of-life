@@ -1,7 +1,10 @@
 from google.cloud import bigquery
+from dotenv import load_dotenv
 import os
 
-project = os.environ["PROJECT"]
+load_dotenv()
+
+project = os.environ["PROJECT_ID"]
 dataset = os.environ["DATASET"]
 
 

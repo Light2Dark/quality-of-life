@@ -4,3 +4,4 @@ datasets
 venv
 *.env
 secrets
+gcloud-notes.txt
