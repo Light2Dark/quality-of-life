@@ -1,11 +1,8 @@
 import requests
 import pandas as pd
 import json
-from datetime import datetime
-import pytz
 from bigquery import save_air_quality_bq, save_state_locs_bq
 from utils import timeConversion
-
 
 def extract_air_quality_data():
     urls = [
@@ -70,6 +67,7 @@ if __name__ == "__main__":
     # simple data modelling
     # first table has locations, air quality data per day and date
     df_locations_air_quality = df.iloc[:, 1:]
+    # print(len(df.axes[0]))  # num of rows
 
     # second table has states and locations
     df_state_locations = pd.DataFrame(df.iloc[:, 0:2])
@@ -77,7 +75,5 @@ if __name__ == "__main__":
     # store_csv(df_locations_air_quality, "air_quality_test.csv")
     # store_csv(df_state_locations, "state_locations_test.csv")
 
-    save_air_quality_bq(df_locations_air_quality) # save air_quality data to bigquery
-    # save_state_locs_bq(df_state_locations)
-    
-    # print(len(df.axes[0]))  # num of rows
+    save_air_quality_bq(df_locations_air_quality)           # save air_quality data to bigquery
+    # save_state_locs_bq(df_state_locations)                # save state_locations data to bigquery
