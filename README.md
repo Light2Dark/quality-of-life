@@ -17,6 +17,9 @@ This project aims to create that data pipeline and provide Data Citizens the dat
 
 As can be seen above, the air quality data has a few attributes and it's meaning can be referenced by the government website.
 
+**Note 1:** The data is updated every day.
+**Note 2:** The data is for the past 24 hours based on the date. Eg: _2100 on 12/10/2022 is 9.00pm on the 12th of October while _900 on 12/10/2022 is 9.00am on the 11th of October
+
 ## Environment Variables
 
 To run this project, you will need to add the following environment variables to your .env file
