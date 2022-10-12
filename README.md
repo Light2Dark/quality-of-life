@@ -2,7 +2,7 @@
 
 Temperature data and air quality data is provided on government & 3rd party sites in Malaysia. Unfortunately, finding the latest and constantly updating datasets on this topic is difficult. 
 
-This project aims to create that data pipeline and provide data citizens the data they need in an accessible way.
+This project aims to create that data pipeline and provide Data Citizens the data they need in an accessible way.
 
 
 ## Features
@@ -10,6 +10,12 @@ This project aims to create that data pipeline and provide data citizens the dat
 - Air Quality Data scraped from [APIMS](http://apims.doe.gov.my/api_table.html)
 - Temperature Data (Todo)
 - Query Data through [Google BigQuery](https://cloud.google.com/bigquery/docs/reference/standard-sql/introduction)
+
+## Air Quality Data
+![image](https://user-images.githubusercontent.com/19585239/195292149-ac7e48d1-8d98-4b85-9533-8616aca9a58d.png)
+![image](https://user-images.githubusercontent.com/19585239/195292738-30a6ae22-a266-4456-9634-fc5ee7217ebc.png)
+
+As can be seen above, the air quality data has a few attributes and it's meaning can be referenced by the government website.
 
 ## Environment Variables
 
