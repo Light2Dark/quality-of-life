@@ -17,8 +17,11 @@ This project aims to create that data pipeline and provide Data Citizens the dat
 
 As can be seen above, the air quality data has a few attributes and it's meaning can be referenced by the government website.
 
-**Note 1:** The data is updated every day.
+**Note 1:** The data is updated every day at 12.00am
+
 **Note 2:** The data is for the past 24 hours based on the date. Eg: \_2100 on 12/10/2022 is 9.00pm on the 12th of October while \_900 on 12/10/2022 is 9.00am on the 11th of October
+
+**Note 3:** The fields have _ in front of them because BigQuery cannot store field names that start with numbers.
 
 ## Environment Variables
 
@@ -83,4 +86,4 @@ Contributions are always welcome!
 #### Several things can be improved:
 
 - Create pipeline for temperature data
-- Add all the historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017))
+- Add all the historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017), [YnShung's API Malaysia](https://github.com/ynshung/api-malaysia))
