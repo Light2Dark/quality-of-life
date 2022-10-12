@@ -8,13 +8,13 @@ on:
 jobs:
   update_air_quality_db:
     name: Update air quality from stations periodically
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     # Add "id-token" with the intended permissions.
     permissions:
       contents: 'read'
       id-token: 'write'
-      
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
