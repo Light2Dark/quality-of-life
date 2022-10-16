@@ -2,8 +2,10 @@ import requests
 import pandas as pd
 import json
 from bigquery import save_air_quality_bq, save_state_locs_bq
+import sys
+# caution: path[0] is reserved for script path (or '' in REPL)
+sys.path.insert(1, './')
 from utils import timeConversion
-
 
 def get_request(url: str) -> json:
     try:
