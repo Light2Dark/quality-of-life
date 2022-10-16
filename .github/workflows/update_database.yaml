@@ -44,4 +44,4 @@ jobs:
           TABLE_AIR_QUALITY: ${{ secrets.TABLE_AIR_QUALITY }}
           TABLE_AIR_QUALITY_ID: ${{ secrets.TABLE_AIR_QUALITY_ID }}
         run:
-          python main.py
+          python air_quality/main.py
