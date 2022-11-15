@@ -1,4 +1,4 @@
-# Malaysia Air Quality & Temperature Data Pipeline
+# Malaysia Air Quality Data Pipeline
 
 Temperature data and air quality data is provided on government & 3rd party sites in Malaysia. Unfortunately, finding the latest and constantly updating datasets on this topic is difficult.
 
