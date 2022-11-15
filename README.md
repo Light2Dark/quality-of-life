@@ -17,9 +17,9 @@ This project aims to create that data pipeline and provide Data Citizens the dat
 
 As can be seen above, the air quality data has a few attributes and it's meaning can be referenced by the government website.
 
-**Note 1:** The data is updated every day at 12.00am
+**Note 1:** The data is updated every day at 12.00am GMT+8 (Malaysia Time)
 
-**Note 2:** The data is for the past 24 hours based on the date. Eg: \_2100 on 12/10/2022 is 9.00pm on the 12th of October while \_900 on 12/10/2022 is 9.00am on the 11th of October
+**Note 2:** The data is for the past 24 hours from 12.00AM on the date. If the date is 12/10/2022, the data is from 12.00PM on the 11th of October to 11.00AM on the 12th of October. Eg: \_2100 on 12/10/2022 is 9.00pm on the 11th of October while \_900 on 12/10/2022 is 9.00am on the 12th of October.
 
 **Note 3:** The fields have _ in front of them because BigQuery cannot store field names that start with numbers.
 
