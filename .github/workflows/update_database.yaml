@@ -3,7 +3,7 @@ name: Update Air Quality Database
 on:
   schedule:
     # Cron jobs are in UTC time, we want this to run at UTC+8 to follow Malaysia time 12.00AM
-    - cron: "0 8 * * *"
+    - cron: "0 16 * * *"
   workflow_dispatch:
 
 jobs:
