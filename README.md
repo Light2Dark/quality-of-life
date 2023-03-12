@@ -1,13 +1,12 @@
 # Malaysia Air Quality Data Pipeline
 
-Temperature data and air quality data is provided on government & 3rd party sites in Malaysia. Unfortunately, finding the latest and constantly updating datasets on this topic is difficult.
+Air quality data is provided on a government site in Malaysia. Unfortunately, there are no datasets available regarding air quality and even if they are, they are not the latest.
 
-This project aims to create that data pipeline and provide Data Citizens the data they need in an accessible way.
+This project aims to create that data pipeline and provide Data Citizens the data they need in a permanently accessible way.
 
 ## Features
 
 - Air Quality Data scraped from [APIMS](http://apims.doe.gov.my/api_table.html)
-- Temperature Data (Todo)
 - Query Data through [Google BigQuery](https://cloud.google.com/bigquery/docs/reference/standard-sql/introduction)
 
 ## Air Quality Data
@@ -85,5 +84,4 @@ Contributions are always welcome!
 
 #### Several things can be improved:
 
-- Create pipeline for temperature data
 - Add all the historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017), [YnShung's API Malaysia](https://github.com/ynshung/api-malaysia))

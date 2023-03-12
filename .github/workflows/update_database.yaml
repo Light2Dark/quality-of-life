@@ -1,53 +1,53 @@
-name: Update Air Quality Database
+# name: Update Air Quality Database
 
-on:
-  schedule:
-    # Cron jobs are in UTC time, we want this to run at UTC+8 to follow Malaysia time 12.00AM
-    - cron: "0 16 * * *"
-  workflow_dispatch:
+# on:
+#   schedule:
+#     # Cron jobs are in UTC time, we want this to run at UTC+8 to follow Malaysia time 12.00AM
+#     - cron: "0 16 * * *"
+#   workflow_dispatch:
 
-jobs:
-  update_air_quality_db:
-    name: Update air quality from stations periodically
-    runs-on: windows-latest
+# jobs:
+#   update_air_quality_db:
+#     name: Update air quality from stations periodically
+#     runs-on: windows-latest
 
-    # Add "id-token" with the intended permissions.
-    permissions:
-      contents: 'read'
-      id-token: 'write'
+#     # Add "id-token" with the intended permissions.
+#     permissions:
+#       contents: 'read'
+#       id-token: 'write'
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v3
 
-      - name: Set timezone to GMT+8
-        uses: szenius/set-timezone@v1.0
-        with: 
-          timezoneWindows: "Singapore Standard Time"
+#       - name: Set timezone to GMT+8
+#         uses: szenius/set-timezone@v1.0
+#         with: 
+#           timezoneWindows: "Singapore Standard Time"
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-          cache: "pip"
+#       - name: Setup Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: "3.10"
+#           cache: "pip"
 
-      - name: Install Dependencies
-        run: pip install -r requirements.txt
+#       - name: Install Dependencies
+#         run: pip install -r requirements.txt
 
-      - id: "auth"
-        name: "Authenticate to Google Cloud"
-        uses: "google-github-actions/auth@v0"
-        with:
-          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: "data-owner@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com"
+#       - id: "auth"
+#         name: "Authenticate to Google Cloud"
+#         uses: "google-github-actions/auth@v0"
+#         with:
+#           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+#           service_account: "data-owner@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com"
 
-      - name: Run Script
-        env:
-          PROJECT_ID: ${{ secrets.PROJECT_ID }}
-          DATASET: ${{ secrets.DATASET }}
-          TABLE_STATE: ${{ secrets.TABLE_STATE }}
-          TABLE_STATE_ID: ${{ secrets.TABLE_STATE_ID }}
-          TABLE_AIR_QUALITY: ${{ secrets.TABLE_AIR_QUALITY }}
-          TABLE_AIR_QUALITY_ID: ${{ secrets.TABLE_AIR_QUALITY_ID }}
-        run:
-          python air_quality/main.py
+#       - name: Run Script
+#         env:
+#           PROJECT_ID: ${{ secrets.PROJECT_ID }}
+#           DATASET: ${{ secrets.DATASET }}
+#           TABLE_STATE: ${{ secrets.TABLE_STATE }}
+#           TABLE_STATE_ID: ${{ secrets.TABLE_STATE_ID }}
+#           TABLE_AIR_QUALITY: ${{ secrets.TABLE_AIR_QUALITY }}
+#           TABLE_AIR_QUALITY_ID: ${{ secrets.TABLE_AIR_QUALITY_ID }}
+#         run:
+#           python air_quality/main.py
