@@ -1,13 +1,23 @@
 # Malaysia Air Quality Data Pipeline
 
-Air quality data is provided on a government site in Malaysia. Unfortunately, there are no datasets available regarding air quality and even if they are, they are not the latest.
+Air quality data is provided on a government site in Malaysia. This API is updated every hour, unfortunately, the dataset for this hourly data is not recorded. A lot of information for environmental & air pollution analysis is lost.
 
-This project aims to create that data pipeline and provide Data Citizens the data they need in a permanently accessible way.
+This project aims to create that data pipeline and provide Data Citizens the data about air quality.
+
+Questions this project can answer:
+- What is the trend of air quality in Malaysia over the past years?
+- Which is the best location to live in Malaysia in terms of air quality?
+- Which months and days have poor / good air quality?
 
 ## Features
 
 - Air Quality Data scraped from [APIMS](http://apims.doe.gov.my/api_table.html)
+
+- Air Quality Data is updated from X/04/2022 - present. Data from 2005 - 2022 is also available*
 - Query Data through [Google BigQuery](https://cloud.google.com/bigquery/docs/reference/standard-sql/introduction)
+
+- Daily workflow that can be observed through Prefect Cloud
+- Alerts whenever a workflow has failed
 
 ## Air Quality Data
 
@@ -19,8 +29,6 @@ As can be seen above, the air quality data has a few attributes and it's meaning
 **Note 1:** The data is updated every day at 12.00am GMT+8 (Malaysia Time)
 
 **Note 2:** The data is for the past 24 hours from 12.00AM on the date. If the date is 12/10/2022, the data is from 1.00AM on the 11th of October to 12.00AM on the 12th of October. Eg: _2100 on 12/10/2022 is 9.00pm on the 11th of October while _900 on 12/10/2022 is 9.00am on the 12th of October.
-
-**Note 3:** The fields have _ in front of them because BigQuery cannot store field names that start with numbers.
 
 ## Environment Variables
 

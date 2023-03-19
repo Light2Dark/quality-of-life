@@ -1,2 +1,8 @@
 pandas
-dotenv
+python-dotenv
+requests
+prefect
+prefect_gcp
+prefect_gcp[bigquery]
+prefect_gcp[cloud_storage]
+pyarrow
