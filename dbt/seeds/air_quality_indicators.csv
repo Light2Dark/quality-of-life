@@ -1,0 +1,8 @@
+﻿polutant,symbol,meaning,unit
+PM2.5,**,Particulate matter with diameter of less than 2.5 micron (PM2.5),μg/m3
+PM10,*,Particulate matter with diameter of less than 10 micron,μg/m3
+SO2,a,Sulphur Dioxide,ppm
+NO2,b,Nitrogen Dioxide,ppm
+O3,c,Ozone,ppm
+CO,d,Carbon Monoxide,ppm
+multi-pollutant,&,More than one pollutant,
