@@ -5,8 +5,8 @@ from prefect.tasks import exponential_backoff
 from prefect_gcp.cloud_storage import GcsBucket
 from prefect_gcp import GcpCredentials
 from datetime import timedelta, datetime
-from flows.config import IN_ORDER_TIMINGS, URLS, DAILY_AQ_DATA_GCS_SAVEPATH, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH
-from flows.utils import local_extract_test, transforming_dates, build_request, try_convert_to_df
+from config import IN_ORDER_TIMINGS, URLS, DAILY_AQ_DATA_GCS_SAVEPATH, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH
+from utils import local_extract_test, transforming_dates, build_request, try_convert_to_df
 import traceback
 import argparse
 from io import BytesIO
@@ -59,7 +59,7 @@ def request_api(url: str) -> dict:
     try:
         response = requests.get(url)
         if response.status_code == 404:
-            with open("datacol/unavailable_urls.txt", "a") as f:
+            with open("unavailable_urls.txt", "a") as f:
                 f.write(f"{url}\n")
             return None
         return response.json()
@@ -80,7 +80,7 @@ def upload_to_gcs(data, filename: str, savepath: str, mobile_station=False):
                 serialization_format='parquet'
             )
         elif isinstance(data, dict):
-            print("Saving to GCS, not dataframe format")
+            print("Saving to GCS, dict format")
             file = BytesIO(json.dumps(data).encode())
             save_path = f"{savepath}/{filename} mobile.json" if mobile_station else f"{savepath}/{filename}.json"
             gcp_cloud_storage_bucket_block.upload_from_file_object(
@@ -231,8 +231,6 @@ def elt_flow(date_start: str, date_end: str, time: str, dataset: str = "dev.hour
             
         datetime_start += timedelta(days=1)
         
-    # start for url_mcaqm = http://apims.doe.gov.my/data/public_v2/MCAQM/mcaqmhours24/2018/08/17/0000.json
-    # start for url_caqm = http://apims.doe.gov.my/data/public_v2/CAQM/hours24/2017/04/14/0000.json
     
     
 @flow(name="test_elt_flow", log_prints=True)
@@ -250,11 +248,11 @@ def test_elt_flow():
 
 
 if __name__ == "__main__":
-    # elt_flow_backlog("2017-01-01", "2017-05-31", "0000") # end of may 2017
-    # elt_flow_backlog("2017-06-01", "2017-06-04", "0000")
-    # elt_flow_backlog("2017-06-13", "2017-12-31", "0000", "prod.hourly_air_quality")
-    # elt_flow_backlog("2018-01-01", "2023-04-04", "0000", "prod.hourly_air_quality")
+    # elt_flow("2017-01-01", "2017-05-31", "0000") # end of may 2017
+    # elt_flow("2017-06-01", "2017-06-04", "0000")
+    # elt_flow("2017-06-13", "2017-12-31", "0000", "prod.hourly_air_quality")
+    # elt_flow("2018-01-01", "2023-04-05", "0000", "prod.hourly_air_quality") # NEXT TO RUN
     
-    test_elt_flow()
+    # test_elt_flow()
     
     elt_flow("2017-06-09", "2017-06-09", "0000")

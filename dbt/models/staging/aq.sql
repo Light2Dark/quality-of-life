@@ -1,1 +1,0 @@
-{{ config(materialized="view") }}
