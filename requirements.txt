@@ -6,3 +6,4 @@ prefect_gcp
 prefect_gcp[bigquery]
 prefect_gcp[cloud_storage]
 pyarrow
+pandas-gbq

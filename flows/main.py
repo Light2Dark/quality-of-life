@@ -3,8 +3,8 @@ import pandas as pd
 from prefect import task, flow
 from prefect.tasks import exponential_backoff
 import json
-from config import IN_ORDER_TIMINGS, COLUMNS, URLS
-from utils import local_extract_test, transforming_dates
+from flows.config import IN_ORDER_TIMINGS, COLUMNS, URLS
+from flows.utils import local_extract_test, transforming_dates
 
 @flow(name="etl_flow", log_prints=True)
 def etl_web_to_gcs(testing = True):

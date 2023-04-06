@@ -28,7 +28,7 @@ As can be seen above, the air quality data has a few attributes and it's meaning
 
 **Note 1:** The data is updated every day at 12.00am GMT+8 (Malaysia Time)
 
-**Note 2:** The data is for the past 24 hours from 12.00AM on the date. If the date is 12/10/2022, the data is from 1.00AM on the 11th of October to 12.00AM on the 12th of October. Eg: _2100 on 12/10/2022 is 9.00pm on the 11th of October while _900 on 12/10/2022 is 9.00am on the 12th of October.
+**Note 2:** The data is for the past 24 hours from 12.00AM on the date. If the labelled data is 12/10/2022, the data is from 1.00AM on the 11th of October to 12.00AM on the 12th of October.
 
 ## Environment Variables
 
