@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: customers
+    description: One record per customer
+    columns:
+      - name: customer_id
+        description: Primary Key
+        tests:
+          - unique
+          - not_null
+      - name: first_order_date
+  
+  - name: stg_customers
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+  
+  - name: stg_orders
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              field: customer_id
+              to: ref('stg_customers')
