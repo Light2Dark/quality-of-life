@@ -1,41 +1,125 @@
 version: 2
 
+sources:
+  - name: dev
+    tables:
+      - name: hourly_air_quality
+        tests:
+        - dbt_utils.unique_combination_of_columns:
+            combination_of_columns:
+              - city
+              - timestamp
+  - name: prod
+    tables:
+      - name: hourly_air_quality
+        tests:
+        - dbt_utils.unique_combination_of_columns:
+            combination_of_columns:
+              - city
+              - timestamp
+
 models:
-  - name: customers
-    description: One record per customer
+  - name: state_city_air_quality
+    description: Air quality data by city and state
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - city
+            - timestamp
     columns:
-      - name: customer_id
-        description: Primary Key
+      - name: state
         tests:
-          - unique
           - not_null
-      - name: first_order_date
-        description: NULL when a customer has not placed an order
-  
-  - name: stg_customers
-    description: This model cleans up customer data
+      - name: pollutant_value
+        tests:
+          - not_null
+
+  - name: air_quality
+    description: Hourly air quality data
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - city
+            - timestamp
     columns:
-      - name: customer_id
-        description: Primary Key
+      - name: city
         tests:
-          - unique
           - not_null
-  
-  - name: stg_orders
-    description: This model cleans up orders data
-    columns:
-      - name: order_id
-        description: Primary key
+      - name: timestamp
+        description: Format of YYYY-MM-DD HH:MM:SS
         tests:
-          - unique
           - not_null
-      - name: status
+      - name: pollutant
+        description: Pollutant with the highest value is recorded
         tests:
           - accepted_values:
-              values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
-      - name: customer_id
+              values: ['PM10', 'PM2.5', 'NO2', 'SO2', 'CO2', 'O3', '']
+      - name: pollutant_value
         tests:
           - not_null
-          - relationships:
-              field: customer_id
-              to: ref('stg_customers')
+      - name: unit
+        tests:
+          - accepted_values:
+              values: ["ppm", "μg/m3", ""]
+
+  - name: stg_hourly_air_quality
+    description: Removes duplicates, cleans data. Primary key is combination of city and timestamp.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - city
+            - timestamp
+    columns:
+      - name: city
+        tests:
+          - not_null
+      - name: timestamp
+        description: Format of YYYY-MM-DD HH:MM:SS
+        tests:
+          - not_null
+      - name: pollutant_value
+        tests:
+          - not_null
+      - name: pollutant_symbol
+        tests:
+          - accepted_values:
+              values: ["*", "**", "a", "b", "c", "d", "&"]
+
+  # - name: customers
+  #   description: One record per customer
+  #   columns:
+  #     - name: customer_id
+  #       description: Primary Key
+  #       tests:
+  #         - unique
+  #         - not_null
+  #     - name: first_order_date
+  #       description: NULL when a customer has not placed an order 
+
+  # - name: stg_customers
+  #   description: This model cleans up customer data
+  #   columns:
+  #     - name: customer_id
+  #       description: Primary Key
+  #       tests:
+  #         - unique
+  #         - not_null
+  
+  # - name: stg_orders
+  #   description: This model cleans up orders data
+  #   columns:
+  #     - name: order_id
+  #       description: Primary key
+  #       tests:
+  #         - unique
+  #         - not_null
+  #     - name: status
+  #       tests:
+  #         - accepted_values:
+  #             values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
+  #     - name: customer_id
+  #       tests:
+  #         - not_null
+  #         - relationships:
+  #             field: customer_id
+  #             to: ref('stg_customers')
