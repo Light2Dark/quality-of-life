@@ -5,7 +5,7 @@ from prefect.tasks import exponential_backoff
 from prefect_gcp.cloud_storage import GcsBucket
 from prefect_gcp import GcpCredentials
 from datetime import timedelta, datetime
-from config import IN_ORDER_TIMINGS, URLS, DAILY_AQ_DATA_GCS_SAVEPATH, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH
+from config import IN_ORDER_TIMINGS, URLS, DAILY_AQ_DATA_GCS_SAVEPATH, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH, DEV_DATASET, PROD_DATASET
 from utils import local_extract_test, transforming_dates, build_request, try_convert_to_df
 import traceback
 import argparse
@@ -175,7 +175,7 @@ def request_valid_timing_response(date: str, time: str, mobile_station: bool):
         return response
 
 @flow(name="elt_flow", log_prints=True)
-def elt_flow(date_start: str, date_end: str, time: str, dataset: str = "dev.hourly_air_quality"):
+def elt_flow(date_start: str, date_end: str, time: str, dataset: str = DEV_DATASET):
     """Runs a flow to extract air quality data from the web, transform it and load it into BigQuery and GCS.
     Flow runs from date_start to date_end inclusive of date_end.
 
@@ -238,13 +238,17 @@ def test_elt_flow():
     response = request_valid_timing_response("2017-06-09", "0000", False)
     print(response)
         
-# parser = argparse.ArgumentParser(prog="Air Quality ELT", description="An ELT flow to get air quality data from API and store in GCS & BQ", epilog="credits to Sham")
-# parser.add_argument("-t", "--testing", type=bool,help="Testing mode")
-# parser.add_argument("-d", "--date", type=str, help="Date to request data from API. Format is YYYY-MM-DD. Defaults to current day.")
-# parser.add_argument("-tm", "--time", type=str, help="Time to request data from API. Format is HHMM. Defaults to 12.00am")
-# args = parser.parse_args()
+parser = argparse.ArgumentParser(prog="Air Quality ELT", description="An ELT flow to get air quality data from API and store in GCS & BQ", epilog="credits to Sham")
+parser.add_argument("-t", "--testing", type=bool,help="If true, dev dataset is use. Else, prod dataset", required=True)
+parser.add_argument("-sd", "--start_date", type=str, help="Start date to request data from API. Format is YYYY-MM-DD.", required=True)
+parser.add_argument("-ed", "--end_date", type=str, help="End date to request data from API. Format is YYYY-MM-DD.", required=True)
+parser.add_argument("-tm", "--time", type=str, help="Time to request data from API. Format is HHMM. Defaults to 12.00am", required=True)
+args = parser.parse_args()
 
-# elt_flow(testing=args.testing, date=args.date, time=args.time)
+if args.testing:
+    elt_flow(args.start_date, args.end_date, args.time)
+elif args.testing is False:
+    elt_flow(args.start_date, args.end_date, args.time, PROD_DATASET)
 
 
 if __name__ == "__main__":
@@ -255,4 +259,5 @@ if __name__ == "__main__":
     
     # test_elt_flow()
     
-    elt_flow("2017-06-09", "2017-06-09", "0000")
+    # elt_flow("2017-08-09", "2017-09-09", "0000")
+    pass
