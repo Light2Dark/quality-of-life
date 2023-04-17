@@ -1,0 +1,14 @@
+__pycache__
+.vscode
+datasets
+venv
+*.env
+secrets
+gcloud-notes.txt
+note.txt
+.prefectignore
+# Default .gitignore content added by dbt Cloud
+target/
+dbt_packages/
+logs/
+# end dbt Cloud content

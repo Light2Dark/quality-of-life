@@ -1,5 +1,3 @@
-from elt_web_to_bq import elt_flow
-
 from prefect_github import GitHubCredentials
 github_credentials_block = GitHubCredentials.load("github-credentials")
 
