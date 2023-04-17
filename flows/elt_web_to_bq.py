@@ -237,18 +237,6 @@ def elt_flow(date_start: str, date_end: str, time: str, dataset: str = DEV_DATAS
 def test_elt_flow():
     response = request_valid_timing_response("2017-06-09", "0000", False)
     print(response)
-        
-parser = argparse.ArgumentParser(prog="Air Quality ELT", description="An ELT flow to get air quality data from API and store in GCS & BQ", epilog="credits to Sham")
-parser.add_argument("-t", "--testing", type=bool,help="If true, dev dataset is use. Else, prod dataset", required=True)
-parser.add_argument("-sd", "--start_date", type=str, help="Start date to request data from API. Format is YYYY-MM-DD.", required=True)
-parser.add_argument("-ed", "--end_date", type=str, help="End date to request data from API. Format is YYYY-MM-DD.", required=True)
-parser.add_argument("-tm", "--time", type=str, help="Time to request data from API. Format is HHMM. Defaults to 12.00am", required=True)
-args = parser.parse_args()
-
-if args.testing:
-    elt_flow(args.start_date, args.end_date, args.time)
-elif args.testing is False:
-    elt_flow(args.start_date, args.end_date, args.time, PROD_DATASET)
 
 
 if __name__ == "__main__":
@@ -260,4 +248,19 @@ if __name__ == "__main__":
     # test_elt_flow()
     
     # elt_flow("2017-08-09", "2017-09-09", "0000")
+    
+    
+    parser = argparse.ArgumentParser(prog="Air Quality ELT", description="An ELT flow to get air quality data from API and store in GCS & BQ", epilog="credits to Sham")
+    parser.add_argument("-t", "--testing", type=bool,help="If true, dev dataset is use. Else, prod dataset", required=True)
+    parser.add_argument("-sd", "--start_date", type=str, help="Start date to request data from API. Format is YYYY-MM-DD.", required=True)
+    parser.add_argument("-ed", "--end_date", type=str, help="End date to request data from API. Format is YYYY-MM-DD.", required=True)
+    parser.add_argument("-tm", "--time", type=str, help="Time to request data from API. Format is HHMM. Defaults to 12.00am", required=True)
+    args = parser.parse_args()
+
+    if args.testing:
+        elt_flow(args.start_date, args.end_date, args.time)
+    elif args.testing is False:
+        elt_flow(args.start_date, args.end_date, args.time, PROD_DATASET)
+        
+        
     pass
