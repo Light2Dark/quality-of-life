@@ -26,8 +26,8 @@ jobs:
           python-version: "3.10"
           cache: "pip"
 
-      - name: Install Prefect Dependency
-        run: pip install "prefect==2.10.2"
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
 
       - id: "auth"
         name: "Authenticate to Google Cloud"
