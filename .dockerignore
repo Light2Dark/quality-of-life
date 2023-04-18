@@ -2,7 +2,6 @@ __pycache__
 .vscode
 datasets
 venv
-*.env
 secrets
 gcloud-notes.txt
 note.txt

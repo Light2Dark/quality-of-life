@@ -95,7 +95,7 @@ def download_from_gcs(bucket_path: str, save_path: str):
     gcp_cloud_storage_bucket_block.download_object_to_path(bucket_path, save_path)
     
 
-def build_request(date: str, time: str, mobile_station: bool) -> list:
+def build_request(date: str, time: str, mobile_station: bool) -> str:
     """Returns url for the APIs, based on date and time string applied.
 
     Args:
@@ -108,7 +108,7 @@ def build_request(date: str, time: str, mobile_station: bool) -> list:
         ValueError: Time string is not in the correct format.
 
     Returns:
-        list: (url_continous_aq_stations_request, url_mobile_aq_stations_request)
+        str: url_mobile_aq_stations_request for mobile_station and url_continous_aq_stations_request if not
     """    
     date = datetime.strptime(date, '%Y-%m-%d')
     validate_time_format(time)

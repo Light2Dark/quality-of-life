@@ -159,6 +159,21 @@ def load_to_bq(df: pd.DataFrame,  to_path_upload: str):
         location="asia-southeast1"
     )
     
+    
+def retry_diff_times(date: str, mobile_station: bool):
+    for time in ["2300", "0000", "0100"]:
+        request = build_request(date, time, mobile_station)
+        print(f"Requesting different URL: {request}")
+        response = request_api(request)
+        
+        if response is not None:
+            data, timings = get_data_timings(response)
+            if timings == IN_ORDER_TIMINGS:
+                return response
+    print(f"Could not find a valid timing response for {date}")
+    return None
+    
+    
 def request_valid_timing_response(date: str, time: str, mobile_station: bool):
     request = build_request(date, time, mobile_station)
     response = request_api(request)
@@ -167,10 +182,9 @@ def request_valid_timing_response(date: str, time: str, mobile_station: bool):
     data, timings = get_data_timings(response)
     
     if timings != IN_ORDER_TIMINGS:
-        print(f"Timings are not in order, retrying with different time of 2300.")
-        response = request_api(build_request(date, "2300", mobile_station))
-        data, timings = get_data_timings(response) if response is not None else (None, None)
-        return response if timings == IN_ORDER_TIMINGS else None
+        print(f"Timings are not in order, retrying with different times")
+        response = retry_diff_times(date, mobile_station)
+        return response
     else:
         return response
 
@@ -193,7 +207,7 @@ def elt_flow(date_start: str, date_end: str, time: str, dataset: str = DEV_DATAS
     datetime_end = datetime.strptime(date_end, "%Y-%m-%d")
     while datetime_start <= datetime_end:
         date = datetime_start.strftime("%Y-%m-%d")
-        print(f"Processing data for {date} {time}")
+        print(f"Requesting data for {date} {time}")
         
         aq_stations_data_24h = request_valid_timing_response(date, time, False)
         mobile_continous_aq_stations_data_24h = request_valid_timing_response(date, time, True)
