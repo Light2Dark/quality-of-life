@@ -20,9 +20,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      uses: szenius/set-timezone@v1.2
-      with:
-        timezoneWindows: "Singapore Standard Time"
+      - name: Set timezone to SG standard time
+        uses: szenius/set-timezone@v1.2
+        with:
+          timezoneWindows: "Singapore Standard Time"
 
       - name: Keep workflow alive (if > 50days)
         uses: gautamkrishnar/keepalive-workflow@v1
