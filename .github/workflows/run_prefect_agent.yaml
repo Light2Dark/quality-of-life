@@ -3,6 +3,8 @@ on:
   schedule:
     # Cron jobs are in UTC time, which is 8 hours b4 Malaysia time, hence 1am is 5pm in UTC.
     - cron: "0 17 * * *"
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 jobs:
   run-agent:
     runs-on: ubuntu-latest
