@@ -1,8 +1,8 @@
-name: Python to run prefect-agent
+name: Python to run prefect-agent daily at 1.00am Malaysian time
 on: 
-  push:
-    branches:
-      - main
+  schedule:
+    # Cron jobs are in UTC time, which is 8 hours b4 Malaysia time, hence 1am is 5pm in UTC.
+    - cron: "0 17 * * *"
 jobs:
   run-agent:
     runs-on: ubuntu-latest
@@ -19,6 +19,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      uses: szenius/set-timezone@v1.2
+      with:
+        timezoneWindows: "Singapore Standard Time"
+
+      - name: Keep workflow alive (if > 50days)
+        uses: gautamkrishnar/keepalive-workflow@v1
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -37,4 +44,4 @@ jobs:
           service_account: "data-owner@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com"
 
       - name: Run prefect agent
-        run: prefect agent start --pool default-agent-pool
+        run: prefect agent start --run-once --pool default-agent-pool
