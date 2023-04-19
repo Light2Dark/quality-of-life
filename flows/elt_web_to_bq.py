@@ -11,32 +11,7 @@ import traceback
 import argparse
 from io import BytesIO
 import json
-
-@flow(name="elt_flow_old", log_prints=True)
-def elt_flow_old(testing=True, date:str=None, time:str=None):
-    """Runs a flow to extract air quality data from the web, transform it and load it into BigQuery and GCS.
-
-    Args:
-        testing (bool, optional): _description_. Defaults to True.
-        date (str, optional): Format of YYYY-MM-DD, example: 2022-09-21. Defaults to None.
-        time (str, optional): Format of HHMM, example: 1200. Defaults to None.
-    """
-    dataset = "dev.hourly_air_quality" if testing else "prod.hourly_air_quality"
-    
-    aq_stations_data_24h, mobile_continous_aq_stations_data_24h = extract(testing, date, time)
-    if not (aq_stations_data_24h or mobile_continous_aq_stations_data_24h):
-        print(f"No data, skipping for {date} {time}")
-        return
-    upload_to_gcs(try_convert_to_df(aq_stations_data_24h), DAILY_AQ_DATA_GCS_SAVEPATH)
-    upload_to_gcs(try_convert_to_df(mobile_continous_aq_stations_data_24h), DAILY_AQ_DATA_GCS_SAVEPATH, mobile_station=True)
-    
-    df_aq = transform_data(aq_stations_data_24h, date)
-    df_maq = transform_data(mobile_continous_aq_stations_data_24h, date)
-    df_preprocessed = pd.concat([df_aq, df_maq], ignore_index=True)
-    upload_to_gcs(df_preprocessed, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH)
-    
-    load_to_bq(df_preprocessed, dataset)
-    
+import pytz
     
 @flow(name="extract", log_prints=True)
 def extract(testing: bool, date:str=None, time:str=None) -> tuple:
@@ -74,15 +49,16 @@ def upload_to_gcs(data, filename: str, savepath: str, mobile_station=False):
     try:
         if isinstance(data, pd.DataFrame):
             save_path = f"{savepath}/{filename} mobile.parquet" if mobile_station else f"{savepath}/{filename}.parquet"
+            print(f"Saving to GCS, dataframe format, path: {save_path}")
             gcp_cloud_storage_bucket_block.upload_from_dataframe(
                 df = data,
                 to_path = save_path,
                 serialization_format='parquet'
             )
         elif isinstance(data, dict):
-            print("Saving to GCS, dict format")
             file = BytesIO(json.dumps(data).encode())
             save_path = f"{savepath}/{filename} mobile.json" if mobile_station else f"{savepath}/{filename}.json"
+            print(f"Saving to GCS, dict format, path: {save_path}")
             gcp_cloud_storage_bucket_block.upload_from_file_object(
                 from_file_object = file,
                 to_path = save_path
@@ -189,18 +165,19 @@ def request_valid_timing_response(date: str, time: str, mobile_station: bool):
         return response
 
 @flow(name="elt_flow", log_prints=True)
-def elt_flow(date_start: str, date_end: str, time: str, dataset: str = DEV_DATASET):
+def elt_flow(date_start: str = None, date_end: str = None, time: str = "0000", dataset: str = DEV_DATASET):
     """Runs a flow to extract air quality data from the web, transform it and load it into BigQuery and GCS.
     Flow runs from date_start to date_end inclusive of date_end.
 
     Args:
-        date_start (str): Format of YYYY-MM-DD, example: 2022-09-21
-        date_end (str): Format of YYYY-MM-DD, example: 2022-09-21. Results are inclusive of date_end.
-        time (str): Format of HHMM, example: 1200.
-        dataset (str, optional): Dataset to load to in BQ. Defaults to "dev.hourly_air_quality".
+        date_start (str): Format of YYYY-MM-DD, example: 2022-09-21. Default is today's date at 12.00am (Kuala Lumpur time)
+        date_end (str): Format of YYYY-MM-DD, example: 2022-09-21. Results are inclusive of date_end. Default is today's date at 12.00am (Kuala Lumpur time)
+        time (str): Format of HHMM, example: 1200. Defaults to 0000.
+        dataset (str, optional): Dataset to load to in BQ. Defaults to "dev.hourly_air_quality". 
     """
-    date_start = date_start.strip()
-    date_end = date_end.strip()
+    
+    date_start = datetime.now(tz=pytz.timezone('Asia/Kuala_Lumpur')).strftime('%Y-%m-%d') if date_start is None else date_start.strip()
+    date_end = datetime.now(tz=pytz.timezone('Asia/Kuala_Lumpur')).strftime('%Y-%m-%d') if date_end is None else date_end.strip()
     time = time.strip()
     
     datetime_start = datetime.strptime(date_start, "%Y-%m-%d")
@@ -219,13 +196,13 @@ def elt_flow(date_start: str, date_end: str, time: str, dataset: str = DEV_DATAS
         
         df_aq_transformed, df_maq_transformed = None, None
         if aq_stations_data_24h:
-            print(f"Upload to GCS and transform continous AQ data")
             upload_to_gcs(aq_stations_data_24h, date, DAILY_AQ_DATA_GCS_SAVEPATH)
+            print("Transforming continous AQ data")
             df_aq = try_convert_to_df(aq_stations_data_24h)
             df_aq_transformed = transform_data(df_aq, date)
         if mobile_continous_aq_stations_data_24h:
-            print(f"Upload to GCS and transform mobile AQ data")
             upload_to_gcs(mobile_continous_aq_stations_data_24h, date, DAILY_AQ_DATA_GCS_SAVEPATH, mobile_station=True)
+            print("Transforming mobile AQ data")
             df_maq = try_convert_to_df(mobile_continous_aq_stations_data_24h)
             df_maq_transformed = transform_data(df_maq, date)
             
@@ -253,17 +230,7 @@ def test_elt_flow():
     print(response)
 
 
-if __name__ == "__main__":
-    # elt_flow("2017-01-01", "2017-05-31", "0000") # end of may 2017
-    # elt_flow("2017-06-01", "2017-06-04", "0000")
-    # elt_flow("2017-06-13", "2017-12-31", "0000", "prod.hourly_air_quality")
-    # elt_flow("2018-01-01", "2023-04-05", "0000", "prod.hourly_air_quality") # NEXT TO RUN
-    
-    # test_elt_flow()
-    
-    # elt_flow("2017-08-09", "2017-09-09", "0000")
-    
-    
+def run_parser():
     parser = argparse.ArgumentParser(prog="Air Quality ELT", description="An ELT flow to get air quality data from API and store in GCS & BQ", epilog="credits to Sham")
     parser.add_argument("-t", "--testing", type=bool,help="If true, dev dataset is use. Else, prod dataset", required=True)
     parser.add_argument("-sd", "--start_date", type=str, help="Start date to request data from API. Format is YYYY-MM-DD.", required=True)
@@ -275,6 +242,13 @@ if __name__ == "__main__":
         elt_flow(args.start_date, args.end_date, args.time)
     elif args.testing is False:
         elt_flow(args.start_date, args.end_date, args.time, PROD_DATASET)
-        
+
+if __name__ == "__main__":
+    # elt_flow("2017-01-01", "2017-05-31", "0000") # end of may 2017
+    # elt_flow("2017-06-01", "2017-06-04", "0000")
+    # elt_flow("2017-06-13", "2017-12-31", "0000", "prod.hourly_air_quality")
+    # elt_flow("2018-01-01", "2023-04-05", "0000", "prod.hourly_air_quality") # NEXT TO RUN
+    
+    elt_flow()
         
     pass
