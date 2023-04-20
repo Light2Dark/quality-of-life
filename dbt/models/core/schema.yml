@@ -38,7 +38,7 @@ models:
         description: There are different sensors which track different pollutants. Only the highest valued pollutant is recorded.
         tests:
           - accepted_values:
-              values: ['PM10', 'PM2.5', 'NO2', 'SO2', 'CO2', 'O3', '']
+              values: ['PM10', 'PM2.5', 'NO2', 'SO2', 'CO2', 'O3', 'multi-pollutant', 'CO', '']
       - name: pollutant_value
         description: The station records several values from different sensors, only the highest value is recorded as air quality reading.
         tests:

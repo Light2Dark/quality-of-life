@@ -12,7 +12,6 @@ WITH hourly_air_quality AS (
     {% else %}
         {{source('prod', 'hourly_air_quality')}}
     {% endif %}
-    
   )
 )
 SELECT *
