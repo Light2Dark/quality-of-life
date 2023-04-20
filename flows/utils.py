@@ -22,11 +22,10 @@ def local_extract_test(fp: str) -> json:
     with open(fp, "r") as f:
         return json.load(f)
     
-    
 def transforming_dates(date: str, time: str) -> datetime:
     """Convert time to datetime format based on api_table. 
     
-    Assuming date is 2021-05-02,
+    If date is 2021-05-02,
     1.00AM will return 2021-05-01 0100
     11.00AM will return 2021-05-01 1100
     12.00PM will return 2021-05-01 1200
@@ -47,6 +46,7 @@ def transforming_dates(date: str, time: str) -> datetime:
     current_day = current_day.strftime('%Y-%m-%d')
     
     day = current_day if time == "12:00AM" else yesterday
+    time = "00:00AM" if time == "12:00AM" else time
     if time.endswith("PM"):
         hour = int(time.split(":")[0])
         hour += 12 if hour != 12 else 0
@@ -148,6 +148,6 @@ def try_convert_to_df(response: dict) -> pd.DataFrame or dict:
     
 
 if __name__ == "__main__":
-    # print(transforming_dates("2021-05-21", "12:00PM"))
+    print(transforming_dates("2021-05-21", "12:00AM"))
     # download_from_gcs("daily_aq_data/2017-04-20.json", "test.json")
     pass
