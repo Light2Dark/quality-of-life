@@ -102,7 +102,7 @@ def transform_data(response: dict, date:str) -> pd.DataFrame:
     data, timings = get_data_timings(response)
     assert timings == IN_ORDER_TIMINGS, "Timings are not in order"
     
-    df_aq = pd.DataFrame(columns=['city', 'timestamp', 'value'])
+    df_aq = pd.DataFrame(columns=['city', 'datetime', 'value'])
     df_states = pd.Series(dtype=str)
     for state_data in data[1:]:
         state = str(state_data[0]).strip().lower().capitalize()
@@ -112,11 +112,11 @@ def transform_data(response: dict, date:str) -> pd.DataFrame:
             df = pd.DataFrame(
                 {
                     "city": [station_location],
-                    "timestamp": [transforming_dates(date, timings[index])],
+                    "datetime": [transforming_dates(date, timings[index])],
                     "value": [value]
                 },
             )
-            df = df.astype(str)
+            df = df.astype(str) # bigquery doesn't accept datetime
             df_aq = pd.concat([df_aq, df], ignore_index=True)
             df_states = pd.concat([df_states, pd.Series(state)], ignore_index=True)
     
@@ -146,7 +146,10 @@ def retry_diff_times(date: str, mobile_station: bool):
             data, timings = get_data_timings(response)
             if timings == IN_ORDER_TIMINGS:
                 return response
-    raise Exception(f"Could not find a valid timing response for {date}")
+    with open("flows/timing_errors.txt", "a") as f:
+        f.write(f"{date} {time} {request}")
+    # raise Exception(f"Could not find a valid timing response for {date}")
+    return None
     
     
 def request_valid_timing_response(date: str, time: str, mobile_station: bool):
@@ -243,5 +246,5 @@ def run_parser():
         elt_flow(args.start_date, args.end_date, args.time, PROD_DATASET)
 
 if __name__ == "__main__":
-    # elt_flow("2017-01-01", "2017-05-31", "0000") # end of may 2017
+    elt_flow("2017-01-01", "2023-04-20", "0000", "prod.hourly_air_quality") 
     pass
