@@ -24,4 +24,4 @@ deployment_elt = Deployment.build_from_flow(
 )
 
 if __name__ == "__main__":
-    deployment_cloud_run.apply()
+    deployment_elt.apply()
