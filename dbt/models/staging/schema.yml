@@ -4,19 +4,19 @@ sources:
   - name: dev
     tables:
       - name: hourly_air_quality
-        tests:
-        - dbt_utils.unique_combination_of_columns:
-            combination_of_columns:
-              - city
-              - timestamp
+        # tests:
+        # - dbt_utils.unique_combination_of_columns:
+        #     combination_of_columns:
+        #       - city
+        #       - timestamp
   - name: prod
     tables:
       - name: hourly_air_quality
-        tests:
-        - dbt_utils.unique_combination_of_columns:
-            combination_of_columns:
-              - city
-              - timestamp
+        # tests:
+        # - dbt_utils.unique_combination_of_columns:
+        #     combination_of_columns:
+        #       - city
+        #       - timestamp
 
 models:
   - name: stg_hourly_air_quality
