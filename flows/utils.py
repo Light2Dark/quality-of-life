@@ -142,10 +142,7 @@ def try_convert_to_df(response: dict) -> pd.DataFrame or dict:
     except Exception:
         print(traceback.format_exc())
         return response
-    
-    
-    
-    
+        
 
 if __name__ == "__main__":
     print(transforming_dates("2021-05-21", "12:00AM"))
