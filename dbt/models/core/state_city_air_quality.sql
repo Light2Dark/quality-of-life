@@ -3,7 +3,7 @@
 select
     city,
     state,
-    timestamp,
+    datetime,
     pollutant_value
 from {{ref('air_quality')}}
 left join {{ref('state_locations')}} on location = city

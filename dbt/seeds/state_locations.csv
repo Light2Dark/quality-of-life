@@ -16,6 +16,7 @@ PERAK,Tanjung Malim
 W.P. KUALA LUMPUR,Batu Muda
 W.P. KUALA LUMPUR,Cheras
 W.P. PUTRAJAYA,Putrajaya
+W.P. PUTRAJAYA,Presint 18
 SELANGOR,Kuala Selangor
 SELANGOR,Petaling Jaya
 SELANGOR,Shah Alam
@@ -35,6 +36,7 @@ JOHOR,Pasir Gudang
 JOHOR,Pengerang
 JOHOR,Kota Tinggi
 JOHOR,Tangkak
+JOHOR,Muar
 PAHANG,Rompin
 PAHANG,Temerloh
 PAHANG,Jerantut
@@ -46,6 +48,7 @@ TERENGGANU,Kuala Terengganu
 TERENGGANU,Besut
 KELANTAN,Tanah Merah
 KELANTAN,Kota Bharu
+KELANTAN,Kota Bahru
 SABAH,Tawau
 SABAH,Sandakan
 SABAH,Kota Kinabalu
@@ -64,6 +67,21 @@ SARAWAK,Sarikei
 SARAWAK,Sri Aman
 SARAWAK,Samarahan
 SARAWAK,Kuching
+SARAWAK,Permyjaya Miri
 SELANGOR,SK Kampung Johan Setia (MCAQM)
+SELANGOR,Johan Setia (MCAQM)
+SELANGOR,JOHAN SETIA KLANG (MCAQM)
+SABAH,Kota Kinabalu (MCAQM)
+JOHOR,Sek. Agama Taman Mawar Pasir Gudang (MCAQM)
+MELAKA,Madrasah An Nur Pekan Rembia Alor Gajah (MCAQM)
+JOHOR,SK Taman Pasir Putih Pasir Gudang (MCAQM)
 SARAWAK,IPD Serian (MCAQM)
 SABAH,Politeknik Kota Kinabalu (MCAQM)
+SARAWAK,SK Kuala Baram 2 (MCAQM)
+SELANGOR,Technology PP Industries(Norhern) Sdn Bhd (MCAQM)
+JOHOR,SMK Tg Puteri Resort (MCAQM)
+W.P. KUALA LUMPUR,Taman Pudu Ulu (MCAQM)
+KEDAH,SMK Bukit Selambau (MCAQM)
+KEDAH,KLINIK DESA TEROI (MCAQM)
+NEGERI SEMBILAN,Masjid Seri Sendayan (MCAQM)
+PULAU PINANG,SJK (T) LADANG BYRAM (MCAQM)

@@ -1,7 +1,7 @@
 {{config(materialized="view")}}
 
 select 
-    timestamp,
+    datetime,
     city,
     pollutant,
     pollutant_value,
