@@ -1,4 +1,0 @@
-http://apims.doe.gov.my/data/public_v2/MCAQM/mcaqmhours24/2022/09/21/1200.json
-http://apims.doe.gov.my/data/public_v2/CAQM/hours24/2022/09/23/1200.json
-http://apims.doe.gov.my/data/public_v2/MCAQM/mcaqmhours24/2022/09/21/1200.json
-http://apims.doe.gov.my/data/public_v2/MCAQM/mcaqmhours24/2022/09/21/1200.json

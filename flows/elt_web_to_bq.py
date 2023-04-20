@@ -34,7 +34,7 @@ def request_api(url: str) -> dict:
     try:
         response = requests.get(url)
         if response.status_code == 404:
-            with open("unavailable_urls.txt", "a") as f:
+            with open("flows/unavailable_urls.txt", "a") as f:
                 f.write(f"{url}\n")
             return None
         return response.json()
@@ -146,8 +146,7 @@ def retry_diff_times(date: str, mobile_station: bool):
             data, timings = get_data_timings(response)
             if timings == IN_ORDER_TIMINGS:
                 return response
-    print(f"Could not find a valid timing response for {date}")
-    return None
+    raise Exception(f"Could not find a valid timing response for {date}")
     
     
 def request_valid_timing_response(date: str, time: str, mobile_station: bool):
@@ -245,10 +244,4 @@ def run_parser():
 
 if __name__ == "__main__":
     # elt_flow("2017-01-01", "2017-05-31", "0000") # end of may 2017
-    # elt_flow("2017-06-01", "2017-06-04", "0000")
-    # elt_flow("2017-06-13", "2017-12-31", "0000", "prod.hourly_air_quality")
-    # elt_flow("2018-01-01", "2023-04-05", "0000", "prod.hourly_air_quality") # NEXT TO RUN
-    
-    elt_flow()
-        
     pass
