@@ -2,12 +2,19 @@ version: 2
 
 seeds:
   - name: state_locations
+    description: Certain MCAQM stations do not have accurate lat & long values, eg. Kota Kinabalu Station
     columns:
       - name: location
         tests:
           - unique
           - not_null
       - name: state
+        tests:
+          - not_null
+      - name: latitude
+        tests:
+          - not_null
+      - name: longitude
         tests:
           - not_null
 
