@@ -147,9 +147,8 @@ def retry_diff_times(date: str, mobile_station: bool):
             if timings == IN_ORDER_TIMINGS:
                 return response
     with open("flows/timing_errors.txt", "a") as f:
-        f.write(f"{date} {time} {request}")
-    # raise Exception(f"Could not find a valid timing response for {date}")
-    return None
+        f.write(f"{date} {time} {request} \n")
+    raise Exception(f"Could not find a valid timing response for {date}")
     
     
 def request_valid_timing_response(date: str, time: str, mobile_station: bool):
@@ -246,5 +245,5 @@ def run_parser():
         elt_flow(args.start_date, args.end_date, args.time, PROD_DATASET)
 
 if __name__ == "__main__":
-    elt_flow("2017-01-01", "2023-04-20", "0000", "prod.hourly_air_quality") 
+    # elt_flow("2022-05-29", "2023-04-21", "0000", PROD_DATASET) 
     pass
