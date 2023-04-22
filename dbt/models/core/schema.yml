@@ -1,8 +1,8 @@
 version: 2
 
 models:
-  - name: state_city_air_quality
-    description: Air quality data by city and state. Composite PK = city + datetime.
+  - name: air_quality_full
+    description: Full AQ data for viewing purposes (Looker Studio has issues with blends). Composite PK = city + datetime.
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
@@ -15,9 +15,6 @@ models:
           - relationships:
               field: state
               to: ref('state_locations')
-      - name: pollutant_value
-        tests:
-          - not_null
 
   - name: air_quality
     description: Hourly air quality data. Composite PK = city + datetime.
