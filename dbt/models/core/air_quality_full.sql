@@ -4,6 +4,7 @@ select
     city,
     state,
     datetime,
+    pollutant,
     pollutant_value
 from {{ref('air_quality')}}
 left join {{ref('state_locations')}} on location = city
