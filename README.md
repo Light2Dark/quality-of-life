@@ -1,68 +1,66 @@
 # Malaysia Air Quality Data Pipeline
 
-Air quality data is provided on a government site in Malaysia. This API is updated every hour, unfortunately, the dataset for this hourly data is not recorded. A lot of information for environmental & air pollution analysis is lost.
+Air quality data is collected from air quality stations and updated to a government API. This API is updated every hour but there is no public database to hold all that information for long-term analysis. This project aims to create an end-to-end data pipeline and a dashboard on the available data.
 
-This project aims to create that data pipeline and provide Data Citizens the data about air quality.
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/19585239/233954611-cf04cf0b-36cd-4c5d-a3c7-e1fb9d2a90fc.png" height="350px"/>
+</p>
 
-Questions this project can answer:
-- What is the trend of air quality in Malaysia over the past years?
-- Which is the best location to live in Malaysia in terms of air quality?
-- Which months and days have poor / good air quality?
+**Questions that can be answered:**
+- What is the trend of air quality in Malaysia? 
+- Which are the best places to live in terms of air quality?
+- Are there any patterns in air quality according to the time of day?
 
 ## Features
+- Dashboard: [Looker Studio Report](https://lookerstudio.google.com/reporting/42328c2a-5493-4dfa-9cb6-54b747f4f69a)
+- Air Quality Data from 2017-Present*
+- Fresh daily data, queryable. Refer to [BigQuery Section](#bigquery)
+- Daily workflow that can be observed through Prefect Cloud. Alerts whenever a workflow has failed
 
-- Air Quality Data scraped from [APIMS](http://apims.doe.gov.my/api_table.html)
+## Architecture
+![image](https://user-images.githubusercontent.com/19585239/233957402-be416dee-cfee-42ff-bbf5-3458a73b0990.png)
 
-- Air Quality Data is updated from X/04/2022 - present. Data from 2005 - 2022 is also available*
-- Query Data through [Google BigQuery](https://cloud.google.com/bigquery/docs/reference/standard-sql/introduction)
+- **Orchestration:** GitHub Actions, Prefect Cloud, dbt Cloud
+- **Infrastructure:** GitHub Actions, GCP
+- **Data Warehouse:** BigQuery
+- **Data Transformation:** dbt, Pandas
+- **Data Visualization:** Google Looker Studio
 
-- Daily workflow that can be observed through Prefect Cloud
-- Alerts whenever a workflow has failed
+### Data Transformation:
+<img src="https://user-images.githubusercontent.com/19585239/233899390-7901932b-d2e1-4290-ad27-aca83758c8f8.png" width="80%" />
+Pandas is used to clean data while dbt is used for heavy processing like mapping, joins and running tests on data sources.
 
-## Air Quality Data
+### Schema
+<img src="https://user-images.githubusercontent.com/19585239/233950343-f51347f3-8c5f-4cae-86d7-7c202f6e391f.png" height="400px" />
 
-![image](https://user-images.githubusercontent.com/19585239/195292149-ac7e48d1-8d98-4b85-9533-8616aca9a58d.png)
-![image](https://user-images.githubusercontent.com/19585239/195292738-30a6ae22-a266-4456-9634-fc5ee7217ebc.png)
+### Data Sources
+<div display="flexbox" style={"flex-direction": "row"}>
+  <img width = "700px" src = "https://user-images.githubusercontent.com/19585239/195292149-ac7e48d1-8d98-4b85-9533-8616aca9a58d.png" />
+  <img height = "400px" src = "https://user-images.githubusercontent.com/19585239/195292738-30a6ae22-a266-4456-9634-fc5ee7217ebc.png" />
+</div>
 
-As can be seen above, the air quality data has a few attributes and it's meaning can be referenced by the government website [APIMS](http://apims.doe.gov.my/api_table.html)
-
-**Note 1:** The data is updated every day at 12.00am GMT+8 (Malaysia Time)
-
-**Note 2:** The data is for the past 24 hours from 12.00AM on the date. If the labelled data is 12/10/2022, the data is from 1.00AM on the 11th of October to 12.00AM on the 12th of October.
-
-## Environment Variables
-
-To run this project, you will need to add the following environment variables to your .env file
-
-`PROJECT_ID=quality-of-life-364309`
-
-`DATASET=air_quality`
-
-#### Provide your own values for the variables below
-
-`WORKLOAD_IDENTITY_PROVIDER`
-
-`SERVICE_ACCOUNT`
-
-Setup reference: [Google Auth GitHub Actions](https://github.com/google-github-actions/auth#setup)
+[APIMS Table](http://apims.doe.gov.my/api_table.html) 
 
 ## Installation
 
-Python 3 is required for this project.
+Python 3 is required for this project. Additionally, the entire project runs daily on the Cloud. Thus, the following is needed:
+- Prefect Cloud Authentication for GitHub Actions (`PREFECT_API_KEY` and `PREFECT_API_URL` environment variables)
+- GCS and BigQuery connection in Prefect
+- dbt Cloud
 
 ```bash
   git clone <url>
   cd <project-name>
 
   python -m venv venv     # create a virtual environment
-  venv\Scripts\Activate.ps1     # activate the virtual environment
+  source venv/bin/activate    # activate the virtual environment
 
   pip install -r requirements.txt   # installing dependencies
 
-  python main.py    # runs the main code of this project
+  python flows/elt_web_to_bq.py    # runs the main code of this project.
 ```
 
-## Querying Data (for Data Citizens)
+## BigQuery
 
 This project uses BigQuery as a Data Warehouse, giving you the power to use SQL to query data.
 
@@ -70,7 +68,7 @@ This project uses BigQuery as a Data Warehouse, giving you the power to use SQL 
 
 `DATASET=air_quality`
 
-There are 2 tables in the `air_quality` dataset, `locations_air_quality` and `state_locations`
+There are several tables in the `air_quality` dataset, you may want to use the `prod.air_quality` and `prod.air_quality_full` dataset for queries.
 
 Example SQL Statements
 
@@ -92,4 +90,4 @@ Contributions are always welcome!
 
 #### Several things can be improved:
 
-- Add all the historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017), [YnShung's API Malaysia](https://github.com/ynshung/api-malaysia))
+- *Add historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017), [YnShung's API Malaysia](https://github.com/ynshung/api-malaysia))
