@@ -102,6 +102,7 @@ Contributions are always welcome!
 
 - Add historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017), [YnShung's API Malaysia](https://github.com/ynshung/api-malaysia))
 - Use IaC tools to setup infra and connections between GCP, Prefect and dbt.
+- Dashboard's time_of_day breakdown can be a better heatmap that changes colour based on running median instead of fixed scale.
 
 ## Credits
 Thank you to everyone who made the [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp)
