@@ -44,8 +44,9 @@ To run the main code, change the last line in the `flows/elt_web_to_bq.py` and t
 
 - **Orchestration:** GitHub Actions, Prefect Cloud, dbt Cloud
 - **Infrastructure:** GitHub Actions, GCP
+- **Data Extraction:** Python
+- **Data Transformation & Load:** dbt, Pandas
 - **Data Warehouse:** BigQuery
-- **Data Transformation:** dbt, Pandas
 - **Data Visualization:** Google Looker Studio
 
 ### Data Transformation:
