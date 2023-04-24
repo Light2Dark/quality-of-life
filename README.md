@@ -62,20 +62,20 @@ Python 3 is required for this project. Additionally, the entire project runs dai
 
 ## BigQuery
 
-This project uses BigQuery as a Data Warehouse, giving you the power to use SQL to query data.
+This project uses BigQuery as a Data Warehouse, giving you the power to use SQL to query data. All the tables in the prod dataset is public.
 
 `PROJECT_ID=quality-of-life-364309`
 
-`DATASET=air_quality`
+`DATASET=prod`
 
-There are several tables in the `air_quality` dataset, you may want to use the `prod.air_quality` and `prod.air_quality_full` dataset for queries.
+There are several tables in the `prod` dataset, you may want to use the `air_quality` and `air_quality_full` tables for queries.
 
 Example SQL Statements
 
 ```bash
-  SELECT * FROM `quality-of-life-364309.air_quality.locations_air_quality` AS air_q
-  INNER JOIN `quality-of-life-364309.air_quality.state_locations` AS state_locs
-  ON air_q.Location = state_locs.Location LIMIT 1000
+  SELECT *
+  FROM `quality-of-life-364309.prod.air_quality`
+  LIMIT 1000
 ```
 
 You can play around with BigQuery SQL using Kaggle
@@ -88,6 +88,6 @@ You can play around with BigQuery SQL using Kaggle
 
 Contributions are always welcome!
 
-#### Several things can be improved:
+#### Improvements:
 
-- *Add historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017), [YnShung's API Malaysia](https://github.com/ynshung/api-malaysia))
+*Add historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017), [YnShung's API Malaysia](https://github.com/ynshung/api-malaysia))
