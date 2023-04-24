@@ -34,10 +34,10 @@ Pandas is used to clean data while dbt is used for heavy processing like mapping
 <img src="https://user-images.githubusercontent.com/19585239/233950343-f51347f3-8c5f-4cae-86d7-7c202f6e391f.png" height="400px" />
 
 ### Data Sources
-<div display="flexbox" style={"flex-direction": "row"}>
-  <img width = "700px" src = "https://user-images.githubusercontent.com/19585239/195292149-ac7e48d1-8d98-4b85-9533-8616aca9a58d.png" />
-  <img height = "400px" src = "https://user-images.githubusercontent.com/19585239/195292738-30a6ae22-a266-4456-9634-fc5ee7217ebc.png" />
-</div>
+<p float="left">
+  <img width = "650px" src = "https://user-images.githubusercontent.com/19585239/195292149-ac7e48d1-8d98-4b85-9533-8616aca9a58d.png" />
+  <img height = "350px" src = "https://user-images.githubusercontent.com/19585239/195292738-30a6ae22-a266-4456-9634-fc5ee7217ebc.png" />
+</p>
 
 [APIMS Table](http://apims.doe.gov.my/api_table.html) 
 
@@ -82,7 +82,9 @@ You can play around with BigQuery SQL using Kaggle
 
 [Kaggle](https://www.kaggle.com/code/dansbecker/getting-started-with-sql-and-bigquery)
 
-#### Have Fun!
+### Additional Features 
+Tests: Some transformation is done in Python and dbt. Several tests are done after running to ensure the data processed is as intended.
+GitHub Actions: Before merging into main, a CI/CD pipeline checks to see if the unittests work.
 
 ## Contributing
 
