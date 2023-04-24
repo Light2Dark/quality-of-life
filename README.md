@@ -17,6 +17,28 @@ Air quality data is collected from air quality stations and updated to a governm
 - Fresh daily data, queryable. Refer to [BigQuery Section](#bigquery)
 - Daily workflow that can be observed through Prefect Cloud. Alerts whenever a workflow has failed
 
+## Installation
+
+Python 3 is required for this project. Additionally, the entire project runs daily on the Cloud. Thus, the following is needed:
+- GitHub Actions setup (`PREFECT_API_KEY` and `PREFECT_API_URL` environment variables in a `.env` file)
+- Prefect Cloud Blocks (`GCP_Credentials`, `GitHub` and `GCS_Bucket`)
+- dbt Cloud & Connection to BigQuery
+
+```bash
+  git clone <url>
+  cd <project-name>
+
+  python -m venv venv     # create a virtual environment
+  source venv/bin/activate    # activate the virtual environment
+
+  pip install -r requirements.txt   # installing dependencies
+```
+
+To run the main code, change the last line in the `flows/elt_web_to_bq.py` and then run the following command:
+``` 
+    python flows/elt_web_to_bq.py
+```
+
 ## Architecture
 ![image](https://user-images.githubusercontent.com/19585239/233957402-be416dee-cfee-42ff-bbf5-3458a73b0990.png)
 
@@ -45,27 +67,12 @@ Pandas is used to clean data while dbt is used for heavy processing like mapping
 
 [APIMS Table](http://apims.doe.gov.my/api_table.html) 
 
-## Installation
+### Dashboard
+Access the dashboard here: [Looker Studio Report](https://lookerstudio.google.com/reporting/42328c2a-5493-4dfa-9cb6-54b747f4f69a)
 
-Python 3 is required for this project. Additionally, the entire project runs daily on the Cloud. Thus, the following is needed:
-- GitHub Actions setup (`PREFECT_API_KEY` and `PREFECT_API_URL` environment variables in a `.env` file)
-- Prefect Cloud Blocks (`GCP_Credentials`, `GitHub` and `GCS_Bucket`)
-- dbt Cloud & Connection to BigQuery
+You may notice the heatmap at the bottom shows flat colours, that's because the differences between columns are small, however this is something that needs to be improved on (if you know how, let me know!)
 
-```bash
-  git clone <url>
-  cd <project-name>
-
-  python -m venv venv     # create a virtual environment
-  source venv/bin/activate    # activate the virtual environment
-
-  pip install -r requirements.txt   # installing dependencies
-```
-
-To run the main code, change the last line in the `flows/elt_web_to_bq.py` and then run the following command:
-``` 
-    python flows/elt_web_to_bq.py
-```
+<img src="https://user-images.githubusercontent.com/19585239/234033506-2dbb9e36-1f4c-4d1c-ae8a-1c1b4b03c27a.png" height="400px" />
 
 ## BigQuery
 
@@ -85,9 +92,7 @@ Example SQL Statements
   LIMIT 1000
 ```
 
-You can play around with BigQuery SQL using Kaggle
-
-[Kaggle](https://www.kaggle.com/code/dansbecker/getting-started-with-sql-and-bigquery)
+You can play around with BigQuery SQL using [Kaggle](https://www.kaggle.com/code/dansbecker/getting-started-with-sql-and-bigquery)
 
 ### Additional Features 
 **Tests:** Some transformation is done in Python and dbt. Several tests are done after running to ensure the data processed is as intended.
