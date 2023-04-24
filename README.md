@@ -33,6 +33,10 @@ Pandas is used to clean data while dbt is used for heavy processing like mapping
 ### Schema
 <img src="https://user-images.githubusercontent.com/19585239/233950343-f51347f3-8c5f-4cae-86d7-7c202f6e391f.png" height="400px" />
 
+**Clustering:** These tables do not need clustering as [recommended here](https://cloud.google.com/bigquery/docs/clustered-tables) due to the table size <1GB
+
+**Partitioning:** While it would be more efficient to partition by states, BigQuery does not allow partitions by String fields. Some workarounds exist (adding an int as an additional column) but the benefits do not outweigh the cons of this approach. Namely, our queries would need to be modified to use this column.
+
 ### Data Sources
 <p float="left">
   <img width = "550px" src = "https://user-images.githubusercontent.com/19585239/195292149-ac7e48d1-8d98-4b85-9533-8616aca9a58d.png" />
@@ -86,8 +90,9 @@ You can play around with BigQuery SQL using Kaggle
 [Kaggle](https://www.kaggle.com/code/dansbecker/getting-started-with-sql-and-bigquery)
 
 ### Additional Features 
-Tests: Some transformation is done in Python and dbt. Several tests are done after running to ensure the data processed is as intended.
-GitHub Actions: Before merging into main, a CI/CD pipeline checks to see if the unittests work.
+**Tests:** Some transformation is done in Python and dbt. Several tests are done after running to ensure the data processed is as intended.
+
+**GitHub Actions:** Before merging into main, a CI/CD pipeline checks to see if the unittests work.
 
 ## Contributing
 
