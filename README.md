@@ -1,6 +1,6 @@
 # Malaysia Air Quality Data Pipeline
 
-Air quality data is collected from air quality stations and updated to a government API. This API is updated every hour but there is no public database to hold all that information for long-term analysis. This project aims to create an end-to-end data pipeline and a dashboard on the available data.
+Air quality data is collected from air quality stations and updated to a government API. This API is updated every hour but there is no public database to hold all that information for long-term analysis. Furthermore, existing datasets do not store information like pollutant types. This project aims to create an automated end-to-end data pipeline and a dashboard on the available data.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/19585239/233954611-cf04cf0b-36cd-4c5d-a3c7-e1fb9d2a90fc.png" height="350px"/>
