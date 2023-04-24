@@ -13,7 +13,7 @@ Air quality data is collected from air quality stations and updated to a governm
 
 ## Features
 - Dashboard: [Looker Studio Report](https://lookerstudio.google.com/reporting/42328c2a-5493-4dfa-9cb6-54b747f4f69a)
-- Air Quality Data from 2017-Present*
+- Air Quality Data from 2017-Present
 - Fresh daily data, queryable. Refer to [BigQuery Section](#bigquery)
 - Daily workflow that can be observed through Prefect Cloud. Alerts whenever a workflow has failed
 
@@ -44,9 +44,9 @@ Pandas is used to clean data while dbt is used for heavy processing like mapping
 ## Installation
 
 Python 3 is required for this project. Additionally, the entire project runs daily on the Cloud. Thus, the following is needed:
-- Prefect Cloud Authentication for GitHub Actions (`PREFECT_API_KEY` and `PREFECT_API_URL` environment variables)
-- GCS and BigQuery connection in Prefect
-- dbt Cloud
+- GitHub Actions setup (`PREFECT_API_KEY` and `PREFECT_API_URL` environment variables in a `.env` file)
+- Prefect Cloud Blocks (`GCP_Credentials`, `GitHub` and `GCS_Bucket`)
+- dbt Cloud & Connection to BigQuery
 
 ```bash
   git clone <url>
@@ -56,8 +56,11 @@ Python 3 is required for this project. Additionally, the entire project runs dai
   source venv/bin/activate    # activate the virtual environment
 
   pip install -r requirements.txt   # installing dependencies
+```
 
-  python flows/elt_web_to_bq.py    # runs the main code of this project.
+To run the main code, change the last line in the `flows/elt_web_to_bq.py` and then run the following command:
+``` 
+    python flows/elt_web_to_bq.py
 ```
 
 ## BigQuery
@@ -92,4 +95,10 @@ Contributions are always welcome!
 
 #### Improvements:
 
-*Add historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017), [YnShung's API Malaysia](https://github.com/ynshung/api-malaysia))
+- Add historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017), [YnShung's API Malaysia](https://github.com/ynshung/api-malaysia))
+- Use IaC tools to setup infra and connections between GCP, Prefect and dbt.
+
+## Credits
+Thank you to everyone who made the [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp)
+![image](https://user-images.githubusercontent.com/19585239/234007526-9b07c079-70f0-4f8e-985b-03b7ad6b9dc7.png)
+
