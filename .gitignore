@@ -7,6 +7,7 @@ secrets
 gcloud-notes.txt
 note.txt
 .prefectignore
+archi.excalidraw
 # Default .gitignore content added by dbt Cloud
 target/
 dbt_packages/
