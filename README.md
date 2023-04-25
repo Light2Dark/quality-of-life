@@ -77,7 +77,7 @@ You may notice the heatmap at the bottom shows flat colours, that's because the 
 
 ## BigQuery
 
-This project uses BigQuery as a Data Warehouse, giving you the power to use SQL to query data. All the tables in the prod dataset is public.
+This project uses BigQuery as a Data Warehouse, so you can use SQL to query data. All the tables in the prod dataset is public.
 
 `PROJECT_ID=quality-of-life-364309`
 
@@ -104,7 +104,7 @@ You can play around with BigQuery SQL using [Kaggle](https://www.kaggle.com/code
 
 Contributions are always welcome!
 
-#### Improvements:
+#### Improvements (To-Do):
 
 - Add historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017), [YnShung's API Malaysia](https://github.com/ynshung/api-malaysia))
 - Use IaC tools to setup infra and connections between GCP, Prefect and dbt.
