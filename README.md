@@ -93,7 +93,7 @@ Example SQL Statements
   LIMIT 1000
 ```
 
-You can play around with BigQuery SQL using [Kaggle](https://www.kaggle.com/code/dansbecker/getting-started-with-sql-and-bigquery)
+You can play around with BigQuery SQL using Kaggle. A sample notebook: [Shahmir's AQ Kaggle Notebook](https://www.kaggle.com/datasets/shahmirvarqha/air-quality-malaysia-2017-present)
 
 ### Additional Features 
 **Tests:** Some transformation is done in Python and dbt. Several tests are done after running to ensure the data processed is as intended.
