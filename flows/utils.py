@@ -56,7 +56,6 @@ def transforming_dates(date: str, time: str) -> datetime:
     return datetime.strptime(date_str, datetime_format) if date_str else None
     
 
-# TODO: Add unit tests
 def get_polutant_unit_value(aq_value: str) -> tuple:
     """Get tuple(polutant, unit, value) from aq_value. Returns (None, None, pd.NA) if N/A
 
