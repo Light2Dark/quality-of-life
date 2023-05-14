@@ -55,39 +55,6 @@ def transforming_dates(date: str, time: str) -> datetime:
     
     return datetime.strptime(date_str, datetime_format) if date_str else None
     
-
-def get_polutant_unit_value(aq_value: str) -> tuple:
-    """Get tuple(polutant, unit, value) from aq_value. Returns (None, None, pd.NA) if N/A
-
-    Args:
-        aq_value (str): air quality value
-
-    Returns:
-        tuple(str, str, int | pd.NA): polutant, unit, value
-    """
-    if aq_value == "N/A":
-        return (None, None, np.nan)
-    text = re.sub(r'\d+', '', aq_value)
-    number = re.search(r'\d+', aq_value).group()
-    number = pd.to_numeric(number, errors="coerce")
-    
-    match text:
-        case "**":
-            return ("PM2.5", "ug/m3", number)
-        case "*":
-            return ("PM10", "ug/m3", number)
-        case "a":
-            return ("S02", "ppm", number)
-        case "b":
-            return ("NO2", "ppm", number)
-        case "c":
-            return ("03", "ppm", number)
-        case "d":
-            return ("CO", "ppm", number)
-        case "&":
-            return ("multi-pollutant", None, number)
-        case _:
-            return ("unknown", None, number)
     
 def download_from_gcs(bucket_path: str, save_path: str):
     gcp_cloud_storage_bucket_block: GcsBucket = GcsBucket.load("air-quality")
