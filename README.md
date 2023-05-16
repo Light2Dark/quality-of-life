@@ -40,7 +40,7 @@ To run the main code, change the last line in the `flows/elt_web_to_bq.py` and t
 ```
 
 ## Architecture
-![image](https://user-images.githubusercontent.com/19585239/233957402-be416dee-cfee-42ff-bbf5-3458a73b0990.png)
+![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/81aa6dc0-75bd-44a1-b7a0-79978f4e54b1)
 
 - **Orchestration:** GitHub Actions, Prefect Cloud, dbt Cloud
 - **Infrastructure:** GitHub Actions, GCP
@@ -54,7 +54,7 @@ To run the main code, change the last line in the `flows/elt_web_to_bq.py` and t
 Pandas is used to clean data while dbt is used for heavy processing like mapping, joins and running tests on data sources.
 
 ### Schema
-<img src="https://user-images.githubusercontent.com/19585239/233950343-f51347f3-8c5f-4cae-86d7-7c202f6e391f.png" height="400px" />
+<img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/2ff0d122-788b-462b-8748-3c21cfdb3c84" height="400px" />
 
 **Clustering:** These tables do not need clustering as [recommended here](https://cloud.google.com/bigquery/docs/clustered-tables) due to the table size <1GB
 
