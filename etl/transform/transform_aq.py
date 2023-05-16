@@ -2,7 +2,7 @@ from prefect import task
 import pandas as pd
 import traceback
 from datetime import datetime, timedelta
-from pipelines.etl.utils.util_aq import IN_ORDER_TIMINGS, get_data_timings
+from etl.utils.util_aq import IN_ORDER_TIMINGS, get_data_timings
 
 
 @task(name="transform_data", log_prints=True)

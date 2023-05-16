@@ -3,7 +3,7 @@ import regex as re
 from prefect import task
 from prefect.tasks import exponential_backoff
 
-from pipelines.etl.utils.util_aq import IN_ORDER_TIMINGS, get_data_timings
+from etl.utils.util_aq import IN_ORDER_TIMINGS, get_data_timings
 from datetime import datetime
 
 DEFAULT_URLS = [
