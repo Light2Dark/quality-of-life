@@ -1,7 +1,7 @@
 import argparse
 from config import PROD_DATASET
 from pipelines.air_quality import elt_flow
-
+from infra import prefect_infra
 
 def run_aq_pipeline():
     elt_flow(date_start="2021-05-11", date_end="2021-05-11", time="0000", dataset="dev.hourly_air_quality")
@@ -20,4 +20,5 @@ def run_parser():
         elt_flow(args.start_date, args.end_date, args.time, PROD_DATASET)
 
 if __name__ == "__main__":
-    run_parser()
+    # run_parser()
+    pass
