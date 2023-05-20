@@ -9,9 +9,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+from infra.prefect_infra import GCP_CREDENTIALS_BLOCK_NAME, GCS_AIR_QUALITY_BUCKET_BLOCK_NAME
+
 @task(name="upload_to_gcs", log_prints=True, retries=3, retry_delay_seconds=exponential_backoff(backoff_factor=20))
 def upload_to_gcs(data, filename: str, savepath: str, mobile_station=False):
-    gcp_cloud_storage_bucket_block = GcsBucket.load(os.getenv("GCS_AIR_QUALITY_BUCKET_BLOCK"))
+    gcp_cloud_storage_bucket_block = GcsBucket.load(GCS_AIR_QUALITY_BUCKET_BLOCK_NAME)
     filename = filename.split(" ")[0]
     try:
         if isinstance(data, pd.DataFrame):
@@ -41,7 +43,7 @@ def upload_to_gcs(data, filename: str, savepath: str, mobile_station=False):
 def load_to_bq(df: pd.DataFrame,  to_path_upload: str):
     """Uploads dataframe to BigQuery in to_path_upload"""
     print(f"Loading to bq {to_path_upload}")
-    gcp_credentials_block = GcpCredentials.load(os.getenv("GCP_CREDENTIALS_BLOCK"))
+    gcp_credentials_block = GcpCredentials.load(GCP_CREDENTIALS_BLOCK_NAME)
     df.to_gbq(
         destination_table=to_path_upload,
         project_id=os.getenv("PROJECT_ID"),

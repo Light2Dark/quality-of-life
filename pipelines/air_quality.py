@@ -1,7 +1,7 @@
 import pytz
 import pandas as pd
 from prefect import flow
-from config import DAILY_AQ_DATA_GCS_SAVEPATH, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH, DEV_DATASET, PROD_DATASET
+from pipelines.config import DAILY_AQ_DATA_GCS_SAVEPATH, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH, DEV_DATASET, PROD_DATASET
 from datetime import datetime, timedelta
 from pipelines.etl.extract.extract_aq import extract_valid_timed_response
 from pipelines.etl.transform.transform_aq import transform_data, try_convert_to_df

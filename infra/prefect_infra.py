@@ -22,19 +22,22 @@ def create_deployment():
 # PREFECT BLOCKS
 from prefect_gcp import GcpCredentials
 
+GCP_CREDENTIALS_BLOCK_NAME = "gcp-credentials"
+GCS_AIR_QUALITY_BUCKET_BLOCK_NAME = "gcs-air-quality-bucket"
+
 def create_gcp_credentials_block(filepath: str = os.getenv("GCP_CREDENTIALS_FILEPATH", "google_creds.json")):
     with open(filepath, "r") as f:
         service_account_info = f.read()
 
     GcpCredentials(
         service_account_info=service_account_info
-    ).save(os.getenv("GCP_CREDENTIALS_BLOCK", "gcp-credentials"))
+    ).save(GCP_CREDENTIALS_BLOCK_NAME)
 
 def create_gcs_bucket_block(bucket_name: str):
     # Creates prefect block that is linked to the GCS Bucket created with terraform
     GcsBucket(
         bucket=bucket_name
-    ).save(os.getenv("GCS_AIR_QUALITY_BUCKET_BLOCK"))
+    ).save(GCS_AIR_QUALITY_BUCKET_BLOCK_NAME)
     
 def create_email_block(email: str):
     # Email for prefect block to send notification to you when pipelines fails
