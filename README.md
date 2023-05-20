@@ -17,55 +17,6 @@ Air quality data is collected from air quality stations and updated to a governm
 - Fresh daily data, queryable. Refer to [BigQuery Section](#bigquery)
 - Daily workflow that can be observed through Prefect Cloud. Alerts whenever a workflow has failed
 
-## Installation
-
-Python 3 is required for this project. Additionally, the entire project runs daily on the Cloud. Thus, the following accounts are needed:
-- [Google Cloud Account](https://console.cloud.google.com/)
-- [Prefect Cloud Account](https://app.prefect.cloud/)
-- [dbt Cloud](https://cloud.getdbt.com/)
-
-1. Setup your environment
-```bash
-  git clone <url>
-  cd <project-name>
-
-  python -m venv venv     # create a virtual environment
-  source venv/bin/activate    # activate the virtual environment
-
-  pip install -r requirements.txt   # installing dependencies
-```
-2. Fill in the `.env.example` file and rename it to `.env`. Do not remove the # symbols!
-```.env
-## Prefect Config
-PREFECT_API_ACCOUNT_ID=<PREFECT_API_ACCOUNT_ID>
-PREFECT_API_WORKSPACE_ID=<PREFECT_API_WORKSPACE_ID>
-PREFECT_API_KEY=<PREFECT_API_KEY>
-#
-## Prefect Blocks
-# GitHub Blocks (Optional)
-GITHUB_REPO=<GITHUB_REPO>
-GITHUB_BRANCH=<GITHUB_BRANCH>
-GITHUB_BLOCK=<GITHUB_BLOCK>
-#
-## GCP Config
-PROJECT_ID=<PROJECT_ID>
-REGION=<REGION>
-GCP_CREDENTIALS_FILEPATH=<GCP_CREDENTIALS_FILEPATH>
-#
-## GitHub Email Config (Work in Progress)
-SMTP=<smtp+starttls://user:password@server:port>
-#
-## Temperature API (Work in Progress)
-ACCU_WEATHER_API_KEY=<ACCU_WEATHER_API_KEY>
-```
-3. Setup the infrastructure, refer to [infra_setup](infra/)
-4. Run dbt, refer to [dbt setup](dbt/)
-
-5. You are ready to run the main elt pipeline. Run the following command to extract air quality data from 2020-01-01 to 2020-01-02
-```
-python main.py --testing=True --start_date=2020-01-01 --end_date=2020-01-02 --time=0000
-```
-
 ## Architecture
 ![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/81aa6dc0-75bd-44a1-b7a0-79978f4e54b1)
 
@@ -127,6 +78,93 @@ You can play around with BigQuery SQL using Kaggle. A sample notebook: [Shahmir'
 
 **GitHub Actions:** Before merging into main, a CI/CD pipeline checks to see if the unittests work.
 
+
+## Installation
+
+Python 3 is required for this project. Additionally, the entire project runs daily on the Cloud. Thus, the following accounts are needed:
+- [Google Cloud Account](https://console.cloud.google.com/)
+- [Prefect Cloud Account](https://app.prefect.cloud/)
+- [dbt Cloud](https://cloud.getdbt.com/)
+
+1. Setup your environment
+```bash
+  git clone <url>
+  cd <project-name>
+
+  python -m venv venv     # create a virtual environment
+  source venv/bin/activate    # activate the virtual environment
+
+  pip install -r requirements.txt   # installing dependencies
+```
+2. Download the service_account_json_file from GCP. Follow [service_account_file_download](https://github.com/wjuszczyk/dezoomcamp-project#step-2-setup-gcp)
+3. Fill in the `.env.example` file and rename it to `.env`. Do not remove the # symbols!
+```.env
+## Prefect Config
+PREFECT_API_ACCOUNT_ID=<PREFECT_API_ACCOUNT_ID>
+PREFECT_API_WORKSPACE_ID=<PREFECT_API_WORKSPACE_ID>
+PREFECT_API_KEY=<PREFECT_API_KEY>
+#
+## Prefect Blocks
+# GitHub Blocks (Optional)
+GITHUB_REPO=<GITHUB_REPO>
+GITHUB_BRANCH=<GITHUB_BRANCH>
+GITHUB_BLOCK=<GITHUB_BLOCK>
+#
+## GCP Config
+PROJECT_ID=<PROJECT_ID>
+REGION=<REGION>
+GCP_CREDENTIALS_FILEPATH=<GCP_CREDENTIALS_FILEPATH>
+#
+## GitHub Email Config (Work in Progress)
+SMTP=<smtp+starttls://user:password@server:port>
+#
+## Temperature API (Work in Progress)
+ACCU_WEATHER_API_KEY=<ACCU_WEATHER_API_KEY>
+```
+4. Setup the infrastructure
+In your terminal, from the root folder of this project, run the following command
+```
+# This will create the GCP resources (buckets + bigquery dataset), create the prefect connection and blocks.
+bash setup_infra.sh
+```
+
+5. You are ready to run the main elt pipeline. Run the following command to extract air quality data from 2020-01-01 to 2020-01-02
+```
+python main.py --testing=True --start_date=2020-01-01 --end_date=2020-01-02 --time=0000
+```
+
+6. Setup dbt. Firstly, modify the `dbt/profile_template.yml` file with your own project details.
+```dbt/profile_template.yml
+fixed:
+  dataset: dev
+  job_execution_timeout_seconds: 300
+  job_retries: 1
+  keyfile: <PATH_TO_GCP_CREDENTIALS_JSON_FILE>
+  location: <REGION>
+  method: service-account
+  priority: interactive
+  project: <PROJECT_ID>
+  type: bigquery
+prompts:
+  user:
+    type: string
+    hint: yourname@jaffleshop.com
+  threads:
+    hint: "number of threads"
+    type: int
+    default: 4
+```
+
+5. Run dbt.
+```
+cd dbt
+dbt init    # answer the prompts
+dbt deps
+dbt seed
+dbt run
+```
+
+
 ## Contributing
 
 Contributions are always welcome!
@@ -135,7 +173,6 @@ Contributions are always welcome!
 
 - It might be good to partition and cluster based on certain attributes to provide long term scalability
 - Add historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017), [YnShung's API Malaysia](https://github.com/ynshung/api-malaysia))
-- Use IaC tools to setup infra and connections between GCP, Prefect and dbt.
 - Dashboard's time_of_day breakdown can be a better heatmap that changes colour based on running median instead of fixed scale.
 
 ## Credits
