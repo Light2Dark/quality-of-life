@@ -19,28 +19,12 @@ Air quality data is collected from air quality stations and updated to a governm
 
 ## Installation
 
-Python 3 is required for this project. Additionally, the entire project runs daily on the Cloud. Thus, the following is needed:
-- GitHub Actions setup (`PREFECT_API_KEY` and `PREFECT_API_URL` environment variables in a `.env` file)
-- Prefect Cloud Blocks (`GCP_Credentials`, `GitHub` and `GCS_Bucket`)
-- dbt Cloud & Connection to BigQuery
+Python 3 is required for this project. Additionally, the entire project runs daily on the Cloud. Thus, the following accounts are needed:
+- [Google Cloud Account](https://console.cloud.google.com/)
+- [Prefect Cloud Account](https://app.prefect.cloud/)
+- [dbt Cloud](https://cloud.getdbt.com/)
 
-1. Set .env variables:
-- PREFECT_API_URL
-- PRFECT
-...
-
-2. Get service_account key json file and place into `infra` folder. Service account must have access to BigQuery and GCS.
-
-3. In your terminal, from the root folder of this project, run `bash setup_infra.sh`
-
-You are ready to go to run the main elt pipeline.
-4. Run `python main.py --testing=True --start_date=2020-01-01 --end_date=2020-01-02 --time=0000`
-
-Run dbt
-4. cd into dbt folder
-5. Run `dbt init`
-...
-
+1. Setup your environment
 ```bash
   git clone <url>
   cd <project-name>
@@ -50,10 +34,12 @@ Run dbt
 
   pip install -r requirements.txt   # installing dependencies
 ```
+2. Setup the infrastructure, refer to [infra_setup](infra/)
+3. Run dbt, refer to [dbt setup](dbt/)
 
-To run the main code, change the last line in the `flows/elt_web_to_bq.py` and then run the following command:
-``` 
-    python flows/elt_web_to_bq.py
+4. You are ready to run the main elt pipeline. Run the following command to extract air quality data from 2020-01-01 to 2020-01-02
+```
+python main.py --testing=True --start_date=2020-01-01 --end_date=2020-01-02 --time=0000
 ```
 
 ## Architecture
