@@ -123,13 +123,13 @@ ACCU_WEATHER_API_KEY=<ACCU_WEATHER_API_KEY>
 ```
 4. Setup the infrastructure
 In your terminal, from the root folder of this project, run the following command
-```
+```bash
 # This will create the GCP resources (buckets + bigquery dataset), create the prefect connection and blocks.
 bash setup_infra.sh
 ```
 
 5. You are ready to run the main elt pipeline. Run the following command to extract air quality data from 2020-01-01 to 2020-01-02
-```
+```python
 python main.py --testing=True --start_date=2020-01-01 --end_date=2020-01-02 --time=0000
 ```
 
@@ -156,7 +156,7 @@ prompts:
 ```
 
 5. Run dbt.
-```
+```bash
 cd dbt
 dbt init    # answer the prompts
 dbt deps
