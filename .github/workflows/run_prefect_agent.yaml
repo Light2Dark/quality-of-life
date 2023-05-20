@@ -15,7 +15,7 @@ jobs:
       id-token: 'write'
 
     env:
-      PREFECT_API_URL: ${{ secrets.PREFECT_API_URL }}
+      PREFECT_API_URL: https://api.prefect.cloud/api/accounts/${{secrets.PREFECT_API_ACCOUNT_ID}}/workspaces/${{secrets.PREFECT_API_WORKSPACE_ID}}
       PREFECT_API_KEY: ${{ secrets.PREFECT_API_KEY }}
 
     steps:

@@ -86,6 +86,7 @@ pendulum==2.1.2
 prefect==2.10.2
 prefect-dbt==0.3.1
 prefect-gcp==0.4.0
+prefect-github==0.1.5
 prefect-shell==0.1.5
 proto-plus==1.22.2
 protobuf==4.22.1

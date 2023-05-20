@@ -1,5 +1,13 @@
 Welcome to your new dbt project!
 
+## Running this project
+Modify the `profile_template.yml` file in this directory to point to your GCP Project-id, and any other configuration like dataset location.
+
+Run the following commands:
+`dbt init`
+`dbt deps`
+`dbt seed`
+
 ### Using the starter project
 
 Try running the following commands:

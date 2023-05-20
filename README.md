@@ -24,6 +24,23 @@ Python 3 is required for this project. Additionally, the entire project runs dai
 - Prefect Cloud Blocks (`GCP_Credentials`, `GitHub` and `GCS_Bucket`)
 - dbt Cloud & Connection to BigQuery
 
+1. Set .env variables:
+- PREFECT_API_URL
+- PRFECT
+...
+
+2. Get service_account key json file and place into `infra` folder. Service account must have access to BigQuery and GCS.
+
+3. In your terminal, from the root folder of this project, run `bash setup_infra.sh`
+
+You are ready to go to run the main elt pipeline.
+4. Run `python main.py --testing=True --start_date=2020-01-01 --end_date=2020-01-02 --time=0000`
+
+Run dbt
+4. cd into dbt folder
+5. Run `dbt init`
+...
+
 ```bash
   git clone <url>
   cd <project-name>
