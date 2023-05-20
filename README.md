@@ -34,10 +34,34 @@ Python 3 is required for this project. Additionally, the entire project runs dai
 
   pip install -r requirements.txt   # installing dependencies
 ```
-2. Setup the infrastructure, refer to [infra_setup](infra/)
-3. Run dbt, refer to [dbt setup](dbt/)
+2. Fill in the `.env.example` file and rename it to `.env`. Do not remove the # symbols!
+```.env
+## Prefect Config
+PREFECT_API_ACCOUNT_ID=<PREFECT_API_ACCOUNT_ID>
+PREFECT_API_WORKSPACE_ID=<PREFECT_API_WORKSPACE_ID>
+PREFECT_API_KEY=<PREFECT_API_KEY>
+#
+## Prefect Blocks
+# GitHub Blocks (Optional)
+GITHUB_REPO=<GITHUB_REPO>
+GITHUB_BRANCH=<GITHUB_BRANCH>
+GITHUB_BLOCK=<GITHUB_BLOCK>
+#
+## GCP Config
+PROJECT_ID=<PROJECT_ID>
+REGION=<REGION>
+GCP_CREDENTIALS_FILEPATH=<GCP_CREDENTIALS_FILEPATH>
+#
+## GitHub Email Config (Work in Progress)
+SMTP=<smtp+starttls://user:password@server:port>
+#
+## Temperature API (Work in Progress)
+ACCU_WEATHER_API_KEY=<ACCU_WEATHER_API_KEY>
+```
+3. Setup the infrastructure, refer to [infra_setup](infra/)
+4. Run dbt, refer to [dbt setup](dbt/)
 
-4. You are ready to run the main elt pipeline. Run the following command to extract air quality data from 2020-01-01 to 2020-01-02
+5. You are ready to run the main elt pipeline. Run the following command to extract air quality data from 2020-01-01 to 2020-01-02
 ```
 python main.py --testing=True --start_date=2020-01-01 --end_date=2020-01-02 --time=0000
 ```
