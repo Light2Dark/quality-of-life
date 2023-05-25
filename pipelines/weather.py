@@ -1,4 +1,3 @@
-# from pipelines.etl.extract import extract_temp
 from pipelines.etl.extract import extract_weather
 from pipelines.etl.transform import transform_weather
 from pipelines.etl.load import upload
