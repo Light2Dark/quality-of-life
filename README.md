@@ -171,6 +171,7 @@ Contributions are always welcome!
 
 #### Improvements (To-Do):
 
+- Add logos for the sources of data in dashboard (APIMS)
 - It might be good to partition and cluster based on certain attributes to provide long term scalability
 - Add historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017), [YnShung's API Malaysia](https://github.com/ynshung/api-malaysia))
 - Dashboard's time_of_day breakdown can be a better heatmap that changes colour based on running median instead of fixed scale.

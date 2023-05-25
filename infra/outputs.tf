@@ -13,8 +13,8 @@ output "gcs_aq_bucket_name" {
     description = "bucket name for air quality data"
 }
 
-output "gcs_temp_bucket_name" {
-    value = google_storage_bucket.temp_data_storage.name
+output "gcs_weather_bucket_name" {
+    value = google_storage_bucket.weather_data_storage.name
     description = "bucket name for temperature data"
 }
 

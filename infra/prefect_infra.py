@@ -24,8 +24,9 @@ def create_deployment():
 # PREFECT BLOCKS
 from prefect_gcp import GcpCredentials
 
-GCP_CREDENTIALS_BLOCK_NAME = "gcp-credentials"
+GCP_CREDENTIALS_BLOCK_NAME = "sham-credentials"
 GCS_AIR_QUALITY_BUCKET_BLOCK_NAME = "gcs-air-quality-bucket"
+GCS_WEATHER_BUCKET_BLOCK_NAME = "gcs-weather-bucket"
 
 def create_gcp_credentials_block(filepath: str = os.getenv("GCP_CREDENTIALS_FILEPATH", "google_creds.json")) -> GcpCredentials:
     with open(filepath, "r") as f:
@@ -58,9 +59,10 @@ def create_github_block():
         include_git_objects=True
     ).save(os.getenv("GITHUB_BLOCK"))
     
-def build_blocks(filepath_gcp_creds: str, aq_bucket_name: str):
+def build_blocks(filepath_gcp_creds: str, aq_bucket_name: str, weather_bucket_name: str):
     gcp_creds = create_gcp_credentials_block(filepath_gcp_creds)
     create_gcs_bucket_block(aq_bucket_name, gcp_creds)
+    create_gcs_bucket_block(weather_bucket_name, gcp_creds)
 
 
 if __name__ == "__main__":

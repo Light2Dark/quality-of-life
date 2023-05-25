@@ -30,9 +30,9 @@ resource "google_storage_bucket" "aq_data_storage" {
   storage_class = "standard"
 }
 
-# Temperature infra
-resource "google_storage_bucket" "temp_data_storage" {
-  name          = "temperature-data-storage"
+# Weather infra
+resource "google_storage_bucket" "weather_data_storage" {
+  name          = "weather-data-storage"
   location      = var.region
   storage_class = "standard"
 }

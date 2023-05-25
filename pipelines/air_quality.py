@@ -1,11 +1,15 @@
 import pytz
 import pandas as pd
 from prefect import flow
-from pipelines.config import DAILY_AQ_DATA_GCS_SAVEPATH, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH, DEV_DATASET, PROD_DATASET
 from datetime import datetime, timedelta
 from pipelines.etl.extract.extract_aq import extract_valid_timed_response
 from pipelines.etl.transform.transform_aq import transform_data, try_convert_to_df
 from pipelines.etl.load.upload import upload_to_gcs, load_to_bq
+from infra.prefect_infra import GCS_AIR_QUALITY_BUCKET_BLOCK_NAME
+
+DAILY_AQ_DATA_GCS_SAVEPATH = "daily_aq_data"
+DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH = "daily_preprocessed_aq_data"
+DEV_DATASET = "dev.hourly_air_quality"
 
 @flow(name="elt_flow", log_prints=True)
 def elt_flow(date_start: str = None, date_end: str = None, time: str = "0000", dataset: str = DEV_DATASET):
@@ -40,12 +44,12 @@ def elt_flow(date_start: str = None, date_end: str = None, time: str = "0000", d
         # processing, uploading raw data and getting transformed data
         df_aq_transformed, df_maq_transformed = None, None
         if aq_stations_data_24h:
-            upload_to_gcs(aq_stations_data_24h, date, DAILY_AQ_DATA_GCS_SAVEPATH)
+            upload_to_gcs(aq_stations_data_24h, date, DAILY_AQ_DATA_GCS_SAVEPATH, GCS_AIR_QUALITY_BUCKET_BLOCK_NAME)
             print("Transforming continous AQ data")
             df_aq = try_convert_to_df(aq_stations_data_24h)
             df_aq_transformed = transform_data(df_aq, date)
         if mobile_continous_aq_stations_data_24h:
-            upload_to_gcs(mobile_continous_aq_stations_data_24h, date, DAILY_AQ_DATA_GCS_SAVEPATH, mobile_station=True)
+            upload_to_gcs(mobile_continous_aq_stations_data_24h, date, DAILY_AQ_DATA_GCS_SAVEPATH, GCS_AIR_QUALITY_BUCKET_BLOCK_NAME, mobile_station=True)
             print("Transforming mobile AQ data")
             df_maq = try_convert_to_df(mobile_continous_aq_stations_data_24h)
             df_maq_transformed = transform_data(df_maq, date)
@@ -54,15 +58,15 @@ def elt_flow(date_start: str = None, date_end: str = None, time: str = "0000", d
         if df_aq_transformed is not None and not df_aq_transformed.empty and df_maq_transformed is not None and not df_maq_transformed.empty:
             print("Upload to GCS transformed continous and mobile AQ data. Loading to bigquery")
             df_transformed = pd.concat([df_aq_transformed, df_maq_transformed], ignore_index=True)
-            upload_to_gcs(df_transformed, date, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH)
+            upload_to_gcs(df_transformed, date, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH, GCS_AIR_QUALITY_BUCKET_BLOCK_NAME)
             load_to_bq(df_transformed, dataset)
         elif df_aq_transformed is not None and not df_aq_transformed.empty:
             print("Upload to GCS transformed continous AQ data. Loading to bigquery")
-            upload_to_gcs(df_aq_transformed, date, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH)
+            upload_to_gcs(df_aq_transformed, date, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH, GCS_AIR_QUALITY_BUCKET_BLOCK_NAME)
             load_to_bq(df_aq_transformed, dataset)
         elif df_maq_transformed is not None and not df_maq_transformed.empty:
             print("Upload to GCS transformed mobile AQ data. Loading to bigquery")
-            upload_to_gcs(df_maq_transformed, date, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH, mobile_station=True)
+            upload_to_gcs(df_maq_transformed, date, DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH, GCS_AIR_QUALITY_BUCKET_BLOCK_NAME, mobile_station=True)
             load_to_bq(df_maq_transformed, dataset)
             
         datetime_start += timedelta(days=1)
