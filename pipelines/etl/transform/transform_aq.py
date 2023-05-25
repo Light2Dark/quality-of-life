@@ -4,6 +4,7 @@ import traceback
 from datetime import datetime, timedelta
 from pipelines.etl.utils.util_aq import IN_ORDER_TIMINGS, get_data_timings
 
+DATETIME_FORMAT = '%Y-%m-%d %H:%M%p'
 
 @task(name="transform_data", log_prints=True)
 def transform_data(response: dict, date:str) -> pd.DataFrame:
@@ -61,7 +62,6 @@ def transforming_dates(date: str, time: str) -> datetime:
     Returns:
         datetime: Datetime format, eg: 2021-05-01 02:00:00
     """    
-    datetime_format = '%Y-%m-%d %H:%M%p'
     current_day = datetime.strptime(date, '%Y-%m-%d')
     yesterday = (current_day - timedelta(days=1)).strftime('%Y-%m-%d')
     current_day = current_day.strftime('%Y-%m-%d')
@@ -74,7 +74,7 @@ def transforming_dates(date: str, time: str) -> datetime:
         time = f"{hour}:{time.split(':')[1]}"
     date_str = f"{day} {time}"
     
-    return datetime.strptime(date_str, datetime_format) if date_str else None
+    return datetime.strptime(date_str, DATETIME_FORMAT) if date_str else None
 
 
 def try_convert_to_df(response: dict) -> pd.DataFrame or dict:

@@ -1,5 +1,6 @@
 import traceback, json, pandas as pd
 from io import BytesIO
+from typing import List
 from prefect import task
 from prefect.tasks import exponential_backoff
 from prefect_gcp.cloud_storage import GcsBucket
@@ -9,11 +10,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from infra.prefect_infra import GCP_CREDENTIALS_BLOCK_NAME, GCS_AIR_QUALITY_BUCKET_BLOCK_NAME
+from infra.prefect_infra import GCP_CREDENTIALS_BLOCK_NAME
 
 @task(name="upload_to_gcs", log_prints=True, retries=3, retry_delay_seconds=exponential_backoff(backoff_factor=20))
-def upload_to_gcs(data, filename: str, savepath: str, mobile_station=False):
-    gcp_cloud_storage_bucket_block = GcsBucket.load(GCS_AIR_QUALITY_BUCKET_BLOCK_NAME)
+def upload_to_gcs(data, filename: str, savepath: str, prefect_gcs_block: str, mobile_station=False):
+    gcp_cloud_storage_bucket_block = GcsBucket.load(prefect_gcs_block)
     filename = filename.split(" ")[0]
     try:
         if isinstance(data, pd.DataFrame):
@@ -40,7 +41,7 @@ def upload_to_gcs(data, filename: str, savepath: str, mobile_station=False):
     
     
 @task(name="load_to_bq", log_prints=True, tags="load_bq")
-def load_to_bq(df: pd.DataFrame,  to_path_upload: str):
+def load_to_bq(df: pd.DataFrame,  to_path_upload: str, table_schema: List[dict] = None):
     """Uploads dataframe to BigQuery in to_path_upload"""
     print(f"Loading to bq {to_path_upload}")
     gcp_credentials_block = GcpCredentials.load(GCP_CREDENTIALS_BLOCK_NAME)
@@ -49,5 +50,6 @@ def load_to_bq(df: pd.DataFrame,  to_path_upload: str):
         project_id=os.getenv("PROJECT_ID"),
         credentials=gcp_credentials_block.get_credentials_from_service_account(),
         if_exists="append",
-        location=os.getenv("REGION")
+        location=os.getenv("REGION"),
+        table_schema=table_schema
     )

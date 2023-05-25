@@ -1,10 +1,10 @@
 import argparse
-from pipelines.config import PROD_DATASET
-from pipelines.air_quality import elt_flow
+from pipelines.config import PROD_DATASET_AQ
+from pipelines import air_quality, weather
 from infra import prefect_infra
 
 def run_aq_pipeline():
-    elt_flow(date_start="2021-05-11", date_end="2021-05-11", time="0000", dataset="dev.hourly_air_quality")
+    air_quality.elt_flow(date_start="2021-05-11", date_end="2021-05-11", time="0000", dataset="dev.hourly_air_quality")
 
 def run_parser():
     parser = argparse.ArgumentParser(prog="Air Quality ELT", description="An ELT flow to get air quality data from API and store in GCS & BQ", epilog="credits to Sham")
@@ -15,10 +15,11 @@ def run_parser():
     args = parser.parse_args()
 
     if args.testing:
-        elt_flow(args.start_date, args.end_date, args.time)
+        air_quality.elt_flow(args.start_date, args.end_date, args.time)
     elif args.testing is False:
-        elt_flow(args.start_date, args.end_date, args.time, PROD_DATASET)
+        air_quality.elt_flow(args.start_date, args.end_date, args.time, PROD_DATASET_AQ)
 
 if __name__ == "__main__":
-    run_parser()
+    # run_parser()
+    weather.elt_weather("20210511", "20210511")
     pass
