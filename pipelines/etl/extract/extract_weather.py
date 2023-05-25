@@ -6,7 +6,7 @@ from typing import List
 
 load_dotenv()
 
-DEFAULT_URL = "https://api.weather.com/v1/location/WMSA:9:MY/observations/historical.json?apiKey=e1f10a1e78da46f5b10a1e78da96f525&units=m&startDate=20230521&endDate=20230521"
+DEFAULT_URl = f"https://api.weather.com/v1/location/WMSA:9:MY/observations/historical.json?apiKey={os.getenv('API_KEY')}&units=m&startDate=20230521&endDate=20230521"
 
 def convert_to_datetime(timestamp):
     # Convert timestamp to datetime object
