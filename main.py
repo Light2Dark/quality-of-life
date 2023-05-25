@@ -20,6 +20,6 @@ def run_parser():
         air_quality.elt_flow(args.start_date, args.end_date, args.time, PROD_DATASET_AQ)
 
 if __name__ == "__main__":
-    # run_parser()
-    weather.elt_weather("20210511", "20210511")
+    run_parser()
+    # weather.elt_weather("20210511", "20210511")
     pass
