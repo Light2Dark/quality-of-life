@@ -1,0 +1,18 @@
+fixed:
+  dataset: dev
+  job_execution_timeout_seconds: 300
+  job_retries: 1
+  keyfile: ../google_creds.json
+  location: asia-southeast1
+  method: service-account
+  priority: interactive
+  project: nomadic-sublime-386809
+  type: bigquery
+prompts:
+  user:
+    type: string
+    hint: yourname@jaffleshop.com
+  threads:
+    hint: "number of threads"
+    type: int
+    default: 4

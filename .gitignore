@@ -8,8 +8,15 @@ gcloud-notes.txt
 note.txt
 .prefectignore
 archi.excalidraw
+google_creds.json
+
+# Terraform
+*.tfvars
+*.tfstate
+*.tfstate.backup
+
 # Default .gitignore content added by dbt Cloud
-target/
-dbt_packages/
-logs/
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
 # end dbt Cloud content
