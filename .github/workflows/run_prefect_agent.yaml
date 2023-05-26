@@ -52,14 +52,14 @@ jobs:
       - name: Send mail
         if: ${{ failure() }}
         uses: dawidd6/action-send-mail@v3
-          with:
-            # Specify connection via URL
-            # Format:
-            #  * smtp+starttls://user:password@server:port
-            connection_url: ${{secrets.MAIL_CONNECTION}}
-            subject: Github Actions job result
-            # Recipients' addresses:
-            to: sham9871@gmail.com
-            from: Qualatay Life
-            body: 1am run from Github Actions for ${{github.repository}} did not run properly!
-            priority: high
+        with:
+          # Specify connection via URL
+          # Format:
+          #  * smtp+starttls://user:password@server:port
+          connection_url: ${{secrets.MAIL_CONNECTION}}
+          subject: Github Actions job result
+          # Recipients' addresses:
+          to: sham9871@gmail.com
+          from: Qualatay Life
+          body: 1am run from Github Actions for ${{github.repository}} did not run properly!
+          priority: high
