@@ -2,11 +2,8 @@ from prefect import task
 from prefect.tasks import exponential_backoff
 import datetime, requests, os, json
 from dotenv import load_dotenv
-from typing import List
 
 load_dotenv()
-
-DEFAULT_URl = f"https://api.weather.com/v1/location/WMSA:9:MY/observations/historical.json?apiKey={os.getenv('API_KEY')}&units=m&startDate=20230521&endDate=20230521"
 
 def convert_to_datetime(timestamp):
     # Convert timestamp to datetime object
