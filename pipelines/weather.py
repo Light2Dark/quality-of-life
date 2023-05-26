@@ -6,6 +6,8 @@ from prefect import flow
 
 WEATHER_STATIONS_LIST = {
     "WMSA:9:MY": "SULTAN ABDUL AZIZ SHAH INTERNATIONAL AIRPORT STATION",
+    # "WMKC:9:MY": "KOTA BHARU AIRPORT STATION",
+    "WMKK:9:MY": "KUALA LUMPUR INTERNATIONAL AIRPORT STATION",
 }
 
 PROD_DATASET = "prod.hourly_weather"
@@ -27,9 +29,25 @@ def elt_weather(start_date: str, end_date: str, dataset: str = DEV_DATASET):
     """
     filename = f"{start_date}_{end_date}"
     
-    weather_data = extract_weather.extract(start_date, end_date, "WMSA:9:MY")
-    upload.upload_to_gcs(weather_data, filename, RAW_DATA_GCS_SAVEPATH, GCS_WEATHER_BUCKET_BLOCK_NAME)
-    df_weather = transform_weather.get_weather_df(weather_data)
+    # Combines extractions of diff weather stations
+    # {
+    #   "WMSA:9:MY": {
+    #       "metadata": {..}
+    #       "observations": [..]
+    #    },
+    #   "WMKC:9:MY": {
+    #       "metadata": {..}
+    #       "observations": [..]
+    #    },
+    #   ...
+    # }
+    combined_weather_data = {}
+    for weather_station in WEATHER_STATIONS_LIST.keys():
+        weather_data = extract_weather.extract(start_date, end_date, weather_station)
+        combined_weather_data[weather_station] = weather_data
+    upload.upload_to_gcs(combined_weather_data, filename, RAW_DATA_GCS_SAVEPATH, GCS_WEATHER_BUCKET_BLOCK_NAME)
+    
+    df_weather = transform_weather.get_weather_df(combined_weather_data, WEATHER_STATIONS_LIST.keys(), start_date)
     upload.upload_to_gcs(df_weather, filename, PREPROCESSEED_DATA_GCS_SAVEPATH, GCS_WEATHER_BUCKET_BLOCK_NAME)
     upload.load_to_bq(df_weather, dataset)
     
