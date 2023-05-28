@@ -1,18 +1,17 @@
 from prefect import task
 from typing import List
-from datetime import datetime, timedelta
+from datetime import datetime
 # from transform_aq import DATETIME_FORMAT 
 import json
 import pandas as pd
 
 @task(name="Transform Weather Data", log_prints=True)
-def get_weather_df(weather_data: dict, weather_stations: List[str], start_date: str) -> pd.DataFrame:
+def get_weather_df(weather_data: dict, weather_stations: List[str]) -> pd.DataFrame:
     """Transforms and models data into dataframe
 
     Args:
         weather_data (dict): response after extraction
         weather_stations (List[str]): all the weather stations requested
-        start_date (str): start date of the data requested. Format: YYYYMMDD
 
     Returns:
         pd.DataFrame: combined dataframe of all weather stations data
@@ -21,14 +20,19 @@ def get_weather_df(weather_data: dict, weather_stations: List[str], start_date: 
     
     for station in weather_stations:
         data = weather_data[station]
-        date_time = datetime.strptime(start_date, '%Y%m%d')
         
         observations = data["observations"]
         for obs in observations:
+            
+            weather_station = obs.get("obs_id", obs.get("key", "Unidentified"))
+            weather_station = "Unidentified" if weather_station == "96535" else weather_station # 96535 is an unidentified station
+            if weather_station != station.split(":")[0] and weather_station != "Unidentified":
+                raise ValueError(f"Station {station} does not match observation {weather_station}")
+                
             df = pd.DataFrame(
                 {
-                    "datetime": [date_time],
-                    "weather_station": [data["metadata"].get("location_id", station)],
+                    "datetime": [datetime.fromtimestamp(obs["valid_time_gmt"])],
+                    "weather_station": [weather_station],
                     "observation_place": [obs["obs_name"]],
                     "temperature": [str(obs["temp"])],
                     "pressure": [str(obs["pressure"])],
@@ -40,7 +44,6 @@ def get_weather_df(weather_data: dict, weather_stations: List[str], start_date: 
                 }
             )
             df_weather = pd.concat([df_weather, df], ignore_index=True)
-            date_time += timedelta(hours=1) # each observation is 1 hour apart. Starts from 12am at start_date
         
     df_weather = df_weather.astype(str)
     return df_weather
@@ -73,4 +76,4 @@ def convert_dtypes(df) -> pd.DataFrame:
 if __name__ == "__main__":
     with open("tests/combined_weather_data.json", "r") as f:
         data = json.load(f)
-        print(get_weather_df(data, ["WMSA:9:MY", "WMKK:9:MY"], "20210101"))
+        print(get_weather_df(data, ["WMSA:9:MY", "WMKK:9:MY"]))
