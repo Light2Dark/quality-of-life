@@ -15,12 +15,12 @@ def convert_to_datetime(timestamp):
     return current_time
 
 def request_url(weather_station: str, date_start: str, date_end: str, unit: str) -> requests.Response:
-    """Makes a request to the Weather API.
+    """Makes a request to the Weather API from start_date to end_date inclusive of both.
 
     Args:
         weather_station (str): A symbol code for a weather station. Eg: WMSA:9:MY -> Subang Intl. Airport
         date_start (str): Start date of the historical data. Format: YYYYMMDD
-        date_end (str): End date of the historical data. Format: YYYYMMDD
+        date_end (str): End date of the historical data. Format: YYYYMMDD. End date must be <31 days from start date.
         unit (str): Either "m" for metric or "e" for imperial.
 
     Returns:
@@ -28,6 +28,12 @@ def request_url(weather_station: str, date_start: str, date_end: str, unit: str)
     """
     if unit not in ["m", "e"]:
         raise ValueError("Unit must be either 'm' for metric or 'e' for imperial.")
+    
+    start_datetime = datetime.datetime.strptime(date_start, "%Y%m%d")
+    end_datetime = datetime.datetime.strptime(date_end, "%Y%m%d")
+    
+    if (end_datetime - start_datetime) > datetime.timedelta(days=31):
+        raise ValueError("End date must be <31 days from start date.")
     
     url = f"https://api.weather.com/v1/location/{weather_station}/observations/historical.json?apiKey={os.getenv('WEATHER_API')}&units={unit}&startDate={date_start}&endDate={date_end}"
     print(f"Requesting {url}")

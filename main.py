@@ -34,4 +34,6 @@ def run_weather_parser():
 if __name__ == "__main__":
     # weather.elt_weather("20210511", "20210511")
     run_weather_parser()
+    # prefect_infra.create_deployment()
+    
     pass
