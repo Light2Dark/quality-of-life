@@ -53,7 +53,11 @@ You may notice the heatmap at the bottom shows flat colours, that's because the 
 
 <img src="https://user-images.githubusercontent.com/19585239/234033506-2dbb9e36-1f4c-4d1c-ae8a-1c1b4b03c27a.png" height="400px" />
 
-## BigQuery
+## Analyzing the data
+
+You can analyze the data in 2 ways.
+1. csv file `data/air_quality_2017-2023.zip`. This file is updated to 29/5/2023.
+2. BigQuery.
 
 This project uses BigQuery as a Data Warehouse, so you can use SQL to query data. All the tables in the prod dataset is public.
 
