@@ -26,7 +26,7 @@ class CompleteTransformTest(unittest.TestCase):
     def test_combined_weather(self):
         with open("tests/combined_weather_data.json", "r") as f:
             data = json.load(f)
-            transform_weather.get_weather_df.fn(data, ["WMSA:9:MY", "WMKK:9:MY"], "20210101")
+            transform_weather.get_weather_df.fn(data, ["WMSA:9:MY", "WMKK:9:MY"])
             
     def test_aq(self):
         with open("tests/aq_stations_data_24h.json", "r") as f:
