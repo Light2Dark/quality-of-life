@@ -32,8 +32,11 @@ def run_weather_parser():
         weather.elt_weather(args.start_date, args.end_date, PROD_DATASET_WEATHER)
 
 if __name__ == "__main__":
-    # weather.elt_weather("20210511", "20210511")
-    run_weather_parser()
+    
+    # lets do 2017 - 2023 first
+    weather.elt_weather("20170101", "20171231", PROD_DATASET_WEATHER)
+    
+    # run_weather_parser()
     # prefect_infra.create_deployment()
     
     pass

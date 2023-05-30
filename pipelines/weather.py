@@ -35,25 +35,24 @@ def elt_weather(start_date: str, end_date: str, dataset: str = DEV_DATASET):
     if end_datetime < start_datetime:
         raise ValueError("End date must be > start date.")
     
-    filename = f"{start_date}_{end_date}"
-    
     date_chunks = get_date_chunks(start_datetime, end_datetime)
     for start_date, end_date in date_chunks:           
         combined_weather_data = {}
         for weather_station in weather_stations_list:
             weather_data = extract_weather.extract(start_date, end_date, weather_station)
             combined_weather_data[weather_station] = weather_data
+            
+        filename = f"{start_date}_{end_date}"
         upload.upload_to_gcs(combined_weather_data, filename, RAW_DATA_GCS_SAVEPATH, GCS_WEATHER_BUCKET_BLOCK_NAME)
         
         df_weather = transform_weather.get_weather_df(combined_weather_data, weather_stations_list)
-        df_weather.to_csv("all_weather.csv", index=False)
         upload.upload_to_gcs(df_weather, filename, PREPROCESSEED_DATA_GCS_SAVEPATH, GCS_WEATHER_BUCKET_BLOCK_NAME)
         upload.load_to_bq(df_weather, dataset)
         
         
 
 def get_date_chunks(start_datetime: datetime.datetime, end_datetime: datetime.datetime) -> List[Tuple[str, str]]:
-    """Extracts weather data in 31 day chunks as that is the max number of days allowed by the API
+    """Extracts weather data in <31 day chunks as that is the max number of days allowed by the API
 
     Args:
         start_date (datetime): Start date in datetime format
@@ -68,7 +67,7 @@ def get_date_chunks(start_datetime: datetime.datetime, end_datetime: datetime.da
 
     chunks = []
     while temp_start_date <= end_datetime:
-        temp_end_date = temp_start_date + datetime.timedelta(days=31)
+        temp_end_date = temp_start_date + datetime.timedelta(days=30)
         if temp_end_date > end_datetime:
             temp_end_date = end_datetime
 

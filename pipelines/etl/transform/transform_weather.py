@@ -5,6 +5,9 @@ from datetime import datetime
 import json
 import pandas as pd
 
+# TO-DO: Add more info in df
+# filename is wrong
+
 @task(name="Transform Weather Data", log_prints=True)
 def get_weather_df(weather_data: dict, weather_stations: List[str]) -> pd.DataFrame:
     """Transforms and models data into dataframe
@@ -35,12 +38,21 @@ def get_weather_df(weather_data: dict, weather_stations: List[str]) -> pd.DataFr
                     "weather_station": [weather_station],
                     "observation_place": [obs["obs_name"]],
                     "temperature": [str(obs["temp"])],
+                    "feels_like_temperature": [str(obs["feels_like"])],
                     "pressure": [str(obs["pressure"])],
-                    "wind_speed": [str(obs["wspd"])],         
+                    "wind_speed": [str(obs["wspd"])],
+                    "wind_direction_deg": [str(obs["wdir"])],
+                    "wind_direction_dir": [str(obs["wdir_cardinal"])],
+                    "wind_chill": [str(obs["wc"])],
                     "weather_phrase": [str(obs["wx_phrase"])],
                     "dew_point": [str(obs["dewPt"])],
                     "relative_humidity": [str(obs["rh"])],
-                    "heat_index": [str(obs["heat_index"])]
+                    "clouds": [str(obs["clds"])],
+                    "heat_index": [str(obs["heat_index"])],
+                    "uv_description": [str(obs["uv_desc"])],
+                    "uv_index": [str(obs["uv_index"])],
+                    "visibility": [str(obs["vis"])],
+                    "day_indicator": [str(obs["day_ind"])]
                 }
             )
             df_weather = pd.concat([df_weather, df], ignore_index=True)
