@@ -14,8 +14,8 @@ def convert_to_datetime(timestamp):
 
     return current_time
 
-def request_url(weather_station: str, date_start: str, date_end: str, unit: str) -> requests.Response:
-    """Makes a request to the Weather API from start_date to end_date inclusive of both.
+def build_request(weather_station: str, date_start: str, date_end: str, unit: str) -> str:
+    """Builds the API url
 
     Args:
         weather_station (str): A symbol code for a weather station. Eg: WMSA:9:MY -> Subang Intl. Airport
@@ -24,7 +24,7 @@ def request_url(weather_station: str, date_start: str, date_end: str, unit: str)
         unit (str): Either "m" for metric or "e" for imperial.
 
     Returns:
-        requests.Response: Returns response object from the Weather API.
+        str: URL string to make a request to the API
     """
     if unit not in ["m", "e"]:
         raise ValueError("Unit must be either 'm' for metric or 'e' for imperial.")
@@ -36,12 +36,10 @@ def request_url(weather_station: str, date_start: str, date_end: str, unit: str)
         raise ValueError("End date must be <31 days from start date.")
     
     url = f"https://api.weather.com/v1/location/{weather_station}/observations/historical.json?apiKey={os.getenv('WEATHER_API')}&units={unit}&startDate={date_start}&endDate={date_end}"
-    print(f"Requesting {url}")
-    
-    return requests.get(url)
+    return url
     
 @task(name="Extract Weather Data", log_prints=True, retries=3, retry_delay_seconds=exponential_backoff(backoff_factor=30))
-def extract(date_start: str, date_end: str, weather_station: str) -> dict:
+def extract(date_start: str, date_end: str, weather_station: str) -> dict | None:
     """Extracts observations from Weather API. Adds weather station to 
 
     Args:
@@ -50,13 +48,22 @@ def extract(date_start: str, date_end: str, weather_station: str) -> dict:
         weather_station (str): A symbol code for a weather station. Eg: WMSA:9:MY -> Subang Intl. Airport
 
     Returns:
-        List[dict]: An array of observations from Weather API. An observation starts from 12.00am on start_date and the next observation is 1 hour after and keeps continuing.
+        List[dict] | None: An array of observations from Weather API. An observation starts from 12.00am on start_date and the next observation is 1 hour after and keeps continuing. If no data, return None
     """
     
-    response = request_url(weather_station, date_start, date_end, "m")
+    request_url = build_request(weather_station, date_start, date_end, "m")
+    response = requests.get(request_url)
+    print(f"Requesting {request_url}")
     
     # check response
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except:
+        print(f"Error with {weather_station} on {date_start} to {date_end}")
+        with open("logs/unavailable_weather_urls.txt", "a") as f:
+            request_url = request_url.replace(os.getenv("WEATHER_API"), "API_KEY")
+            f.write(f"{request_url}\n")
+        return None
     
     # validate response
     response_json = response.json()

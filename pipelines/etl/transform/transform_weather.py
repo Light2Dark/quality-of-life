@@ -19,10 +19,12 @@ def get_weather_df(weather_data: dict, weather_stations: List[str]) -> pd.DataFr
     Returns:
         pd.DataFrame: combined dataframe of all weather stations data
     """
-    df_weather = pd.DataFrame(columns=["datetime", "weather_station", "observation_place", "temperature", "pressure", "wind_speed", "weather_phrase", "dew_point", "relative_humidity", "heat_index"])
+    df_weather = pd.DataFrame()
     
     for station in weather_stations:
-        data = weather_data[station]
+        data = weather_data.get("station", None)
+        if data is None: # non-existent station data
+            continue
         
         observations = data["observations"]
         for obs in observations:
