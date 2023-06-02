@@ -5,7 +5,6 @@ WITH formatted_hourly_weather AS
     select 
         DATETIME(datetime) as datetime,
         weather_station,
-        observation_place,
         SAFE_CAST(temperature as FLOAT64) as temperature,
         SAFE_CAST(pressure AS FLOAT64) as pressure,
         SAFE_CAST(wind_speed AS INT) as wind_speed,
@@ -36,7 +35,6 @@ WITH formatted_hourly_weather AS
 SELECT 
     datetime,
     weather_station,
-    observation_place
     visibility,
     day_indicator,
 

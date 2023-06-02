@@ -2,7 +2,6 @@
 
 select
     w.datetime,
-    weather_station,
     temperature,
     feels_like_temperature,
     pressure,
@@ -17,7 +16,7 @@ select
     visibility,
     day_indicator
 from {{ref('weather')}} as w
-inner join {{ref('air_quality')}} as aq
+-- inner join {{ref('air_quality')}} as aq ##### INNER JOIN isn't righttt
 ON w.datetime = aq.datetime
 {% if var('test_run', default=true) %}
   limit 100

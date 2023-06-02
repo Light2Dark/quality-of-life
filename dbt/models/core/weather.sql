@@ -2,7 +2,7 @@
 
 select
     datetime,
-    weather_station,
+    sl.location,
     temperature,
     feels_like_temperature,
     pressure,
@@ -16,7 +16,8 @@ select
     clouds,
     visibility,
     day_indicator
-from {{ref('stg_hourly_weather')}}
+from {{ref('stg_hourly_weather')}} as stg_hw left join {{ref('state_locations')}} as sl
+on stg_hw.weather_station = sl.ICAO
 {% if var('test_run', default=true) %}
   limit 100
 {% endif %}

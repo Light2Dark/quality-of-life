@@ -2,7 +2,7 @@
 
 select 
     datetime,
-    city,
+    location,
     pollutant,
     pollutant_value,
     unit
