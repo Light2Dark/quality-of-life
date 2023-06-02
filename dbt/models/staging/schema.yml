@@ -4,6 +4,7 @@ sources:
   - name: dev
     tables:
       - name: hourly_air_quality
+      - name: hourly_weather
   - name: prod
     tables:
       - name: hourly_air_quality
@@ -11,6 +12,7 @@ sources:
         #     combination_of_columns:
         #       - city
         #       - timestamp
+      - name: hourly_weather
 
 
 models:
@@ -38,3 +40,18 @@ models:
         tests:
           - accepted_values:
               values: ["*", "**", "a", "b", "c", "d", "&"]
+
+  - name: stg_hourly_weather
+    description: Sets datatypes and ensures no extreme values
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - weather_station
+            - datetime
+    columns:
+      - name: datetime
+        tests:
+          - not_null
+      - name: weather_station
+        tests:
+          - not_null
