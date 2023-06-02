@@ -32,7 +32,7 @@ def transform_data(response: dict, date:str) -> pd.DataFrame:
             value = state_data[index]
             df = pd.DataFrame(
                 {
-                    "city": [station_location],
+                    "location": [station_location],
                     "datetime": [transforming_dates(date, timings[index])],
                     "value": [value]
                 },

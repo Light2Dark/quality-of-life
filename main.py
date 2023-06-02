@@ -51,6 +51,6 @@ if __name__ == "__main__":
     # 2003 - 2010
     # weather.elt_weather("20100722", "20101231", PROD_DATASET_WEATHER)
     
-    
+    air_quality.elt_flow("2023-01-01", "2023-01-31", "0000")
     
     pass

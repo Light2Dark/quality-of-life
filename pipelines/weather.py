@@ -25,7 +25,7 @@ def elt_weather(start_date: str = None, end_date: str = None, dataset: str = DEV
         end_date (str): End date in YYYYMMDD format. End date must be > start date. Default is today's date at 12.00am (Kuala Lumpur time)
         dataset (str, optional): Production or dev_dataset. Defaults to DEV_DATASET.
     """
-    df = pd.read_csv("dbt/seeds/stations.csv")
+    df = pd.read_csv("dbt/seeds/state_locations.csv")
     df.dropna(subset=["ICAO"], inplace=True)
     weather_stations_df = df["ICAO"] + ":9:MY"
     weather_stations_list = weather_stations_df.tolist()
