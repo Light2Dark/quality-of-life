@@ -1,7 +1,7 @@
 {{config(materialized='view')}}
 
 select
-    datetime,
+    w.datetime,
     weather_station,
     temperature,
     feels_like_temperature,
@@ -16,7 +16,9 @@ select
     clouds,
     visibility,
     day_indicator
-from {{ref('stg_hourly_weather')}}
+from {{ref('weather')}} as w
+inner join {{ref('air_quality')}} as aq
+ON w.datetime = aq.datetime
 {% if var('test_run', default=true) %}
   limit 100
 {% endif %}

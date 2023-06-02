@@ -27,3 +27,18 @@ seeds:
           
   - name: air_quality_indicators
     description: A mapping for each pollutant, unit and label.
+
+  - name: stations
+    description: "Weather stations used to pull weather data from"
+    columns:
+      - name: state
+        tests:
+          - not_null
+      - name: ICAO
+        description: "The airport code of this location"
+        tests:
+          - unique
+          - not_null
+
+  - name: uv
+    description: "UV information for weather"

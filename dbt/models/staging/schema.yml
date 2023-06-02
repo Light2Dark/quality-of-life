@@ -55,3 +55,6 @@ models:
       - name: weather_station
         tests:
           - not_null
+          - relationships:
+              to: ref('stations')
+              field: ICAO
