@@ -5,9 +5,6 @@ from datetime import datetime
 import json
 import pandas as pd
 
-# TO-DO: Add more info in df
-# filename is wrong
-
 @task(name="Transform Weather Data", log_prints=True)
 def get_weather_df(weather_data: dict, weather_stations: List[str]) -> pd.DataFrame:
     """Transforms and models data into dataframe
@@ -19,10 +16,13 @@ def get_weather_df(weather_data: dict, weather_stations: List[str]) -> pd.DataFr
     Returns:
         pd.DataFrame: combined dataframe of all weather stations data
     """
-    df_weather = pd.DataFrame(columns=["datetime", "weather_station", "observation_place", "temperature", "pressure", "wind_speed", "weather_phrase", "dew_point", "relative_humidity", "heat_index"])
+    df_weather = pd.DataFrame()
     
     for station in weather_stations:
-        data = weather_data[station]
+        data = weather_data.get(station, None)
+        if data is None:
+            print(f"Unable to transform data for station {station}, no data available")
+            continue
         
         observations = data["observations"]
         for obs in observations:
