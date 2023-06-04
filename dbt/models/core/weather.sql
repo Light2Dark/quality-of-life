@@ -2,7 +2,7 @@
 
 select
     datetime,
-    sl.location,
+    sl.identifying_location as location,
     temperature,
     feels_like_temperature,
     pressure,

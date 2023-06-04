@@ -4,8 +4,7 @@ select
     datetime,
     location,
     pollutant,
-    pollutant_value,
-    unit
+    pollutant_value
 from {{ref('stg_hourly_air_quality')}}
 left join {{ref('air_quality_indicators')}} ON pollutant_symbol = symbol
 {% if var('test_run', default=true) %}

@@ -40,11 +40,11 @@ models:
         description: The station records several values from different sensors, only the highest value is recorded as air quality reading.
         tests:
           - not_null
-      - name: unit
-        description: Unit for the air quality reading of the sensor.
-        tests:
-          - accepted_values:
-              values: ["ppm", "μg/m3", ""]
+      # - name: unit
+      #   description: Unit for the air quality reading of the sensor.
+      #   tests:
+      #     - accepted_values:
+      #         values: ["ppm", "μg/m3", ""]
 
   - name: weather
     description: "Hourly data from weather API"
