@@ -23,7 +23,7 @@ def transform_data(response: dict, date:str) -> pd.DataFrame:
     data, timings = get_data_timings(response)
     assert timings == IN_ORDER_TIMINGS, "Timings are not in order"
     
-    df_aq = pd.DataFrame(columns=['city', 'datetime', 'value'])
+    df_aq = pd.DataFrame()
     df_states = pd.Series(dtype=str)
     for state_data in data[1:]:
         state = str(state_data[0]).strip().lower().capitalize()
@@ -32,7 +32,7 @@ def transform_data(response: dict, date:str) -> pd.DataFrame:
             value = state_data[index]
             df = pd.DataFrame(
                 {
-                    "city": [station_location],
+                    "location": [station_location],
                     "datetime": [transforming_dates(date, timings[index])],
                     "value": [value]
                 },

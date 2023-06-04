@@ -1,22 +1,39 @@
 version: 2
 
 seeds:
-  - name: state_locations
-    description: Certain MCAQM stations do not have accurate lat & long values, eg. Kota Kinabalu Station
+  - name: city_states
+    description: Mapping of cities and their state
     columns:
-      - name: location
+      - name: city
+        description: Primary Key
         tests:
           - unique
           - not_null
       - name: state
         tests:
           - not_null
+
+  - name: state_locations
+    description: Certain MCAQM stations do not have accurate lat & long values, eg. Kota Kinabalu Station
+    columns:
+      - name: identifying_location
+        tests:
+          - unique
+          - not_null
+      - name: city
+        tests:
+          - not_null
+          - relationships:
+              field: city
+              to: ref('city_states')
       - name: latitude
         tests:
           - not_null
       - name: longitude
         tests:
           - not_null
+      - name: ICAO
+        description: "The airport code of this location"
 
   - name: air_quality_warning
     columns:
@@ -27,3 +44,9 @@ seeds:
           
   - name: air_quality_indicators
     description: A mapping for each pollutant, unit and label.
+
+  - name: uv
+    description: "UV information for weather"
+    columns:
+      - name: uv_level
+        description: "Represents upper limit. Eg: uv_value of 2 indicates uv within 0-2"

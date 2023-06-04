@@ -4,13 +4,15 @@ sources:
   - name: dev
     tables:
       - name: hourly_air_quality
+      - name: hourly_weather
   - name: prod
     tables:
       - name: hourly_air_quality
         # - dbt_utils.unique_combination_of_columns:
         #     combination_of_columns:
-        #       - city
+        #       - location
         #       - timestamp
+      - name: hourly_weather
 
 
 models:
@@ -19,10 +21,10 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - city
+            - location
             - datetime
     columns:
-      - name: city
+      - name: location
         tests:
           - not_null
       - name: datetime
@@ -38,3 +40,21 @@ models:
         tests:
           - accepted_values:
               values: ["*", "**", "a", "b", "c", "d", "&"]
+
+  - name: stg_hourly_weather
+    description: Sets datatypes and ensures no extreme values
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - weather_station
+            - datetime
+    columns:
+      - name: datetime
+        tests:
+          - not_null
+      - name: weather_station
+        tests:
+          - not_null
+          - relationships:
+              to: ref('state_locations')
+              field: ICAO

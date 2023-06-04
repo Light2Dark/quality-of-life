@@ -16,10 +16,13 @@ def get_weather_df(weather_data: dict, weather_stations: List[str]) -> pd.DataFr
     Returns:
         pd.DataFrame: combined dataframe of all weather stations data
     """
-    df_weather = pd.DataFrame(columns=["datetime", "weather_station", "observation_place", "temperature", "pressure", "wind_speed", "weather_phrase", "dew_point", "relative_humidity", "heat_index"])
+    df_weather = pd.DataFrame()
     
     for station in weather_stations:
-        data = weather_data[station]
+        data = weather_data.get(station, None)
+        if data is None:
+            print(f"Unable to transform data for station {station}, no data available")
+            continue
         
         observations = data["observations"]
         for obs in observations:
@@ -35,12 +38,21 @@ def get_weather_df(weather_data: dict, weather_stations: List[str]) -> pd.DataFr
                     "weather_station": [weather_station],
                     "observation_place": [obs["obs_name"]],
                     "temperature": [str(obs["temp"])],
+                    "feels_like_temperature": [str(obs["feels_like"])],
                     "pressure": [str(obs["pressure"])],
-                    "wind_speed": [str(obs["wspd"])],         
+                    "wind_speed": [str(obs["wspd"])],
+                    "wind_direction_deg": [str(obs["wdir"])],
+                    "wind_direction_dir": [str(obs["wdir_cardinal"])],
+                    "wind_chill": [str(obs["wc"])],
                     "weather_phrase": [str(obs["wx_phrase"])],
                     "dew_point": [str(obs["dewPt"])],
                     "relative_humidity": [str(obs["rh"])],
-                    "heat_index": [str(obs["heat_index"])]
+                    "clouds": [str(obs["clds"])],
+                    "heat_index": [str(obs["heat_index"])],
+                    "uv_description": [str(obs["uv_desc"])],
+                    "uv_index": [str(obs["uv_index"])],
+                    "visibility": [str(obs["vis"])],
+                    "day_indicator": [str(obs["day_ind"])]
                 }
             )
             df_weather = pd.concat([df_weather, df], ignore_index=True)

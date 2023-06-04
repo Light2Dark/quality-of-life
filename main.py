@@ -32,8 +32,25 @@ def run_weather_parser():
         weather.elt_weather(args.start_date, args.end_date, PROD_DATASET_WEATHER)
 
 if __name__ == "__main__":
-    # weather.elt_weather("20210511", "20210511")
-    run_weather_parser()
+    
+    # lets do 2017 - 2017 first
+    # weather.elt_weather("20170101", "20171231", PROD_DATASET_WEATHER)
+    
+    # run_weather_parser()
     # prefect_infra.create_deployment()
+    
+    # 2000 - 2002
+    # weather.elt_weather("20000101", "20021231", PROD_DATASET_WEATHER)
+    
+    # 1999
+    # weather.elt_weather("19990101", "19991231", PROD_DATASET_WEATHER)
+    
+    # 1995 - 1998
+    # weather.elt_weather("19950101", "19981231", PROD_DATASET_WEATHER)
+    
+    # 2003 - 2010
+    # weather.elt_weather("20100722", "20101231", PROD_DATASET_WEATHER)
+    
+    air_quality.elt_flow("2023-01-01", "2023-01-31", "0000")
     
     pass
