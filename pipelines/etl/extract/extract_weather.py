@@ -2,6 +2,8 @@ from prefect import task
 from prefect.tasks import exponential_backoff
 import datetime, requests, os, json
 from dotenv import load_dotenv
+from infra.prefect_infra import WEATHER_API_SECRET_BLOCK
+from prefect.blocks.system import Secret
 
 load_dotenv()
 
@@ -35,7 +37,9 @@ def build_request(weather_station: str, date_start: str, date_end: str, unit: st
     if (end_datetime - start_datetime) > datetime.timedelta(days=31):
         raise ValueError("End date must be <31 days from start date.")
     
-    url = f"https://api.weather.com/v1/location/{weather_station}/observations/historical.json?apiKey={os.getenv('WEATHER_API')}&units={unit}&startDate={date_start}&endDate={date_end}"
+    weather_api_key = os.getenv("WEATHER_API", Secret.load(WEATHER_API_SECRET_BLOCK).get())
+    
+    url = f"https://api.weather.com/v1/location/{weather_station}/observations/historical.json?apiKey={weather_api_key}&units={unit}&startDate={date_start}&endDate={date_end}"
     return url
     
 @task(name="Extract Weather Data", log_prints=True, retries=3, retry_delay_seconds=exponential_backoff(backoff_factor=30))
