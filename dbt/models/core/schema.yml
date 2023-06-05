@@ -56,3 +56,8 @@ models:
 
   - name: full_weather
     description: "Hourly data for all envinronmental factors, combining air quality & weather"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - location
+            - datetime
