@@ -2,7 +2,7 @@
 
 WITH formatted_hourly_weather AS 
 (
-    select 
+    select DISTINCT
         DATETIME(datetime) as datetime,
         weather_station,
         SAFE_CAST(temperature as FLOAT64) as temperature,
