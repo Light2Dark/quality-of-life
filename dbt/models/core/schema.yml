@@ -1,21 +1,6 @@
 version: 2
 
 models:
-  # - name: air_quality_full
-  #   description: Full AQ data for viewing purposes (Looker Studio has issues with blends). Composite PK = city + datetime.
-  #   tests:
-  #     - dbt_utils.unique_combination_of_columns:
-  #         combination_of_columns:
-  #           - city
-  #           - datetime
-  #   columns:
-  #     - name: state
-  #       tests:
-  #         - not_null
-  #         - relationships:
-  #             field: state
-  #             to: ref('state_locations')
-
   - name: air_quality
     description: Hourly air quality data. Composite PK = city + datetime.
     tests:
@@ -56,3 +41,8 @@ models:
 
   - name: full_weather
     description: "Hourly data for all envinronmental factors, combining air quality & weather"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - location
+            - datetime
