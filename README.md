@@ -1,6 +1,7 @@
-# Malaysia Air Quality Data Pipeline
+# Malaysia Weather Data Pipeline
 
-Air quality data is collected from air quality stations and updated to a government API. This API is updated every hour but there is no public database to hold all that information for long-term analysis. Furthermore, existing datasets do not store information like pollutant types. This project aims to create an automated end-to-end data pipeline and a dashboard on the available data.
+Weather data is collected from air quality and weather stations throughout Malaysia. This data is sometimes collected in government databases, or in 3rd party applications. There is no public database to hold all the normalized data for analysis, and certainly there is no pipelines to keep this data fresh day by day.
+This project aims to create an automated end-to-end data pipeline and a dashboard on the available data.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/19585239/233954611-cf04cf0b-36cd-4c5d-a3c7-e1fb9d2a90fc.png" height="350px"/>
@@ -28,7 +29,8 @@ Air quality data is collected from air quality stations and updated to a governm
 - **Data Visualization:** Google Looker Studio
 
 ### Data Transformation:
-<img src="https://user-images.githubusercontent.com/19585239/233899390-7901932b-d2e1-4290-ad27-aca83758c8f8.png" width="80%" />
+<img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/7c1dd0e0-bb33-401b-98b9-f3dc326c5c73" width="80%" />
+
 Pandas is used to clean data while dbt is used for heavy processing like mapping, joins and running tests on data sources.
 
 ### Schema
