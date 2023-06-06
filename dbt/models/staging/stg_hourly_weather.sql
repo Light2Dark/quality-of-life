@@ -113,4 +113,5 @@ SELECT
 
 FROM formatted_hourly_weather
 WHERE 
-    datetime IS NOT NULL
+    datetime IS NOT NULL AND
+    weather_station != 'Unidentified'
