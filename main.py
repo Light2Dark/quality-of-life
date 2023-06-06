@@ -1,6 +1,6 @@
 import argparse
 from pipelines.config import PROD_DATASET_AQ, PROD_DATASET_WEATHER
-from pipelines import air_quality, weather
+from pipelines import air_quality, weather, historical_aq
 from infra import prefect_infra
 
 def run_aq_pipeline():
@@ -51,7 +51,9 @@ if __name__ == "__main__":
     # 2003 - 2010
     # weather.elt_weather("20100722", "20101231", PROD_DATASET_WEATHER)
     
-    # 2011 - 2016
-    weather.elt_weather("20150802", "20161231", PROD_DATASET_WEATHER)
+    # 2011 - 2016 (CURRENT UNDONE)
+    weather.elt_weather("20150802", "20191231", PROD_DATASET_WEATHER)
+    
+
     
     pass
