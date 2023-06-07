@@ -15,10 +15,10 @@ Weather data is collected from weather stations throughout Malaysia. This data i
 - Dashboard: [Looker Studio Report](https://lookerstudio.google.com/reporting/42328c2a-5493-4dfa-9cb6-54b747f4f69a)
 - Weather data from 1998-Present
 - Fresh daily data, publicly available. Refer to [analyzing the data](#analyzing-the-data)
-- Daily workflow that can be observed through Prefect Cloud. Alerts whenever a workflow has failed
+- Daily workflow that can be observed through Prefect Cloud. GitHub Actions, Prefect & dbt sends an email if the workflow has failed in any stage.
 
 ## Architecture
-![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/4b7454b1-ca67-4713-a44f-f3cf0d57304a)
+![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/5cf56b20-0e52-4a1d-8c33-237b1b3efcf2)
 
 - **Orchestration:** GitHub Actions, Prefect Cloud, dbt Cloud
 - **Infrastructure:** GitHub Actions, GCP, Terraform
