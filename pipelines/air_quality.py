@@ -31,7 +31,7 @@ def elt_flow(date_start: str = None, date_end: str = None, time: str = "0000", d
     datetime_end = datetime.strptime(date_end, "%Y-%m-%d")
     while datetime_start <= datetime_end:
         date = datetime_start.strftime("%Y-%m-%d")
-        print(f"Requesting data for {date} {time}")
+        print(f"Requesting aq data for {date} {time}")
         
         aq_stations_data_24h = extract_valid_timed_response(date, time, False)
         mobile_continous_aq_stations_data_24h = extract_valid_timed_response(date, time, True)
