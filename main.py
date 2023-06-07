@@ -51,9 +51,16 @@ if __name__ == "__main__":
     # 2003 - 2010
     # weather.elt_weather("20100722", "20101231", PROD_DATASET_WEATHER)
     
-    # 2011 - 2016 (CURRENT UNDONE)
-    weather.elt_weather("20150802", "20191231", PROD_DATASET_WEATHER)
+    # 2011 - 2019
+    # weather.elt_weather("20170101", "20171231", PROD_DATASET_WEATHER)
     
-
+    #2020 - 2021
+    # weather.elt_weather("20200101", "20211231", PROD_DATASET_WEATHER)
+    
+    # 2022 - 2023
+    # weather.elt_weather("20220101", "20230606", PROD_DATASET_WEATHER)
+    
+    # from pipelines.historical_aq import elt_archive
+    # elt_archive("dev.historic_air_quality")
     
     pass
