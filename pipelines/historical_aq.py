@@ -23,7 +23,7 @@ def find_diff_locations():
     print("------")
     print(diffs_id_locs)
     
-def elt_archive(df: pd.DataFrame, dataset):
+def elt_archive(dataset: str):
     df.rename(columns={"Time": "datetime"}, inplace=True)
     locations = df.columns.tolist()
     locations.remove("datetime")
@@ -32,14 +32,18 @@ def elt_archive(df: pd.DataFrame, dataset):
     # new_df.to_csv("data/2005-2017-elt.csv", index=False)
     
     # TODO: add 2017 up to a certain point only since we already have that data
+    # TODO: remove null rows
+    print(new_df.isna().sum())
+    new_df.dropna(axis=0, inplace=True)
+    print(new_df.isna().sum())
     
-    # upload.upload_to_gcs(new_df, "2005-2017-elt", DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH, GCS_AIR_QUALITY_BUCKET_BLOCK_NAME)
+    upload.upload_to_gcs.fn(new_df, "2005-2017-elt", DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH, GCS_AIR_QUALITY_BUCKET_BLOCK_NAME)
 
-    # upload.load_to_bq(new_df, dataset)
+    upload.load_to_bq.fn(new_df, dataset)
     
 if __name__ == "__main__":
     # find_diff_locations()
-    elt_archive(df)
+    elt_archive(df, "dev.historic_air_quality")
     pass
     
     

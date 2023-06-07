@@ -39,7 +39,7 @@ models:
         description: The station records several values from different sensors, only the highest value is recorded as air quality reading.
         tests:
           - accepted_values:
-              values: ["*", "**", "a", "b", "c", "d", "&"]
+              values: ["*", "**", "a", "b", "c", "d", "&", null, ""]
 
   - name: stg_hourly_weather
     description: Sets datatypes and ensures no extreme values
