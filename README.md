@@ -1,28 +1,27 @@
 # Malaysia Weather Data Pipeline
 
-Weather data is collected from air quality and weather stations throughout Malaysia. This data is sometimes collected in government databases, or in 3rd party applications. There is no public database to hold all the normalized data for analysis, and certainly there is no pipelines to keep this data fresh day by day.
-This project aims to create an automated end-to-end data pipeline and a dashboard on the available data.
+Weather data is collected from weather stations throughout Malaysia. This data is sometimes collected in government databases or in 3rd party applications. There is no public database to analyze all of the compiled data. This project aims to create an automated end-to-end data pipeline and a dashboard that is updated daily.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/19585239/233954611-cf04cf0b-36cd-4c5d-a3c7-e1fb9d2a90fc.png" height="350px"/>
 </p>
 
 **Questions that can be answered:**
-- What is the trend of air quality in Malaysia? 
-- Which are the best places to live in terms of air quality?
-- Are there any patterns in air quality according to the time of day?
+- How has our environment changed over the past 10 years?
+- Which are the best places to live in terms of weather?
+- Are there any patterns in air quality, temperature and humidity according to the time of day?
 
 ## Features
 - Dashboard: [Looker Studio Report](https://lookerstudio.google.com/reporting/42328c2a-5493-4dfa-9cb6-54b747f4f69a)
-- Air Quality Data from 2017-Present
-- Fresh daily data, queryable. Refer to [BigQuery Section](#bigquery)
+- Weather data from 1998-Present
+- Fresh daily data, publicly available. Refer to [analyzing the data](#analyzing-the-data)
 - Daily workflow that can be observed through Prefect Cloud. Alerts whenever a workflow has failed
 
 ## Architecture
-![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/81aa6dc0-75bd-44a1-b7a0-79978f4e54b1)
+![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/4b7454b1-ca67-4713-a44f-f3cf0d57304a)
 
 - **Orchestration:** GitHub Actions, Prefect Cloud, dbt Cloud
-- **Infrastructure:** GitHub Actions, GCP
+- **Infrastructure:** GitHub Actions, GCP, Terraform
 - **Data Extraction:** Python
 - **Data Transformation & Load:** dbt, Pandas
 - **Data Warehouse:** BigQuery
@@ -41,12 +40,17 @@ Pandas is used to clean data while dbt is used for heavy processing like mapping
 **Partitioning:** While it would be more efficient to partition by states, BigQuery does not allow partitions by String fields. Some workarounds exist (adding an int as an additional column) but the benefits do not outweigh the cons of this approach. Namely, our queries would need to be modified to use this column.
 
 ### Data Sources
+The Weather data is proprietary and unfortunately this code is not reproducible without the API key. Credits to [Weather Underground](https://www.wunderground.com/) for the data.
 <p float="left">
-  <img width = "550px" src = "https://user-images.githubusercontent.com/19585239/195292149-ac7e48d1-8d98-4b85-9533-8616aca9a58d.png" />
-  <img height = "300px" src = "https://user-images.githubusercontent.com/19585239/195292738-30a6ae22-a266-4456-9634-fc5ee7217ebc.png" />
+  <img width = "650px" src = "https://github.com/Light2Dark/quality-of-life/assets/19585239/283ec5a9-93c4-4bb2-87c8-c04fb9703bb9" />
+  <img height = "80px" src = "https://github.com/Light2Dark/quality-of-life/assets/19585239/2c24acc2-08a1-4813-b3c1-46b620ed393a" />
 </p>
 
-[APIMS Table](http://apims.doe.gov.my/api_table.html) 
+The air quality data is extracted from the government website [APIMS Table](http://apims.doe.gov.my/api_table.html).
+<p float="left">
+  <img width = "650px" src = "https://user-images.githubusercontent.com/19585239/195292149-ac7e48d1-8d98-4b85-9533-8616aca9a58d.png" />
+  <img height = "320px" src = "https://user-images.githubusercontent.com/19585239/195292738-30a6ae22-a266-4456-9634-fc5ee7217ebc.png" />
+</p>
 
 ### Dashboard
 Access the dashboard here: [Looker Studio Report](https://lookerstudio.google.com/reporting/42328c2a-5493-4dfa-9cb6-54b747f4f69a)
