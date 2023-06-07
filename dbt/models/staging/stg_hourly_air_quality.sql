@@ -1,3 +1,5 @@
+{{config(materialized="table")}}
+
 WITH hourly_air_quality AS (
   SELECT
     datetime,
