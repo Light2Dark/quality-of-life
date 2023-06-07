@@ -3,7 +3,7 @@
 Weather data is collected from weather stations throughout Malaysia. This data is sometimes collected in government databases or in 3rd party applications. There is no public database to analyze all of the compiled data. This project aims to create an automated end-to-end data pipeline and a dashboard that is updated daily.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/19585239/233954611-cf04cf0b-36cd-4c5d-a3c7-e1fb9d2a90fc.png" height="350px"/>
+  <img src="https://user-images.githubusercontent.com/19585239/233954611-cf04cf0b-36cd-4c5d-a3c7-e1fb9d2a90fc.png" height="500px"/>
 </p>
 
 **Questions that can be answered:**
@@ -24,20 +24,22 @@ Weather data is collected from weather stations throughout Malaysia. This data i
 - **Infrastructure:** GitHub Actions, GCP, Terraform
 - **Data Extraction:** Python
 - **Data Transformation & Load:** dbt, Pandas
-- **Data Warehouse:** BigQuery
+- **Data Lake & Warehouse:** Google Cloud Storage, BigQuery
 - **Data Visualization:** Google Looker Studio
 
 ### Data Transformation:
 <img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/7c1dd0e0-bb33-401b-98b9-f3dc326c5c73" width="80%" />
 
-Pandas is used to clean data while dbt is used for heavy processing like mapping, joins and running tests on data sources.
+Both pandas and dbt is used to clean, transform and model the data
 
 ### Schema
-<img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/2ff0d122-788b-462b-8748-3c21cfdb3c84" height="400px" />
+<!-- <img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/dbce8522-d986-4c2e-b5d8-51e9f38807624" height="400px" /> -->
+![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/60c1e2be-fd2e-4ad6-bcff-88bd08590a8f)
 
-**Clustering:** These tables do not need clustering as [recommended here](https://cloud.google.com/bigquery/docs/clustered-tables) due to the table size <1GB
 
-**Partitioning:** While it would be more efficient to partition by states, BigQuery does not allow partitions by String fields. Some workarounds exist (adding an int as an additional column) but the benefits do not outweigh the cons of this approach. Namely, our queries would need to be modified to use this column.
+**Clustering:** TODO [recommended here](https://cloud.google.com/bigquery/docs/clustered-tables).
+
+**Partitioning:** It may be more efficient to partition by states however BigQuery does not allow partitions by String fields. Some workarounds exist (adding an int as an additional column) but the pros and cons needs to be examined.
 
 ### Data Sources
 The Weather data is proprietary and unfortunately this code is not reproducible without the API key. Credits to [Weather Underground](https://www.wunderground.com/) for the data.
@@ -48,8 +50,8 @@ The Weather data is proprietary and unfortunately this code is not reproducible 
 
 The air quality data is extracted from the government website [APIMS Table](http://apims.doe.gov.my/api_table.html).
 <p float="left">
-  <img width = "650px" src = "https://user-images.githubusercontent.com/19585239/195292149-ac7e48d1-8d98-4b85-9533-8616aca9a58d.png" />
-  <img height = "320px" src = "https://user-images.githubusercontent.com/19585239/195292738-30a6ae22-a266-4456-9634-fc5ee7217ebc.png" />
+  <img width = "600px" src = "https://user-images.githubusercontent.com/19585239/195292149-ac7e48d1-8d98-4b85-9533-8616aca9a58d.png" />
+  <img height = "300px" src = "https://user-images.githubusercontent.com/19585239/195292738-30a6ae22-a266-4456-9634-fc5ee7217ebc.png" />
 </p>
 
 ### Dashboard
@@ -71,13 +73,13 @@ This project uses BigQuery as a Data Warehouse, so you can use SQL to query data
 
 `DATASET=prod`
 
-There are several tables in the `prod` dataset, you may want to use the `air_quality` and `air_quality_full` tables for queries.
+There are several tables in the `prod` dataset, you may want to use the `full_weather`, `air_quality` and `weather` tables for queries.
 
 Example SQL Statements
 
 ```bash
   SELECT *
-  FROM `quality-of-life-364309.prod.air_quality`
+  FROM `quality-of-life-364309.prod.full_weather`
   LIMIT 1000
 ```
 
@@ -129,7 +131,7 @@ GCP_CREDENTIALS_FILEPATH=<GCP_CREDENTIALS_FILEPATH>
 SMTP=<smtp+starttls://user:password@server:port>
 #
 ## Temperature API (Work in Progress)
-ACCU_WEATHER_API_KEY=<ACCU_WEATHER_API_KEY>
+WEATHER_API=<WEATHER_API_KEY>
 ```
 4. Setup the infrastructure
 In your terminal, from the root folder of this project, run the following command
@@ -138,9 +140,9 @@ In your terminal, from the root folder of this project, run the following comman
 bash setup_infra.sh
 ```
 
-5. You are ready to run the main elt pipeline. Run the following command to extract air quality data from 2020-01-01 to 2020-01-02
+5. You are ready to run the main elt pipeline. Run the following command to extract air quality and weather from 2020-01-01 to 2020-01-02
 ```python
-python main.py --testing=True --start_date=2020-01-01 --end_date=2020-01-02 --time=0000
+python main.py --testing=True --start_date=20200101 --end_date=20200102 --time=0000
 ```
 
 6. Setup dbt. Firstly, modify the `dbt/profile_template.yml` file with your own project details.
@@ -181,10 +183,10 @@ Contributions are always welcome!
 
 #### Improvements (To-Do):
 
-- Add logos for the sources of data in dashboard (APIMS)
+- Add logos for the sources of data in dashboard
 - It might be good to partition and cluster based on certain attributes to provide long term scalability
-- Add historical air quality data ([Hong Lim's Kaggle Dataset](https://www.kaggle.com/datasets/honglim/malaysia-air-quality-index-2017), [YnShung's API Malaysia](https://github.com/ynshung/api-malaysia))
-- Dashboard's time_of_day breakdown can be a better heatmap that changes colour based on running median instead of fixed scale.
+- Dashboard could include more analysis and charts
+- Improving fault tolerance
 
 ## Credits
 Thank you to everyone who made the [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp)
