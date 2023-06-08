@@ -16,6 +16,9 @@ def convert_to_datetime(timestamp):
 
     return current_time
 
+def get_api_key():
+    return os.getenv("WEATHER_API", Secret.load(WEATHER_API_SECRET_BLOCK).get())
+
 def build_request(weather_station: str, date_start: str, date_end: str, unit: str) -> str:
     """Builds the API url
 
@@ -37,7 +40,7 @@ def build_request(weather_station: str, date_start: str, date_end: str, unit: st
     if (end_datetime - start_datetime) > datetime.timedelta(days=31):
         raise ValueError("End date must be <31 days from start date.")
     
-    weather_api_key = os.getenv("WEATHER_API", Secret.load(WEATHER_API_SECRET_BLOCK).get())
+    weather_api_key = get_api_key()
     
     url = f"https://api.weather.com/v1/location/{weather_station}/observations/historical.json?apiKey={weather_api_key}&units={unit}&startDate={date_start}&endDate={date_end}"
     return url
@@ -65,7 +68,7 @@ def extract(date_start: str, date_end: str, weather_station: str) -> dict | None
     except:
         print(f"Error with {weather_station} on {date_start} to {date_end}")
         with open("logs/unavailable_weather_urls.txt", "a") as f:
-            request_url = request_url.replace(os.getenv("WEATHER_API"), "API_KEY")
+            request_url = request_url.replace(get_api_key(), "API_KEY")
             f.write(f"{request_url}\n")
         return None
     
