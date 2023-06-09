@@ -8,22 +8,18 @@ from datetime import datetime, timedelta
 import pytz
 import pandas as pd
 
-PROD_DATASET = "prod.hourly_weather"
-DEV_DATASET = "dev.hourly_weather"
-
-RAW_DATA_GCS_SAVEPATH = "hourly_weather_data"
-PREPROCESSEED_DATA_GCS_SAVEPATH = "preprocessed_weather_data"
-
 
 @flow(name="Extract Weather Data", log_prints=True)
-def elt_weather(start_date: str = None, end_date: str = None, dataset: str = DEV_DATASET):
+def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, start_date: str = None, end_date: str = None):
     """Extract, transform and load weather data from start_date to end_date into BigQuery & GCS.
     Uploads raw and pre-processed data to GCS, and pre-processed data to BigQuery.
 
     Args:
+        raw_gcs_savepath (str): GCS path to save raw data.
+        preproc_gcs_savepath (str): GCS path to save pre-processed data.
+        dataset (str, optional): Production or dev_dataset.
         start_date (str): Start date in YYYYMMDD format. Default is today's date at 12.00am (Kuala Lumpur time)
         end_date (str): End date in YYYYMMDD format. End date must be > start date. Default is today's date at 12.00am (Kuala Lumpur time)
-        dataset (str, optional): Production or dev_dataset. Defaults to DEV_DATASET.
     """
     df = pd.read_csv("dbt/seeds/state_locations.csv")
     df.dropna(subset=["ICAO"], inplace=True)
@@ -49,10 +45,10 @@ def elt_weather(start_date: str = None, end_date: str = None, dataset: str = DEV
             combined_weather_data[weather_station] = weather_data
             
         filename = f"{start_date}_{end_date}"
-        upload.upload_to_gcs(combined_weather_data, filename, RAW_DATA_GCS_SAVEPATH, GCS_WEATHER_BUCKET_BLOCK_NAME)
+        upload.upload_to_gcs(combined_weather_data, filename, raw_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
         
         df_weather = transform_weather.get_weather_df(combined_weather_data, weather_stations_list)
-        upload.upload_to_gcs(df_weather, filename, PREPROCESSEED_DATA_GCS_SAVEPATH, GCS_WEATHER_BUCKET_BLOCK_NAME)
+        upload.upload_to_gcs(df_weather, filename, preproc_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
         upload.load_to_bq(df_weather, dataset)
         
         

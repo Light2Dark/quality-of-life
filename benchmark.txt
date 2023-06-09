@@ -1,0 +1,1 @@
+Time taken without multiprocessing: 1678.879303825961

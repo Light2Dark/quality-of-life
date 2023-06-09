@@ -2111,3 +2111,4 @@ https://api.weather.com/v1/location/WMKE:9:MY/observations/historical.json?apiKe
 https://api.weather.com/v1/location/WMKE:9:MY/observations/historical.json?apiKey=API_KEY&units=m&startDate=20120511&endDate=20120610
 https://api.weather.com/v1/location/WMKE:9:MY/observations/historical.json?apiKey=API_KEY&units=m&startDate=20120611&endDate=20120711
 https://api.weather.com/v1/location/WMKE:9:MY/observations/historical.json?apiKey=API_KEY&units=m&startDate=20120712&endDate=20120811
+https://api.weather.com/v1/location/WBGN:9:MY/observations/historical.json?apiKey=API_KEY&units=m&startDate=20230608&endDate=20230608
