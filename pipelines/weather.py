@@ -10,7 +10,7 @@ import pandas as pd
 
 
 @flow(name="Extract Weather Data", log_prints=True)
-def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, start_date: str = None, end_date: str = None):
+def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, start_date: str, end_date: str):
     """Extract, transform and load weather data from start_date to end_date into BigQuery & GCS.
     Uploads raw and pre-processed data to GCS, and pre-processed data to BigQuery.
 
@@ -18,38 +18,27 @@ def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, 
         raw_gcs_savepath (str): GCS path to save raw data.
         preproc_gcs_savepath (str): GCS path to save pre-processed data.
         dataset (str, optional): Production or dev_dataset.
-        start_date (str): Start date in YYYYMMDD format. Default is today's date at 12.00am (Kuala Lumpur time)
-        end_date (str): End date in YYYYMMDD format. End date must be > start date. Default is today's date at 12.00am (Kuala Lumpur time)
+        start_date (str): Start date in YYYYMMDD format.
+        end_date (str): End date in YYYYMMDD format. End date must be <31 days from start_date.
     """
     df = pd.read_csv("dbt/seeds/state_locations.csv")
     df.dropna(subset=["ICAO"], inplace=True)
     weather_stations_df = df["ICAO"] + ":9:MY"
     weather_stations_list = weather_stations_df.tolist()
-    
-    start_date = datetime.now(tz=pytz.timezone('Asia/Kuala_Lumpur')).strftime('%Y%m%d') if start_date is None else start_date.strip()
-    end_date = datetime.now(tz=pytz.timezone('Asia/Kuala_Lumpur')).strftime('%Y%m%d') if end_date is None else end_date.strip()
-    
-    start_datetime = datetime.strptime(start_date, "%Y%m%d")
-    end_datetime = datetime.strptime(end_date, "%Y%m%d")
-    
-    if end_datetime < start_datetime:
-        raise ValueError("End date must be > start date.")
-    
-    date_chunks = get_date_chunks(start_datetime, end_datetime)
-    for start_date, end_date in date_chunks:           
-        combined_weather_data = {}
-        for weather_station in weather_stations_list:
-            weather_data = extract_weather.extract(start_date, end_date, weather_station)
-            if weather_data is None: # If weather data is unavailable, skip
-                continue
-            combined_weather_data[weather_station] = weather_data
-            
-        filename = f"{start_date}_{end_date}"
-        upload.upload_to_gcs(combined_weather_data, filename, raw_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
+
+    combined_weather_data = {}
+    for weather_station in weather_stations_list:
+        weather_data = extract_weather.extract(start_date, end_date, weather_station)
+        if weather_data is None: # If weather data is unavailable, skip
+            continue
+        combined_weather_data[weather_station] = weather_data
         
-        df_weather = transform_weather.get_weather_df(combined_weather_data, weather_stations_list)
-        upload.upload_to_gcs(df_weather, filename, preproc_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
-        upload.load_to_bq(df_weather, dataset)
+    filename = f"{start_date}_{end_date}"
+    upload.upload_to_gcs(combined_weather_data, filename, raw_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
+    
+    df_weather = transform_weather.get_weather_df(combined_weather_data, weather_stations_list)
+    upload.upload_to_gcs(df_weather, filename, preproc_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
+    upload.load_to_bq(df_weather, dataset)
         
         
 

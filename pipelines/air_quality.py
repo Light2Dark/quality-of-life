@@ -9,7 +9,7 @@ from infra.prefect_infra import GCS_AIR_QUALITY_BUCKET_BLOCK_NAME
 
 
 @flow(name="elt_flow", log_prints=True)
-def elt_air_quality(raw_gcs_savepath: str, preproc_gcs_savepath: str,dataset: str, date_start: str = None, date_end: str = None, time: str = "0000"):
+def elt_air_quality(raw_gcs_savepath: str, preproc_gcs_savepath: str,dataset: str, date_start: str, date_end: str, time: str):
     """Runs a flow to extract air quality data from the web, transform it and load it into BigQuery and GCS.
     Flow runs from date_start to date_end inclusive of date_end.
 
@@ -17,15 +17,10 @@ def elt_air_quality(raw_gcs_savepath: str, preproc_gcs_savepath: str,dataset: st
         raw_gcs_savepath (str): GCS path to save raw data.
         preproc_gcs_savepath (str): GCS path to save preprocessed data.
         dataset (str): Dataset to load to in BQ.
-        date_start (str, optional): Format of YYYY-MM-DD, example: 2022-09-21. Default is today's date at 12.00am (Kuala Lumpur time)
-        date_end (str, optional): Format of YYYY-MM-DD, example: 2022-09-21. Results are inclusive of date_end. Default is today's date at 12.00am (Kuala Lumpur time)
-        time (str, optional): Format of HHMM, example: 1200. Defaults to 0000.
+        date_start (str): Format of YYYY-MM-DD, example: 2022-09-21.
+        date_end (str): Format of YYYY-MM-DD, example: 2022-09-21. Results are inclusive of date_end.
+        time (str): Format of HHMM, example: 1200.
     """
-    
-    date_start = datetime.now(tz=pytz.timezone('Asia/Kuala_Lumpur')).strftime('%Y-%m-%d') if date_start is None else date_start.strip()
-    date_end = datetime.now(tz=pytz.timezone('Asia/Kuala_Lumpur')).strftime('%Y-%m-%d') if date_end is None else date_end.strip()
-    time = time.strip()
-    
     datetime_start = datetime.strptime(date_start, "%Y-%m-%d")
     datetime_end = datetime.strptime(date_end, "%Y-%m-%d")
     while datetime_start <= datetime_end:
