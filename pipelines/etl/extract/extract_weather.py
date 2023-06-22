@@ -90,12 +90,10 @@ def extract(date_start: str, date_end: str, weather_station: str) -> dict | None
 def extract_local(filepath: str) -> json:
     with open(filepath, "r") as f:
         data = json.load(f)
-        observations = data["observations"]
-        print(len(observations))        
+        print("num of stations", len(data))
+        print("len observations", len(data["WMKK:9:MY"]["observations"]))
         
-        return observations
-
 if __name__ == "__main__":
-    # extract_local("pipelines/etl/extract/temp.json")
+    extract_local("json_response.json")
     # request_url("WMSA:9:MY", "20230521", "20230520", "m")
-    extract("20230521", "20230521", "WMSA:9:MY")
+    # extract("20230521", "20230521", "WMSA:9:MY")

@@ -76,11 +76,12 @@ def pickled_weather(*args, **kwargs):
     
 def pickled_aq(*args, **kwargs):
     # allows multiprocessing to work with air_quality.elt_flow
-    air_quality.elt_flow(*args, **kwargs)
+    air_quality.elt_air_quality(*args, **kwargs)
 
 
-# @timeit
+@timeit
 def weather_multiprocessing(start_date: str, end_date: str, raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, num_processes: int):
+    # Run weather ELT in parallel
     # Execute the max number of processes concurrently until all date chunks are processed
     # TODO: Unittest this
     start_datetime = datetime.strptime(start_date, "%Y%m%d")
@@ -130,6 +131,7 @@ def run_aq_flows(raw_gcs_savepath, preproc_gcs_savepath, dataset, date_chunks, t
         )
 
 def air_quality_multiprocessing(start_date: str, end_date: str, raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, num_processes: int, time: str):
+    # Run air quality ELT in parallel
     start_datetime = datetime.strptime(start_date, "%Y-%m-%d")
     end_datetime = datetime.strptime(end_date, "%Y-%m-%d")
     
@@ -137,7 +139,7 @@ def air_quality_multiprocessing(start_date: str, end_date: str, raw_gcs_savepath
     date_chunks = get_date_chunks(start_datetime, end_datetime, 0, "%Y-%m-%d")
     
     if num_processes >= len(date_chunks):
-        print("Running weather ELT in 1 run")
+        print("Running air quality ELT in 1 run")
         print(date_chunks)
         run_aq_flows(raw_gcs_savepath, preproc_gcs_savepath, dataset, date_chunks, time, len(date_chunks))
     else:
@@ -189,6 +191,6 @@ if __name__ == "__main__":
     # prefect_infra.create_deployment()  ## Run this only once to create prefect blocks
     
     # main flow
-    run_full_weather_parser()
+    run_full_weather_parser() 
     
     pass

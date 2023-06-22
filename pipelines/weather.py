@@ -7,6 +7,7 @@ from typing import Tuple, List
 from datetime import datetime, timedelta
 import pytz
 import pandas as pd
+import concurrent.futures
 
 
 @flow(name="Extract Weather Data", log_prints=True)
@@ -27,11 +28,22 @@ def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, 
     weather_stations_list = weather_stations_df.tolist()
 
     combined_weather_data = {}
-    for weather_station in weather_stations_list:
-        weather_data = extract_weather.extract(start_date, end_date, weather_station)
-        if weather_data is None: # If weather data is unavailable, skip
-            continue
-        combined_weather_data[weather_station] = weather_data
+    # for weather_station in weather_stations_list:
+    #     weather_data = extract_weather.extract(start_date, end_date, weather_station)
+    #     if weather_data is None: # If weather data is unavailable, skip
+    #         continue
+    #     combined_weather_data[weather_station] = weather_data
+        
+    with concurrent.futures.ThreadPoolExecutor(max_workers=len(weather_stations_list)) as executor:
+        futures = []
+        for weather_station in weather_stations_list:
+            futures.append(executor.submit(extract_weather.extract.fn, start_date, end_date, weather_station))
+        
+        for future in concurrent.futures.as_completed(futures):
+            weather_data = future.result()
+            if weather_data is not None:
+                weather_station = weather_data.get("weather_station", "MISSING_MT")
+                combined_weather_data[weather_station] = weather_data
         
     filename = f"{start_date}_{end_date}"
     upload.upload_to_gcs(combined_weather_data, filename, raw_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
@@ -39,8 +51,7 @@ def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, 
     df_weather = transform_weather.get_weather_df(combined_weather_data, weather_stations_list)
     upload.upload_to_gcs(df_weather, filename, preproc_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
     upload.load_to_bq(df_weather, dataset)
-        
-        
+                
 
 def get_date_chunks(start_datetime: datetime, end_datetime: datetime) -> List[Tuple[str, str]]:
     """Extracts weather data in <31 day chunks as that is the max number of days allowed by the API
