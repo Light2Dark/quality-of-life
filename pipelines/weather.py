@@ -5,12 +5,9 @@ from infra.prefect_infra import GCS_WEATHER_BUCKET_BLOCK_NAME
 from prefect import flow
 from typing import Tuple, List
 from datetime import datetime, timedelta
-import pytz
 import pandas as pd
-import concurrent.futures
 
-
-@flow(name="Extract Weather Data", log_prints=True)
+@flow(name="ELT Weather", log_prints=True)
 def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, start_date: str, end_date: str):
     """Extract, transform and load weather data from start_date to end_date into BigQuery & GCS.
     Uploads raw and pre-processed data to GCS, and pre-processed data to BigQuery.
@@ -26,29 +23,13 @@ def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, 
     df.dropna(subset=["ICAO"], inplace=True)
     weather_stations_df = df["ICAO"] + ":9:MY"
     weather_stations_list = weather_stations_df.tolist()
-
-    combined_weather_data = {}
-    # for weather_station in weather_stations_list:
-    #     weather_data = extract_weather.extract(start_date, end_date, weather_station)
-    #     if weather_data is None: # If weather data is unavailable, skip
-    #         continue
-    #     combined_weather_data[weather_station] = weather_data
-        
-    with concurrent.futures.ThreadPoolExecutor(max_workers=len(weather_stations_list)) as executor:
-        futures = []
-        for weather_station in weather_stations_list:
-            futures.append(executor.submit(extract_weather.extract.fn, start_date, end_date, weather_station))
-        
-        for future in concurrent.futures.as_completed(futures):
-            weather_data = future.result()
-            if weather_data is not None:
-                weather_station = weather_data.get("weather_station", "MISSING_MT")
-                combined_weather_data[weather_station] = weather_data
-        
-    filename = f"{start_date}_{end_date}"
-    upload.upload_to_gcs(combined_weather_data, filename, raw_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
     
-    df_weather = transform_weather.get_weather_df(combined_weather_data, weather_stations_list)
+    weather_data = extract_weather.extract(start_date, end_date, weather_stations_list)   
+         
+    filename = f"{start_date}_{end_date}"
+    upload.upload_to_gcs(weather_data, filename, raw_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
+    
+    df_weather = transform_weather.get_weather_df(weather_data, weather_stations_list)
     upload.upload_to_gcs(df_weather, filename, preproc_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
     upload.load_to_bq(df_weather, dataset)
                 

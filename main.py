@@ -79,7 +79,7 @@ def pickled_aq(*args, **kwargs):
     air_quality.elt_air_quality(*args, **kwargs)
 
 
-@timeit
+# @timeit
 def weather_multiprocessing(start_date: str, end_date: str, raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, num_processes: int):
     # Run weather ELT in parallel
     # Execute the max number of processes concurrently until all date chunks are processed
@@ -183,7 +183,6 @@ def get_date_chunks(start_datetime: datetime, end_datetime: datetime, chunksize:
 
     return chunks
 
-
 if __name__ == "__main__":
     ## Running the elt_historical_air_quality_pipeline
     # historical_aq.elt_archive("dev.historic_air_quality")
@@ -192,5 +191,3 @@ if __name__ == "__main__":
     
     # main flow
     run_full_weather_parser() 
-    
-    pass

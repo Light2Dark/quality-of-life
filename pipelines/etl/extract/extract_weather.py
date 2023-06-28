@@ -1,9 +1,9 @@
-from prefect import task
+from prefect import task, flow
 from prefect.tasks import exponential_backoff
-import datetime, requests, os, json
 from dotenv import load_dotenv
 from infra.prefect_infra import WEATHER_API_SECRET_BLOCK
 from prefect.blocks.system import Secret
+import datetime, requests, os, json, asyncio
 
 load_dotenv()
 
@@ -17,7 +17,8 @@ def convert_to_datetime(timestamp):
     return current_time
 
 def get_api_key():
-    return os.getenv("WEATHER_API", Secret.load(WEATHER_API_SECRET_BLOCK).get())
+    # return os.getenv("WEATHER_API", Secret.load(WEATHER_API_SECRET_BLOCK).get()) # TODO- FIX THIS
+    return os.getenv("WEATHER_API")
 
 def build_request(weather_station: str, date_start: str, date_end: str, unit: str) -> str:
     """Builds the API url
@@ -44,11 +45,36 @@ def build_request(weather_station: str, date_start: str, date_end: str, unit: st
     
     url = f"https://api.weather.com/v1/location/{weather_station}/observations/historical.json?apiKey={weather_api_key}&units={unit}&startDate={date_start}&endDate={date_end}"
     return url
-    
-@task(name="Extract Weather Data", log_prints=True, retries=3, retry_delay_seconds=exponential_backoff(backoff_factor=30))
-def extract(date_start: str, date_end: str, weather_station: str) -> dict | None:
-    """Extracts observations from Weather API. Adds weather station to 
 
+@flow(name="Extract Weather Data", log_prints=True)
+async def extract(start_date, end_date, weather_stations_list) -> dict:
+    """Extracts weather data from Weather API, returns all the combined weather data in a dictionary.
+    
+    Args:
+        date_start (str): Start date of the historical data. Format: YYYYMMDD
+        date_end (str): End date of the historical data. Format: YYYYMMDD
+        weather_stations_list (str): 
+
+    Returns:
+        dict: A dictionary of weather stations and their observations.
+    """
+    combined_weather_data = {}
+    coros = [request_data(start_date, end_date, weather_station) for weather_station in weather_stations_list]
+    responses = await asyncio.gather(*coros)
+    
+    for response in responses:
+        if response is None:
+            continue # If weather data is unavailable, skip
+        combined_weather_data[response["weather_station"]] = response
+        
+    return combined_weather_data
+
+    
+@task(name="Request Weather Data", log_prints=True, retries=3, retry_delay_seconds=exponential_backoff(backoff_factor=30))
+async def request_data(date_start: str, date_end: str, weather_station: str) -> dict | None:
+    """
+    Builds the API url and makes a request to the API. If the request is successful, returns the response in json. If not, returns None.
+    
     Args:
         date_start (str): Start date of the historical data. Format: YYYYMMDD
         date_end (str): End date of the historical data. Format: YYYYMMDD

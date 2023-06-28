@@ -1,4 +1,3 @@
-import pytz
 import pandas as pd
 from prefect import flow
 from datetime import datetime, timedelta
