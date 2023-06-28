@@ -18,7 +18,7 @@ Weather data is collected from weather stations throughout Malaysia. This data i
 - Daily workflow that can be observed through Prefect Cloud. GitHub Actions, Prefect & dbt sends an email if the workflow has failed in any stage.
 
 ## Architecture
-![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/5cf56b20-0e52-4a1d-8c33-237b1b3efcf2)
+![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/19ec5326-2350-44cb-b972-bba0a86f614c)
 
 - **Orchestration:** GitHub Actions, Prefect Cloud, dbt Cloud
 - **Infrastructure:** GitHub Actions, GCP, Terraform
