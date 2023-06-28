@@ -38,6 +38,14 @@ models:
           combination_of_columns:
             - location
             - datetime
+    columns:
+      - name: location
+        tests:
+          - not_null
+      - name: datetime
+        description: Format of YYYY-MM-DD HH:MM:SS.
+        tests:
+          - not_null
 
   - name: full_weather
     description: "Hourly data for all envinronmental factors, combining air quality & weather"
@@ -46,3 +54,11 @@ models:
           combination_of_columns:
             - location
             - datetime
+    columns:
+      - name: location
+        tests:
+          - not_null
+      - name: datetime
+        description: Format of YYYY-MM-DD HH:MM:SS.
+        tests:
+          - not_null
