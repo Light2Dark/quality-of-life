@@ -13,7 +13,8 @@ Weather data is collected from weather stations throughout Malaysia. This data i
 
 ## Features
 - Dashboard: [Looker Studio Report](https://lookerstudio.google.com/reporting/42328c2a-5493-4dfa-9cb6-54b747f4f69a)
-- Weather data from 1998-Present
+- FYP Dashboard: [Looker Studio Report](https://lookerstudio.google.com/reporting/f0bac475-b860-4d01-8ac0-7dceae960daf)
+- Weather data from 1996-Present
 - Fresh daily data, publicly available. Refer to [analyzing the data](#analyzing-the-data)
 - Daily workflow that can be observed through Prefect Cloud. GitHub Actions, Prefect & dbt sends an email if the workflow has failed in any stage.
 
@@ -117,21 +118,22 @@ PREFECT_API_WORKSPACE_ID=<PREFECT_API_WORKSPACE_ID>
 PREFECT_API_KEY=<PREFECT_API_KEY>
 #
 ## Prefect Blocks
-# GitHub Blocks (Optional)
-GITHUB_REPO=<GITHUB_REPO>
-GITHUB_BRANCH=<GITHUB_BRANCH>
-GITHUB_BLOCK=<GITHUB_BLOCK>
 #
 ## GCP Config
 PROJECT_ID=<PROJECT_ID>
 REGION=<REGION>
 GCP_CREDENTIALS_FILEPATH=<GCP_CREDENTIALS_FILEPATH>
 #
+## Weather API
+WEATHER_API=<WEATHER_API_KEY>
+#
 ## GitHub Email Config (Work in Progress)
 SMTP=<smtp+starttls://user:password@server:port>
+# GitHub Blocks (Optional)
+GITHUB_REPO=<GITHUB_REPO>
+GITHUB_BRANCH=<GITHUB_BRANCH>
+GITHUB_BLOCK=<GITHUB_BLOCK>
 #
-## Temperature API (Work in Progress)
-WEATHER_API=<WEATHER_API_KEY>
 ```
 4. Setup the infrastructure
 In your terminal, from the root folder of this project, run the following command
@@ -140,9 +142,9 @@ In your terminal, from the root folder of this project, run the following comman
 bash setup_infra.sh
 ```
 
-5. You are ready to run the main elt pipeline. Run the following command to extract air quality and weather from 2020-01-01 to 2020-01-02
+5. You are ready to run the main elt pipeline. Run the following command to extract air quality and weather data from 2020-01-01 to 2020-01-02 using 1 process only.
 ```python
-python main.py --testing=True --start_date=20200101 --end_date=20200102 --time=0000
+python main.py --testing=True --air_quality=True --weather=True --start_date=20200101 --end_date=20200102 --time=0000 --parallel=1
 ```
 
 6. Setup dbt. Firstly, modify the `dbt/profile_template.yml` file with your own project details.
