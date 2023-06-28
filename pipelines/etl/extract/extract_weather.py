@@ -1,11 +1,14 @@
-from prefect import task
+from prefect import task, flow
 from prefect.tasks import exponential_backoff
-import datetime, requests, os, json
 from dotenv import load_dotenv
-from infra.prefect_infra import WEATHER_API_SECRET_BLOCK
-from prefect.blocks.system import Secret
+# from infra.prefect_infra import WEATHER_API_SECRET_BLOCK
+# from prefect.blocks.system import Secret
+import datetime, requests, os, json, asyncio
 
 load_dotenv()
+
+# weather_api_key = os.getenv("WEATHER_API", Secret.load(WEATHER_API_SECRET_BLOCK).get())
+weather_api_key = os.getenv("WEATHER_API")
 
 def convert_to_datetime(timestamp):
     # Convert timestamp to datetime object
@@ -37,15 +40,38 @@ def build_request(weather_station: str, date_start: str, date_end: str, unit: st
     if (end_datetime - start_datetime) > datetime.timedelta(days=31):
         raise ValueError("End date must be <31 days from start date.")
     
-    weather_api_key = os.getenv("WEATHER_API", Secret.load(WEATHER_API_SECRET_BLOCK).get())
-    
     url = f"https://api.weather.com/v1/location/{weather_station}/observations/historical.json?apiKey={weather_api_key}&units={unit}&startDate={date_start}&endDate={date_end}"
     return url
-    
-@task(name="Extract Weather Data", log_prints=True, retries=3, retry_delay_seconds=exponential_backoff(backoff_factor=30))
-def extract(date_start: str, date_end: str, weather_station: str) -> dict | None:
-    """Extracts observations from Weather API. Adds weather station to 
 
+@flow(name="Extract Weather Data", log_prints=True)
+async def extract(start_date, end_date, weather_stations_list) -> dict:
+    """Extracts weather data from Weather API, returns all the combined weather data in a dictionary. Starting point of the ELT pipeline.
+    
+    Args:
+        date_start (str): Start date of the historical data. Format: YYYYMMDD
+        date_end (str): End date of the historical data. Format: YYYYMMDD
+        weather_stations_list (str): 
+
+    Returns:
+        dict: A dictionary of weather stations and their observations.
+    """
+    combined_weather_data = {}
+    coros = [request_data(start_date, end_date, weather_station) for weather_station in weather_stations_list]
+    responses = await asyncio.gather(*coros)
+    
+    for response in responses:
+        if response is None:
+            continue # If weather data is unavailable, skip
+        combined_weather_data[response["weather_station"]] = response
+        
+    return combined_weather_data
+
+    
+@task(name="Request Weather Data", log_prints=True, retries=3, retry_delay_seconds=exponential_backoff(backoff_factor=30))
+async def request_data(date_start: str, date_end: str, weather_station: str) -> dict | None:
+    """
+    Builds the API url and makes a request to the API. If the request is successful, returns the response in json. If not, returns None.
+    
     Args:
         date_start (str): Start date of the historical data. Format: YYYYMMDD
         date_end (str): End date of the historical data. Format: YYYYMMDD
@@ -65,7 +91,7 @@ def extract(date_start: str, date_end: str, weather_station: str) -> dict | None
     except:
         print(f"Error with {weather_station} on {date_start} to {date_end}")
         with open("logs/unavailable_weather_urls.txt", "a") as f:
-            request_url = request_url.replace(os.getenv("WEATHER_API"), "API_KEY")
+            request_url = request_url.replace(weather_api_key, "API_KEY")
             f.write(f"{request_url}\n")
         return None
     
@@ -87,12 +113,10 @@ def extract(date_start: str, date_end: str, weather_station: str) -> dict | None
 def extract_local(filepath: str) -> json:
     with open(filepath, "r") as f:
         data = json.load(f)
-        observations = data["observations"]
-        print(len(observations))        
+        print("num of stations", len(data))
+        print("len observations", len(data["WMKK:9:MY"]["observations"]))
         
-        return observations
-
 if __name__ == "__main__":
-    # extract_local("pipelines/etl/extract/temp.json")
+    extract_local("json_response.json")
     # request_url("WMSA:9:MY", "20230521", "20230520", "m")
-    extract("20230521", "20230521", "WMSA:9:MY")
+    # extract("20230521", "20230521", "WMSA:9:MY")

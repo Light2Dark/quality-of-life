@@ -1,6 +1,6 @@
 import pandas as pd
 from pipelines.etl.load import upload
-from pipelines.air_quality import DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH
+from main import PREPROCESSED_AQ_DATA_GCS_SAVEPATH
 from infra.prefect_infra import GCS_AIR_QUALITY_BUCKET_BLOCK_NAME
 
 df = pd.read_csv("data/apims-2005-2017.csv", dtype=str)
@@ -37,7 +37,7 @@ def elt_archive(dataset: str):
     new_df.dropna(axis=0, inplace=True)
     print(new_df.isna().sum())
     
-    upload.upload_to_gcs.fn(new_df, "2005-2017-elt", DAILY_PREPROCESSED_AQ_DATA_GCS_SAVEPATH, GCS_AIR_QUALITY_BUCKET_BLOCK_NAME)
+    upload.upload_to_gcs.fn(new_df, "2005-2017-elt", PREPROCESSED_AQ_DATA_GCS_SAVEPATH, GCS_AIR_QUALITY_BUCKET_BLOCK_NAME)
 
     upload.load_to_bq.fn(new_df, dataset)
     
