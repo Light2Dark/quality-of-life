@@ -12,12 +12,11 @@ client = get_client()
 # PREFECT DEPLOYMENT 
 def create_deployment():
     # Creates a prefect deployment
-    from pipelines.air_quality import test_elt_flow, elt_flow
-    from pipelines.weather import elt_weather
+    from main import weather_multiprocessing, air_quality_multiprocessing
     
     github_block = GitHub.load(os.getenv("GITHUB_BLOCK"))
     deployment_aq = Deployment.build_from_flow(
-        flow=elt_flow,
+        flow=air_quality_multiprocessing,
         name="Daily Air Quality",
         storage=github_block,
         work_queue_name="default"
@@ -25,7 +24,7 @@ def create_deployment():
     deployment_aq.apply()
     
     deployment_weather = Deployment.build_from_flow(
-        flow=elt_weather,
+        flow=weather_multiprocessing,
         name="Daily Weather",
         storage=github_block,
         work_queue_name="default"
