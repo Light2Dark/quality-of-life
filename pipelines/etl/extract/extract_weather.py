@@ -7,6 +7,8 @@ import datetime, requests, os, json, asyncio
 
 load_dotenv()
 
+weather_api_key = os.getenv("WEATHER_API", Secret.load(WEATHER_API_SECRET_BLOCK).get())
+
 def convert_to_datetime(timestamp):
     # Convert timestamp to datetime object
     datetime_object = datetime.datetime.fromtimestamp(timestamp)
@@ -15,10 +17,6 @@ def convert_to_datetime(timestamp):
     current_time = datetime.datetime.now(datetime_object.tzinfo)
 
     return current_time
-
-def get_api_key():
-    # return os.getenv("WEATHER_API", Secret.load(WEATHER_API_SECRET_BLOCK).get()) # TODO- FIX THIS
-    return os.getenv("WEATHER_API")
 
 def build_request(weather_station: str, date_start: str, date_end: str, unit: str) -> str:
     """Builds the API url
@@ -41,14 +39,12 @@ def build_request(weather_station: str, date_start: str, date_end: str, unit: st
     if (end_datetime - start_datetime) > datetime.timedelta(days=31):
         raise ValueError("End date must be <31 days from start date.")
     
-    weather_api_key = get_api_key()
-    
     url = f"https://api.weather.com/v1/location/{weather_station}/observations/historical.json?apiKey={weather_api_key}&units={unit}&startDate={date_start}&endDate={date_end}"
     return url
 
 @flow(name="Extract Weather Data", log_prints=True)
 async def extract(start_date, end_date, weather_stations_list) -> dict:
-    """Extracts weather data from Weather API, returns all the combined weather data in a dictionary.
+    """Extracts weather data from Weather API, returns all the combined weather data in a dictionary. Starting point of the ELT pipeline.
     
     Args:
         date_start (str): Start date of the historical data. Format: YYYYMMDD
@@ -94,7 +90,7 @@ async def request_data(date_start: str, date_end: str, weather_station: str) -> 
     except:
         print(f"Error with {weather_station} on {date_start} to {date_end}")
         with open("logs/unavailable_weather_urls.txt", "a") as f:
-            request_url = request_url.replace(get_api_key(), "API_KEY")
+            request_url = request_url.replace(weather_api_key, "API_KEY")
             f.write(f"{request_url}\n")
         return None
     
