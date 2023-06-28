@@ -1,13 +1,14 @@
 from prefect import task, flow
 from prefect.tasks import exponential_backoff
 from dotenv import load_dotenv
-from infra.prefect_infra import WEATHER_API_SECRET_BLOCK
-from prefect.blocks.system import Secret
+# from infra.prefect_infra import WEATHER_API_SECRET_BLOCK
+# from prefect.blocks.system import Secret
 import datetime, requests, os, json, asyncio
 
 load_dotenv()
 
-weather_api_key = os.getenv("WEATHER_API", Secret.load(WEATHER_API_SECRET_BLOCK).get())
+# weather_api_key = os.getenv("WEATHER_API", Secret.load(WEATHER_API_SECRET_BLOCK).get())
+weather_api_key = os.getenv("WEATHER_API")
 
 def convert_to_datetime(timestamp):
     # Convert timestamp to datetime object
