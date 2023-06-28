@@ -1,7 +1,7 @@
 {{config(materialized='view')}}
 
 select
-    w.datetime as datetime,
+    COALESCE(w.datetime, aq.datetime) as datetime,
     COALESCE(w.location, aq.location) as location,
     temperature,
     feels_like_temperature,
@@ -9,6 +9,7 @@ select
     dew_point,
     relative_humidity,
     wind_speed,
+    gust,
     wind_chill,
     wind_direction_degree,
     wind_direction_dir,

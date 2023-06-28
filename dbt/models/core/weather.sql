@@ -8,6 +8,7 @@ select
     pressure,
     dew_point,
     relative_humidity,
+    gust,
     wind_speed,
     wind_chill,
     wind_direction_degree,
