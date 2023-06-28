@@ -1,5 +1,6 @@
 import argparse, concurrent.futures, pytz
 import multiprocessing as mp
+from prefect import flow
 from pipelines import air_quality, weather, historical_aq
 from datetime import datetime, timedelta
 from typing import List, Tuple
@@ -17,8 +18,48 @@ RAW_AQ_DATA_GCS_SAVEPATH = "daily_aq_data"
 PREPROCESSED_AQ_DATA_GCS_SAVEPATH = "daily_preprocessed_air_quality_data"
 
 
-def run_aq_pipeline():
-    air_quality.elt_flow(date_start="2021-05-11", date_end="2021-05-11", time="0000", dataset="dev.hourly_air_quality")
+@flow(log_prints=True)
+def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool, start_date: str = None, end_date: str = None, time: str = '0000'):
+    """Runs the full weather ELT flow using Prefect. Only 1 process will run.
+
+    Args:
+        testing (bool): If true, dev dataset is used. Else, prod dataset.
+        air_quality_run (bool): If true, air quality data is requested from API and stored in GCS & BQ.
+        weather_run (bool): If true, weather data is requested from API and stored in GCS & BQ.
+        start_date (str, optional): Date must be in YYYYMMDD format. Defaults to today's date if not specified.
+        end_date (str, optional): Date must be in YYYYMMDD format. Defaults to today's date if not specified.
+        time (str, optional): Request to the api using the time parameter. Defaults to '0000'.
+    """    
+    if air_quality_run:
+        if start_date is None or end_date is None:
+            print("Start date or end date not specified, using default of today")
+            aq_start_date = get_datetime_today('%Y-%m-%d')
+            aq_end_date = get_datetime_today('%Y-%m-%d')
+        else:        
+            # convert YYYYMMDD to YYYY-MM-DD for aq pipeline
+            aq_start_date = start_date[:4] + "-" + start_date[4:6] + "-" + start_date[6:]
+            aq_end_date = end_date[:4] + "-" + end_date[4:6] + "-" + end_date[6:]
+        
+        if testing:
+            print("Running air quality pipeline on dev dataset")
+            air_quality.elt_air_quality(RAW_AQ_DATA_GCS_SAVEPATH, PREPROCESSED_AQ_DATA_GCS_SAVEPATH, DEV_DATASET_AQ, aq_start_date, aq_end_date, time.strip())
+        else:
+            print("Running air quality pipeline on prod dataset")
+            air_quality.elt_air_quality(RAW_AQ_DATA_GCS_SAVEPATH, PREPROCESSED_AQ_DATA_GCS_SAVEPATH, PROD_DATASET_AQ, aq_start_date, aq_end_date, time.strip())
+    
+    if weather_run:
+        if start_date is None or end_date is None:
+            print("Start date or end date not specified, using default of today")
+        start_date = get_datetime_today('%Y%m%d') if start_date is None else start_date.strip()
+        end_date = get_datetime_today('%Y%m%d') if end_date is None else end_date.strip()
+        
+        if testing:
+            print("Running weather pipeline on dev dataset")
+            weather.elt_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_WEATHER, start_date, end_date)
+        else:
+            print("Running weather pipeline on prod dataset")
+            weather.elt_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PROD_DATASET_WEATHER, start_date, end_date)
+        
         
 def run_full_weather_parser():
     parser = argparse.ArgumentParser(prog="Full Weather ELT", description="An ELT flow to get weather and air quality data from API and store in GCS & BQ", epilog="credits to Sham")
@@ -187,7 +228,8 @@ if __name__ == "__main__":
     ## Running the elt_historical_air_quality_pipeline
     # historical_aq.elt_archive("dev.historic_air_quality")
     
-    # prefect_infra.create_deployment()  ## Run this only once to create prefect blocks
+    # prefect_infra.create_deployment()  ## Run this only once to create prefect deployment
+    # prefect_infra.build_blocks() ## Run this only once to create prefect blocks
     
     # main flow
     run_full_weather_parser() 

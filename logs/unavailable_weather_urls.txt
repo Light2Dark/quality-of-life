@@ -7409,3 +7409,4 @@ https://api.weather.com/v1/location/WBKT:9:MY/observations/historical.json?apiKe
 https://api.weather.com/v1/location/WMAU:9:MY/observations/historical.json?apiKey=API_KEY&units=m&startDate=20001201&endDate=20001231
 https://api.weather.com/v1/location/WBGS:9:MY/observations/historical.json?apiKey=API_KEY&units=m&startDate=20001201&endDate=20001231
 https://api.weather.com/v1/location/WBGN:9:MY/observations/historical.json?apiKey=API_KEY&units=m&startDate=20001201&endDate=20001231
+https://api.weather.com/v1/location/WBGN:9:MY/observations/historical.json?apiKey=API_KEY&units=m&startDate=20230628&endDate=20230628
