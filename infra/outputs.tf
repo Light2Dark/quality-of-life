@@ -15,7 +15,7 @@ output "gcs_aq_bucket_name" {
 
 output "gcs_weather_bucket_name" {
     value = google_storage_bucket.weather_data_storage.name
-    description = "bucket name for temperature data"
+    description = "bucket name for weather data"
 }
 
 output "dev_bq_dataset_name" {
