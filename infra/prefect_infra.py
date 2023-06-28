@@ -11,25 +11,18 @@ client = get_client()
 
 # PREFECT DEPLOYMENT 
 def create_deployment():
+    from main import prefect_full_weather
+    
     # Creates a prefect deployment
-    from main import weather_multiprocessing, air_quality_multiprocessing
-    
     github_block = GitHub.load(os.getenv("GITHUB_BLOCK"))
-    deployment_aq = Deployment.build_from_flow(
-        flow=air_quality_multiprocessing,
-        name="Daily Air Quality",
-        storage=github_block,
-        work_queue_name="default"
-    )
-    deployment_aq.apply()
     
-    deployment_weather = Deployment.build_from_flow(
-        flow=weather_multiprocessing,
-        name="Daily Weather",
+    deployment_full = Deployment.build_from_flow(
+        flow=prefect_full_weather,
+        name="Full Weather Pipeline",
         storage=github_block,
         work_queue_name="default"
     )
-    deployment_weather.apply()
+    deployment_full.apply()
 
 
 # PREFECT BLOCKS

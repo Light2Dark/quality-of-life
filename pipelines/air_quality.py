@@ -7,7 +7,7 @@ from pipelines.etl.load.upload import upload_to_gcs, load_to_bq
 from infra.prefect_infra import GCS_AIR_QUALITY_BUCKET_BLOCK_NAME
 
 
-@flow(name="elt_flow", log_prints=True)
+@flow(name="ELT Air Quality", log_prints=True)
 def elt_air_quality(raw_gcs_savepath: str, preproc_gcs_savepath: str,dataset: str, date_start: str, date_end: str, time: str):
     """Runs a flow to extract air quality data from the web, transform it and load it into BigQuery and GCS.
     Flow runs from date_start to date_end inclusive of date_end.
