@@ -31,6 +31,14 @@ models:
       #     - accepted_values:
       #         values: ["ppm", "μg/m3", ""]
 
+  - name: uv
+    description: "Hourly uv data together with labels and warnings"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - location
+            - datetime
+
   - name: weather
     description: "Hourly data from weather API"
     tests:
