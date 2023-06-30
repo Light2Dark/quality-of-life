@@ -29,14 +29,12 @@ Weather data is collected from weather stations throughout Malaysia. This data i
 - **Data Visualization:** Google Looker Studio
 
 ### Data Transformation:
-<img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/7c1dd0e0-bb33-401b-98b9-f3dc326c5c73" width="80%" />
+<img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/f72286b9-5732-45a7-9100-edd6ff7c54fb" width="80%" />
 
 Both pandas and dbt is used to clean, transform and model the data
 
 ### Schema
-<!-- <img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/dbce8522-d986-4c2e-b5d8-51e9f38807624" height="400px" /> -->
-![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/60c1e2be-fd2e-4ad6-bcff-88bd08590a8f)
-
+![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/8003cb6b-2364-4ad8-a37c-dfc4833ddeec)
 
 **Clustering:** TODO [recommended here](https://cloud.google.com/bigquery/docs/clustered-tables).
 
