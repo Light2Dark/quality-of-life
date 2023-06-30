@@ -2,7 +2,7 @@
 
 WITH formatted_hourly_weather AS 
 (
-    select DISTINCT
+    select
         DATETIME(datetime) as datetime,
         weather_station,
         observation_place,

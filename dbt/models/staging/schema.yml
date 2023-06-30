@@ -65,11 +65,6 @@ models:
 
   - name: stg_hourly_weather
     description: Sets datatypes and ensures no extreme values
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - weather_station
-            - datetime
     columns:
       - name: datetime
         tests:

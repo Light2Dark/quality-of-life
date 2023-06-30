@@ -59,7 +59,7 @@ models:
         tests:
           - not_null
           - relationships:
-              field: identifying_locations
+              field: identifying_location
               to: ref('state_locations')
       - name: datetime
         description: Format of YYYY-MM-DD HH:MM:SS.

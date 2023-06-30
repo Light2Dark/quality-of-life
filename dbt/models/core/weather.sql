@@ -1,6 +1,6 @@
 {{config(materialized='view')}}
 
-select
+select distinct
     datetime,
     sl.identifying_location as location,
     temperature,
