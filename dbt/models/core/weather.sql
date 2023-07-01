@@ -3,6 +3,7 @@
 select distinct
     datetime,
     sl.identifying_location as location,
+    city,
     temperature,
     feels_like_temperature,
     pressure,
