@@ -12,8 +12,7 @@ Weather data is collected from weather stations throughout Malaysia. This data i
 - Are there any patterns in air quality, temperature and humidity according to the time of day?
 
 ## Features
-- Dashboard: [Looker Studio Report](https://lookerstudio.google.com/reporting/42328c2a-5493-4dfa-9cb6-54b747f4f69a)
-- FYP Dashboard: [Looker Studio Report](https://lookerstudio.google.com/reporting/f0bac475-b860-4d01-8ac0-7dceae960daf)
+- Dashboard: [Looker Studio Report](https://lookerstudio.google.com/reporting/f0bac475-b860-4d01-8ac0-7dceae960daf)
 - Weather data from 1996-Present
 - Fresh daily data, publicly available. Refer to [analyzing the data](#analyzing-the-data)
 - Daily workflow that can be observed through Prefect Cloud. GitHub Actions, Prefect & dbt sends an email if the workflow has failed in any stage.
@@ -54,7 +53,7 @@ The air quality data is extracted from the government website [APIMS Table](http
 </p>
 
 ### Dashboard
-Access the dashboard here: [Looker Studio Report](https://lookerstudio.google.com/reporting/42328c2a-5493-4dfa-9cb6-54b747f4f69a)
+Access the dashboard here: [Looker Studio Report](https://lookerstudio.google.com/reporting/f0bac475-b860-4d01-8ac0-7dceae960daf)
 
 You may notice the heatmap at the bottom shows flat colours, that's because the differences between columns are small, however this is something that needs to be improved on (if you know how, let me know!)
 
