@@ -45,7 +45,7 @@ seeds:
   - name: air_quality_indicators
     description: A mapping for each pollutant, unit and label.
 
-  - name: uv
+  - name: uv_info
     description: "UV information for weather"
     columns:
       - name: uv_level

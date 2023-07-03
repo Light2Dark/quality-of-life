@@ -16,6 +16,13 @@ models:
         description: Format of YYYY-MM-DD HH:MM:SS.
         tests:
           - not_null
+      - name: city
+        description: City of the location
+        tests: 
+          - not_null
+          - relationships:
+              field: city
+              to: ref('state_locations')
       - name: pollutant
         description: There are different sensors which track different pollutants. Only the highest valued pollutant is recorded.
         tests:
@@ -54,20 +61,27 @@ models:
         description: Format of YYYY-MM-DD HH:MM:SS.
         tests:
           - not_null
+      - name: city
+        description: City of the location
+        tests: 
+          - not_null
+          - relationships:
+              field: city
+              to: ref('state_locations')
 
   - name: full_weather
     description: "Hourly data for all envinronmental factors, combining air quality & weather"
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - location
+            - city
             - datetime
     columns:
-      - name: location
+      - name: city
         tests:
           - not_null
           - relationships:
-              field: identifying_location
+              field: city
               to: ref('state_locations')
       - name: datetime
         description: Format of YYYY-MM-DD HH:MM:SS.
