@@ -56,6 +56,12 @@ select
         WHEN pollutant = 'NO2' AND label = 'Very unhealthy' THEN 'People with asthma, children and older adults should avoid all outdoor exertion; everyone else should avoid prolonged exertion especially near busy roads'
         WHEN pollutant = 'NO2' AND label = 'Hazardous' THEN 'People with asthma, children and older adults should remain indoors; everyone else should avoid all outdoor exertion'
 
+        WHEN pollutant IS NULL AND label = 'Moderate' THEN 'Unusually sensitive individuals should consider limiting prolonged exertion outdoors'
+        WHEN pollutant IS NULL AND label = 'Unhealthy for sensitive groups' THEN 'People with asthma, children and older adults should limit prolonged exertion outdoors'
+        WHEN pollutant IS NULL AND label = 'Unhealthy' THEN 'People with asthma, children and older adults should avoid prolonged exertion outdoors'
+        WHEN pollutant IS NULL AND label = 'Very unhealthy' THEN 'People with heart or lung disease, older adults, and children should avoid all physical activity outdoors. Everyone else should avoid prolonged or heavy exertion'
+        WHEN pollutant IS NULL AND label = 'Hazardous' THEN 'Everyone should avoid all outdoor exertion'
+
         ELSE 'No health effects reported'
     END as message
 FROM aq
