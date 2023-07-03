@@ -1,6 +1,6 @@
 # Malaysia Weather Data Pipeline
 
-Weather data is collected from weather stations throughout Malaysia. This data is sometimes collected in government databases or in 3rd party applications. There is no public database to analyze all of the compiled data. This project aims to create an automated end-to-end data pipeline and a dashboard that is updated daily.
+Weather data is collected from weather stations throughout Malaysia. Government or third party providers collect this data. Unfortunately, these datasets are not publicly accessible and are error-prone. This project aims to create an automated end-to-end data pipeline and a dashboard on Malaysian weather.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/19585239/233954611-cf04cf0b-36cd-4c5d-a3c7-e1fb9d2a90fc.png" height="500px"/>
@@ -13,9 +13,9 @@ Weather data is collected from weather stations throughout Malaysia. This data i
 
 ## Features
 - Dashboard: [Looker Studio Report](https://lookerstudio.google.com/reporting/f0bac475-b860-4d01-8ac0-7dceae960daf)
-- Weather data from 1996-Present
+- Weather data from 1996-Present*
 - Fresh daily data, publicly available. Refer to [analyzing the data](#analyzing-the-data)
-- Daily workflow that can be observed through Prefect Cloud. GitHub Actions, Prefect & dbt sends an email if the workflow has failed in any stage.
+- Daily workflow that can be observed through Prefect Cloud. GitHub Actions, Prefect & dbt sends an email if the workflow has failed at any stage.
 
 ## Architecture
 ![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/19ec5326-2350-44cb-b972-bba0a86f614c)
@@ -28,19 +28,21 @@ Weather data is collected from weather stations throughout Malaysia. This data i
 - **Data Visualization:** Google Looker Studio
 
 ### Data Transformation:
-<img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/f72286b9-5732-45a7-9100-edd6ff7c54fb" width="80%" />
+<img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/b56672ad-9957-44c8-a131-dbb4840b4e3a" width="80%" />
 
 Both pandas and dbt is used to clean, transform and model the data
 
 ### Schema
-![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/8003cb6b-2364-4ad8-a37c-dfc4833ddeec)
+![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/14ae32bd-0548-4494-81cb-7771d176cda0)
 
 **Clustering:** TODO [recommended here](https://cloud.google.com/bigquery/docs/clustered-tables).
 
 **Partitioning:** It may be more efficient to partition by states however BigQuery does not allow partitions by String fields. Some workarounds exist (adding an int as an additional column) but the pros and cons needs to be examined.
 
+**Normalization** TODO. There are duplicated city fields, changing them would require reconnecting the dashboard which is a pain.
+
 ### Data Sources
-The Weather data is proprietary and unfortunately this code is not reproducible without the API key. Credits to [Weather Underground](https://www.wunderground.com/) for the data.
+The Weather data is proprietary and unfortunately this code is not reproducible without the API key. Credits to [Weather Underground](https://www.wunderground.com/) for the data. Contact me for more details regarding this.
 <p float="left">
   <img width = "650px" src = "https://github.com/Light2Dark/quality-of-life/assets/19585239/283ec5a9-93c4-4bb2-87c8-c04fb9703bb9" />
   <img height = "80px" src = "https://github.com/Light2Dark/quality-of-life/assets/19585239/2c24acc2-08a1-4813-b3c1-46b620ed393a" />
@@ -55,9 +57,8 @@ The air quality data is extracted from the government website [APIMS Table](http
 ### Dashboard
 Access the dashboard here: [Looker Studio Report](https://lookerstudio.google.com/reporting/f0bac475-b860-4d01-8ac0-7dceae960daf)
 
-You may notice the heatmap at the bottom shows flat colours, that's because the differences between columns are small, however this is something that needs to be improved on (if you know how, let me know!)
+<img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/4183283e-c191-4d46-9672-85187fcda9f9" height="400px" />
 
-<img src="https://user-images.githubusercontent.com/19585239/234033506-2dbb9e36-1f4c-4d1c-ae8a-1c1b4b03c27a.png" height="400px" />
 
 ## Analyzing the data
 
@@ -71,7 +72,7 @@ This project uses BigQuery as a Data Warehouse, so you can use SQL to query data
 
 `DATASET=prod`
 
-There are several tables in the `prod` dataset, you may want to use the `full_weather`, `air_quality` and `weather` tables for queries.
+There are several tables in the `prod` dataset, you may want to use the `full_weather`, `air_quality`, `weather` and `uv` tables for queries.
 
 Example SQL Statements
 
@@ -141,7 +142,14 @@ bash setup_infra.sh
 
 5. You are ready to run the main elt pipeline. Run the following command to extract air quality and weather data from 2020-01-01 to 2020-01-02 using 1 process only.
 ```python
-python main.py --testing=True --air_quality=True --weather=True --start_date=20200101 --end_date=20200102 --time=0000 --parallel=1
+python main.py \
+  --testing=True \
+  --air_quality=True \
+  --weather=True \
+  --start_date=20200101 \
+  --end_date=20200102 \
+  --time=0000 \
+  --parallel=1
 ```
 
 6. Setup dbt. Firstly, modify the `dbt/profile_template.yml` file with your own project details.
@@ -182,10 +190,8 @@ Contributions are always welcome!
 
 #### Improvements (To-Do):
 
-- Add logos for the sources of data in dashboard
 - It might be good to partition and cluster based on certain attributes to provide long term scalability
-- Dashboard could include more analysis and charts
-- Improving fault tolerance
+- Queries are slow, SQL used in dbt models may deserve improvement
 
 ## Credits
 Thank you to everyone who made the [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp)
