@@ -1,5 +1,7 @@
 {{config(materialized='view')}}
 
+-- There are no common locations between aq and weather table. Thus, it is better to aggregate over the city rather than use locations.
+
 select
     COALESCE(w.datetime, aq.datetime) as datetime,
     COALESCE(w.city, aq.city) as city,
