@@ -9,6 +9,7 @@ note.txt
 .prefectignore
 archi.excalidraw
 google_creds.json
+data/apims-2005-2017.csv
 
 # Terraform
 *.tfvars
