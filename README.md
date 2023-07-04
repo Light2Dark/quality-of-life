@@ -33,13 +33,13 @@ Weather data is collected from weather stations throughout Malaysia. Government 
 Both pandas and dbt is used to clean, transform and model the data
 
 ### Schema
-![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/14ae32bd-0548-4494-81cb-7771d176cda0)
+![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/1a95389e-9c5e-4aa6-8a8d-c6945aef1b1c)
 
 **Clustering:** TODO [recommended here](https://cloud.google.com/bigquery/docs/clustered-tables).
 
 **Partitioning:** It may be more efficient to partition by states however BigQuery does not allow partitions by String fields. Some workarounds exist (adding an int as an additional column) but the pros and cons needs to be examined.
 
-**Normalization** TODO. There are duplicated city fields, changing them would require reconnecting the dashboard which is a pain.
+**Normalization:** TODO. There are duplicated city fields, changing them would require reconnecting the dashboard which is a pain.
 
 ### Data Sources
 The Weather data is proprietary and unfortunately this code is not reproducible without the API key. Credits to [Weather Underground](https://www.wunderground.com/) for the data. Contact me for more details regarding this.
