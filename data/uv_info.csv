@@ -1,0 +1,6 @@
+uv_level,exposure_category,short_description,long_description
+2,low,no protection required,No damage is expected. You can safely stay outside.
+5,moderate,protection required,"Some precaution needed for people with sensitive skin. Seek shade during midday hours. Put on a shirt, use sun screen and a hat."
+7,high,protection required,"Some precaution needed for people with sensitive skin. Seek shade during midday hours. Put on a shirt, use sun screen and a hat."
+10,very high,extra protection,"Avoid unnecessary exposure especially during midday hours. Make sure you seek shade. Shirt, sun screen and hat are a must."
+20,extreme,extra protection,"Avoid unnecessary exposure especially during midday hours. Make sure you seek shade. Shirt, sun screen and hat are a must."
