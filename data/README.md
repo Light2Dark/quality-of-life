@@ -19,7 +19,7 @@ uv_info.csv
 ```
 
 Historical Air Quality data:
-There is a file called `apims-2005-2017.csv` used in the code. Big thanks to [YoungShung](https://github.com/ynshung/api-malaysia) for this data.
+There is a file called `apims-2005-2017.csv` used in the `pipelines/historical_aq` code. Big thanks to [YoungShung's API Project](https://github.com/ynshung/api-malaysia) for this data. You can donwload the data from that repo and give him a star too!
 
 ## Schema
-To understand the data model, refer to the schema in the [schema section in README.md](https://github.com/Light2Dark/quality-of-life#schema)
+To understand the data model, refer to the [schema section in README.md](https://github.com/Light2Dark/quality-of-life#schema)
