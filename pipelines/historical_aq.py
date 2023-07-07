@@ -3,11 +3,11 @@ from pipelines.etl.load import upload
 from main import PREPROCESSED_AQ_DATA_GCS_SAVEPATH
 from infra.prefect_infra import GCS_AIR_QUALITY_BUCKET_BLOCK_NAME
 
-df = pd.read_csv("data/apims-2005-2017.csv", dtype=str)
+# df = pd.read_csv("data/apims-2005-2017.csv", dtype=str)
 df2 = pd.read_csv("dbt/seeds/city_states.csv")
 df3 = pd.read_csv("dbt/seeds/state_locations.csv")
 
-def find_diff_locations():
+def find_diff_locations(df):
     df.rename(columns={"Time": "Datetime"}, inplace=True)
     locations = df.columns.tolist()
     locations.remove("Datetime")
@@ -23,7 +23,7 @@ def find_diff_locations():
     print("------")
     print(diffs_id_locs)
     
-def elt_archive(dataset: str):
+def elt_archive(df, dataset: str):
     df.rename(columns={"Time": "datetime"}, inplace=True)
     locations = df.columns.tolist()
     locations.remove("datetime")
@@ -43,6 +43,7 @@ def elt_archive(dataset: str):
     
 if __name__ == "__main__":
     # find_diff_locations()
+    df = pd.read_csv("data/apims-2005-2017.csv", dtype=str) # NEEDS LOCAL FILE
     elt_archive(df, "dev.historic_air_quality")
     pass
     
