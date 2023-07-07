@@ -1,6 +1,6 @@
 # Data Files
 
-The main fact tables (measurements / metrics) are in the following files:
+The main **fact tables** (measurements / metrics) are in the following files:
 ```
 air_quality_2005-2023.zip
 full_weather_1996-2023.zip
@@ -10,4 +10,16 @@ weather_1996-2023.zip
 
 Please unzip the file and you will find csv files inside.
 
-The dimension tables (supporting attributes) are the rest of the csv files. To understand the data model, refer to the schema in the [schema section in README.md](https://github.com/Light2Dark/quality-of-life#schema)
+The **dimension tables** (supporting attributes) are the rest of the csv files:
+```
+city_states.csv
+air_quality_indicators.csv
+air_quality_warning.csv
+uv_info.csv
+```
+
+Historical Air Quality data:
+There is a file called `apims-2005-2017.csv` used in the `pipelines/historical_aq` code. Big thanks to [YoungShung's API Project](https://github.com/ynshung/api-malaysia) for this data. You can donwload the data from that repo and give him a star too!
+
+## Schema
+To understand the data model, refer to the [schema section in README.md](https://github.com/Light2Dark/quality-of-life#schema)
