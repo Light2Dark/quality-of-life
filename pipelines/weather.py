@@ -32,6 +32,32 @@ def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, 
     df_weather = transform_weather.get_weather_df(weather_data, weather_stations_list)
     upload.upload_to_gcs(df_weather, filename, preproc_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
     upload.load_to_bq(df_weather, dataset)
+
+
+@flow(name="ELT Personal Weather", log_prints=True)
+def elt_pws_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, start_date: str, end_date: str):
+    df = pd.read_csv("dbt/seeds/state_locations.csv", header=0)
+    personal_weather_stations = df['PWStation'].dropna().unique()
+    
+    sd = datetime.strptime(start_date, "%Y%m%d")
+    ed = datetime.strptime(end_date, "%Y%m%d")
+    
+    while sd <= ed:
+        date = sd.strftime("%Y%m%d")
+        weather_data = extract_weather.extract_pws(date, personal_weather_stations)
+        if bool(weather_data) == False:
+            print(f"No data for {date}")
+            sd += timedelta(days=1)
+            continue 
+        
+        filename = f"{date}_pws"
+        upload.upload_to_gcs(weather_data, filename, raw_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
+        
+        transformed_weather_data = transform_weather.transform_pws_data(weather_data, personal_weather_stations)
+        upload.upload_to_gcs(transformed_weather_data, filename, preproc_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
+        upload.load_to_bq(transformed_weather_data, dataset)
+
+        sd += timedelta(days=1)
                 
 
 def get_date_chunks(start_datetime: datetime, end_datetime: datetime) -> List[Tuple[str, str]]:

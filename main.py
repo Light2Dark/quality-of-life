@@ -9,6 +9,8 @@ from pipelines.config import timeit
 
 PROD_DATASET_WEATHER = "prod.hourly_weather"
 DEV_DATASET_WEATHER = "dev.hourly_weather"
+PROD_DATASET_PWS = "prod.hourly_pws_weather"
+DEV_DATASET_PWS = "dev.hourly_pws_weather"
 RAW_WEATHER_DATA_GCS_SAVEPATH = "hourly_weather_data"
 PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH = "preprocessed_weather_data"
 
@@ -18,7 +20,7 @@ RAW_AQ_DATA_GCS_SAVEPATH = "daily_aq_data"
 PREPROCESSED_AQ_DATA_GCS_SAVEPATH = "daily_preprocessed_air_quality_data"
 
 
-@flow(log_prints=True)
+@flow(name="prefect_full_weather",log_prints=True)
 def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool, start_date: str = None, end_date: str = None, time: str = '0000'):
     """Runs the full weather ELT flow using Prefect. Only 1 process will run.
 
@@ -56,9 +58,11 @@ def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool
         if testing:
             print("Running weather pipeline on dev dataset")
             weather.elt_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_WEATHER, start_date, end_date)
+            weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_PWS, start_date, end_date)
         else:
             print("Running weather pipeline on prod dataset")
             weather.elt_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PROD_DATASET_WEATHER, start_date, end_date)
+            weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PROD_DATASET_PWS, start_date, end_date)
         
         
 def run_full_weather_parser():
@@ -101,9 +105,11 @@ def run_full_weather_parser():
         if args.testing:
             print("Running weather pipeline on dev dataset")
             weather_multiprocessing(start_date, end_date, RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_WEATHER, num_processes)
+            weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_PWS, start_date, end_date)
         else:
             print("Running weather pipeline on prod dataset")
             weather_multiprocessing(start_date, end_date, RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PROD_DATASET_WEATHER, num_processes)
+            weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PROD_DATASET_PWS, start_date, end_date)
          
          
 def get_datetime_today(format_date: str, days_prior: int = 0) -> str:
@@ -224,6 +230,7 @@ def get_date_chunks(start_datetime: datetime, end_datetime: datetime, chunksize:
         temp_start_date = temp_end_date + timedelta(days=1)
 
     return chunks
+
 
 if __name__ == "__main__":
     ## Running the elt_historical_air_quality_pipeline
