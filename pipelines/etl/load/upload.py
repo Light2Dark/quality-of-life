@@ -41,15 +41,19 @@ def upload_to_gcs(data, filename: str, savepath: str, prefect_gcs_block: str, mo
     
     
 @task(name="load_to_bq", log_prints=True, tags="load_bq")
-def load_to_bq(df: pd.DataFrame,  to_path_upload: str, table_schema: List[dict] = None):
-    """Uploads dataframe to BigQuery in to_path_upload"""
-    print(f"Loading to bq {to_path_upload}")
+def load_to_bq(df: pd.DataFrame,  to_path_upload: str, table_schema: List[dict] = None, append: bool = True):
+    """
+    Uploads dataframe to BigQuery in to_path_upload
+    if append is True, appends to existing table. if False, overwrites existing table
+    """
+    load_method = "append" if append else "replace"
+    print(f"Loading to bq {to_path_upload} with method {load_method}")
     gcp_credentials_block = GcpCredentials.load(GCP_CREDENTIALS_BLOCK_NAME)
     df.to_gbq(
         destination_table=to_path_upload,
         project_id=os.getenv("PROJECT_ID"),
         credentials=gcp_credentials_block.get_credentials_from_service_account(),
-        if_exists="append",
+        if_exists=load_method,
         location=os.getenv("REGION"),
         table_schema=table_schema
     )

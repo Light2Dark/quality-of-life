@@ -120,11 +120,11 @@ def transform_pws_data(weather_data: dict, personal_weather_stations: List[str])
             pressure_max = obs["metric"]["pressureMax"]
             pressure_min = obs["metric"]["pressureMin"]
             
-            if isinstance(pressure_max, int) and isinstance(pressure_min, int):
+            if pressure_max and pressure_min:
                 pressure_avg = (pressure_max + pressure_min) / 2
-            elif isinstance(pressure_max, int):
+            elif pressure_max:
                 pressure_avg = pressure_max
-            elif isinstance(pressure_min, int):
+            elif pressure_min:
                 pressure_avg = pressure_min
             else:
                 pressure_avg = None

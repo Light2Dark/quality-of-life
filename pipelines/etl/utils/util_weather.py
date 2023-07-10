@@ -1,7 +1,9 @@
-import os, requests, json
+import os, requests, json, glob
 from dotenv import load_dotenv
 import pandas as pd
 from geopy.geocoders import Nominatim
+from google.cloud import bigquery
+from datetime import datetime
 
 load_dotenv()
 
@@ -121,10 +123,79 @@ def geocode():
         
     df.apply(breakdown_address, axis=1)
     
+def make_pressure_df(file_str: str) -> pd.DataFrame:
+    """
+        Return a dataframe with pressure, datetime and weather station id.
+        file_str (str): Used to limit the number of files to read.
+    """
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'google_creds.json'
+    client = bigquery.Client()
+    
+    json_files = glob.glob(f"data/pws/{file_str}.json")
+    
+    weather_df = pd.DataFrame()
+    
+    for file in json_files:
+        with open(file, "r") as f:
+            print(f"Reading file... {file}")
+            data = json.load(f)
+            for key in data.keys():
+                observations = data[key]["observations"]
+                for obs in observations:
+                    weather_station = str(obs['stationID'])
+                    dtime = str(datetime.fromtimestamp(obs['epoch']))
+                    
+                    pressure_max = obs["metric"]["pressureMax"]
+                    pressure_min = obs["metric"]["pressureMin"]
+                    
+                    if pressure_max and pressure_min:
+                        pressure_avg = round((pressure_max + pressure_min) / 2,3)
+                    elif pressure_max:
+                        pressure_avg = pressure_max
+                    elif pressure_min:
+                        pressure_avg = pressure_min
+                    else:
+                        pressure_avg = None
+                    
+                    # dml_statement = (
+                    #     f"""UPDATE `quality-of-life-364309.dev.hourly_pws_weather` SET pressure = CAST({pressure_avg} as STRING) WHERE datetime = '{dtime}' AND weather_station = '{weather_station}';"""
+                    # )
+                    # sql_statements.append(dml_statement)
+                    
+                    df = pd.DataFrame({
+                        "datetime": [str(dtime)],
+                        "weather_station": [str(weather_station)],
+                        "pressure": [str(pressure_avg)]
+                    })
+                    weather_df = pd.concat([weather_df, df], axis=0, ignore_index=True)
+            print(f"Finished reading file... {file}")
+    
+    weather_df = weather_df.astype(str)
+    return weather_df
+                    
+    # sql_statements = "\n".join(sql_statements)
+    # query_job = client.query(sql_statements)  # API request
+    # query_job.result()  # Waits for statement to finish
+
+
+def pressure_update():
+    from pipelines.etl.utils.util_weather import make_pressure_df
+    from pipelines.etl.load.upload import load_to_bq
+    from typing import List
+    import concurrent.futures
+
+    def pws_pressure(date_str: str):
+        df = make_pressure_df(date_str)
+        load_to_bq.fn(df, "dev.hourly_pws_pressure", append=True)
+
+    def mp_pws_pressure(date_list: List[str]):
+        with concurrent.futures.ProcessPoolExecutor(7) as executor:
+            executor.map(
+                pws_pressure,
+                [date for date in date_list]
+            )
+
+    
 if __name__ == "__main__":
     # extract_personal_weather_stations()
-    
-    df = pd.read_csv("dbt/seeds/state_locations.csv", header=0)
-    personal_weather_stations = df['PWStation'].dropna().unique()
-    print(personal_weather_stations)
-    
+    pass
