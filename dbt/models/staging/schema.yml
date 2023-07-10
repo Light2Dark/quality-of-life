@@ -22,6 +22,15 @@ sources:
           - name: datetime
             tests:
               - not_null
+      - name: hourly_pws_weather
+        columns:
+          - name: datetime
+            tests:
+              - not_null
+          - name: weather_station
+            description: "Personal weather station location"
+            tests:
+              - not_null
   - name: prod
     tables:
       - name: hourly_air_quality
@@ -32,6 +41,20 @@ sources:
       - name: hourly_weather
         columns:
           - name: weather_station
+      - name: hourly_pws_weather
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+              combination_of_columns:
+                - datetime
+                - weather_station
+        columns:
+          - name: datetime
+            tests:
+              - not_null
+          - name: weather_station
+            description: "Personal weather station location"
+            tests:
+              - not_null
 
 
 models:
@@ -75,3 +98,8 @@ models:
           - relationships:
               to: ref('state_locations')
               field: ICAO
+
+  - name: stg_hourly_pws_weather
+    description: Table for personal weather station, cleaning and eliminating outliers
+    columns:
+      - name: date

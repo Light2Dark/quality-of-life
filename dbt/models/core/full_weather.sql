@@ -1,4 +1,4 @@
-{{config(materialized='view')}}
+{{config(materialized='table')}}
 
 -- There are no common locations between aq and weather table. Thus, it is better to aggregate over the city rather than use locations.
 

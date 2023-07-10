@@ -69,6 +69,22 @@ models:
               field: city
               to: ref('state_locations')
 
+  - name: full_locations
+    description: Combines the location, city and state data into a singular table
+    columns:
+      - name: identifying_location
+        tests:
+          - unique
+      - name: place
+        tests:
+          - not_null
+      - name: city
+        tests:
+          - not_null
+      - name: state
+        tests:
+          - not_null
+
   - name: full_weather
     description: "Hourly data for all envinronmental factors, combining air quality & weather"
     tests:

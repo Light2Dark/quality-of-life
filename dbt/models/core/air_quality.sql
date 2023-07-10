@@ -1,4 +1,4 @@
-{{config(materialized="view")}}
+{{config(materialized="table")}}
 
 WITH aq AS (
     select 
@@ -23,7 +23,9 @@ WITH aq AS (
 select
     datetime,
     location,
+    place,
     city,
+    state,
     pollutant,
     pollutant_value,
     label,
@@ -65,4 +67,4 @@ select
         ELSE 'No health effects reported'
     END as message
 FROM aq
-LEFT JOIN {{ref('state_locations')}} as sl ON sl.identifying_location = aq.location 
+LEFT JOIN {{ref('full_locations')}} as fl ON fl.identifying_location = aq.location 
