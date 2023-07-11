@@ -22,7 +22,6 @@ WITH aq AS (
 )
 select
     datetime,
-    location,
     place,
     city,
     state,

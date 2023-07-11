@@ -1,9 +1,11 @@
-{{config(materialized='view')}}
+{{config(materialized='table')}}
 
 WITH uv_stg AS (
     select 
         datetime,
-        location,
+        place,
+        city,
+        state,
         uv_index,
         CASE
             WHEN uv_index >= 0 AND uv_index <= 2 THEN "low"
@@ -22,7 +24,9 @@ WITH uv_stg AS (
 
 SELECT 
     datetime,
-    location,
+    place,
+    city,
+    state,
     uv_index,
     uv_stg.exposure_category as exposure_category,
     short_description,

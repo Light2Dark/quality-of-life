@@ -6,12 +6,15 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - location
+            - place
             - datetime
     columns:
-      - name: location
+      - name: place
         tests:
           - not_null
+          - relationships:
+              field: place
+              to: ref('full_locations')
       - name: datetime
         description: Format of YYYY-MM-DD HH:MM:SS.
         tests:
@@ -22,7 +25,7 @@ models:
           - not_null
           - relationships:
               field: city
-              to: ref('state_locations')
+              to: ref('full_locations')
       - name: pollutant
         description: There are different sensors which track different pollutants. Only the highest valued pollutant is recorded.
         tests:
@@ -43,31 +46,48 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - location
-            - datetime
-
-  - name: weather
-    description: "Hourly data from weather API"
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - location
+            - place
             - datetime
     columns:
-      - name: location
+      - name: place
+        description: Place of the location
         tests:
-          - not_null
-      - name: datetime
-        description: Format of YYYY-MM-DD HH:MM:SS.
-        tests:
-          - not_null
+          - relationships:
+              field: place
+              to: ref('full_locations')
       - name: city
         description: City of the location
         tests: 
           - not_null
           - relationships:
               field: city
-              to: ref('state_locations')
+              to: ref('full_locations')
+
+  - name: weather
+    description: "Hourly data from weather API"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - place
+            - datetime
+    columns:
+      - name: datetime
+        description: Format of YYYY-MM-DD HH:MM:SS.
+        tests:
+          - not_null
+      - name: place
+        description: Place of the location
+        tests:
+          - relationships:
+              field: place
+              to: ref('full_locations')
+      - name: city
+        description: City of the location
+        tests: 
+          - not_null
+          - relationships:
+              field: city
+              to: ref('full_locations')
 
   - name: full_locations
     description: Combines the location, city and state data into a singular table
@@ -86,7 +106,7 @@ models:
           - not_null
 
   - name: full_weather
-    description: "Hourly data for all envinronmental factors, combining air quality & weather"
+    description: "Hourly data for all envinronmental factors, combining air quality & weather, grouped by city"
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
@@ -98,7 +118,38 @@ models:
           - not_null
           - relationships:
               field: city
-              to: ref('state_locations')
+              to: ref('full_locations')
+      - name: datetime
+        description: Format of YYYY-MM-DD HH:MM:SS.
+        tests:
+          - not_null
+
+  - name: full_weather_places
+    description: "Hourly data for all envinronmental factors, combining air quality & weather, grouped by places"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - place
+            - datetime
+    columns:
+      - name: place
+        description: Place of the location
+        tests:
+          - relationships:
+              field: place
+              to: ref('full_locations')
+      - name: city
+        tests:
+          - not_null
+          - relationships:
+              field: city
+              to: ref('full_locations')
+      - name: state
+        tests:
+          - not_null
+          - relationships:
+              field: state
+              to: ref('full_locations')
       - name: datetime
         description: Format of YYYY-MM-DD HH:MM:SS.
         tests:
