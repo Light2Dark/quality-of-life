@@ -148,7 +148,7 @@ def transform_pws_data(weather_data: dict, personal_weather_stations: List[str])
                 "pressure": [pressure_avg],
                 "pressure_trend": [obs["metric"]["pressureTrend"]],
                 "heat_index": [obs["metric"]["heatindexAvg"]],
-                "preciptation_rate": [obs["metric"]["precipRate"]],
+                "precipitation_rate": [obs["metric"]["precipRate"]],
                 "precipitation_total": [obs["metric"]["precipTotal"]],
                 "qc_status": [obs["qcStatus"]],
             })
