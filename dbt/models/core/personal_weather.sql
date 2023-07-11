@@ -1,3 +1,5 @@
+{{config(materialized='table')}}
+
 select
     datetime,
     place,
@@ -10,7 +12,6 @@ select
     precipitation_rate,
     precipitation_total,
     pressure,
-    pressure_trend,
     wind_speed,
     gust,
     dew_point,

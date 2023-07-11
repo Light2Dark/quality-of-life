@@ -5,9 +5,6 @@ sources:
     tables:
       - name: hourly_air_quality
         columns:
-          - name: location
-            tests:
-              - not_null
           - name: datetime
             tests:
               - not_null
@@ -28,31 +25,29 @@ sources:
             tests:
               - not_null
           - name: weather_station
-            description: "Personal weather station location"
+            description: "Personal weather station"
             tests:
               - not_null
+
   - name: prod
     tables:
       - name: hourly_air_quality
-        # - dbt_utils.unique_combination_of_columns:
-        #     combination_of_columns:
-        #       - location
-        #       - timestamp
+        columns:
+          - name: datetime
+            tests:
+              - not_null
+          - name: value
+            tests:
+              - not_null   
       - name: hourly_weather
         columns:
           - name: weather_station
       - name: hourly_pws_weather
-        tests:
-          - dbt_utils.unique_combination_of_columns:
-              combination_of_columns:
-                - datetime
-                - weather_station
         columns:
           - name: datetime
             tests:
               - not_null
           - name: weather_station
-            description: "Personal weather station location"
             tests:
               - not_null
 
@@ -101,5 +96,19 @@ models:
 
   - name: stg_hourly_pws_weather
     description: Table for personal weather station, cleaning and eliminating outliers
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - datetime
+            - weather_station
     columns:
-      - name: date
+      - name: datetime
+        tests:
+          - not_null
+      - name: weather_station
+        description: "Personal weather station"
+        tests:
+          - not_null
+          - relationships:
+              field: PWStation
+              to: ref('state_locations')
