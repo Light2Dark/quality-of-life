@@ -35,11 +35,12 @@ models:
         description: The station records several values from different sensors, only the highest value is recorded as air quality reading.
         tests:
           - not_null
-      # - name: unit
-      #   description: Unit for the air quality reading of the sensor.
-      #   tests:
-      #     - accepted_values:
-      #         values: ["ppm", "μg/m3", ""]
+      - name: label
+        tests:
+          - not_null
+      - name: message
+        tests:
+          - not_null
 
   - name: uv
     description: "Hourly uv data together with labels and warnings"

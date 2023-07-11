@@ -56,8 +56,17 @@ seeds:
 
   - name: air_quality_warning
     columns:
-      - name: limit
-        description: "Represents the upper limit of air quality value of this polutant. Eg: 0-50, 51-100, 101-150, 151-200, 201-300, 301-500"
+      - name: label
+        description: "Represents the severity of the pollution value"
+        tests:
+          - accepted_values:
+              values:
+                - ["Good", "Moderate", "Unhealthy", "Unhealthy for sensitive groups", "Very unhealthy", "Hazardous"]
+      - name: pollutant
+        description: Pollutant type
+        tests:
+          - accepted_values:
+              values: ["PM2.5", "PM10", "SO2", "CO2", "O3", "NO2"]
       - name: should_report
         description: "If true, an air quality value at this level should be notified to authorities and users"
           
