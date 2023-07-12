@@ -101,6 +101,70 @@ def convert_dtypes(df) -> pd.DataFrame:
     return df.astype(convert_dict)
 
 
+@task(name="Transform PWS Data", log_prints=True)
+def transform_pws_data(weather_data: dict, personal_weather_stations: List[str]) -> pd.DataFrame:
+    df_pws = pd.DataFrame()
+    
+    for pws in personal_weather_stations:
+        data = weather_data.get(pws, None)
+        if data is None:
+            print(f"Unable to transform data for station {pws}, no data available")
+            continue
+            
+        observations = data["observations"]
+        for obs in observations:
+            weather_station = obs.get("stationID", "Unidentified")
+            if weather_station != pws.split(":")[0] and weather_station != "Unidentified":
+                raise ValueError(f"Station {pws} does not match observation {weather_station}")
+            
+            pressure_max = obs["metric"]["pressureMax"]
+            pressure_min = obs["metric"]["pressureMin"]
+            
+            try:
+                epoch = datetime.fromtimestamp(obs["epoch"])
+            except Exception as e:
+                with open("logs/error.log", "a") as f:
+                    f.write(f"Unable to parse epoch {obs['epoch']} from {weather_station} with error {e}\n")
+                epoch = datetime.fromtimestamp(obs["epoch"] / 1000)
+                
+            if pressure_max and pressure_min:
+                pressure_avg = (pressure_max + pressure_min) / 2
+            elif pressure_max:
+                pressure_avg = pressure_max
+            elif pressure_min:
+                pressure_avg = pressure_min
+            else:
+                pressure_avg = None
+            
+            df = pd.DataFrame({
+                "datetime": [epoch],
+                "weather_station": [weather_station],
+                "obsTimeUtc": [obs["obsTimeUtc"]],
+                "obsTimeLocal": [obs["obsTimeLocal"]],
+                "lat": [obs["lat"]],
+                "lon": [obs["lon"]],
+                "uv": [obs["uvHigh"]],
+                "solar_radiation_high": [obs["solarRadiationHigh"]],
+                "humidity": [obs["humidityAvg"]],
+                "temperature": [obs["metric"]["tempAvg"]],
+                "wind_speed": [obs["metric"]["windspeedAvg"]],
+                "gust": [obs["metric"]["windgustAvg"]],
+                "dew_point": [obs["metric"]["dewptAvg"]],
+                "wind_direction": [obs["winddirAvg"]],
+                "wind_chill": [obs["metric"]["windchillAvg"]],
+                "pressure": [pressure_avg],
+                "pressure_trend": [obs["metric"]["pressureTrend"]],
+                "heat_index": [obs["metric"]["heatindexAvg"]],
+                "precipitation_rate": [obs["metric"]["precipRate"]],
+                "precipitation_total": [obs["metric"]["precipTotal"]],
+                "qc_status": [obs["qcStatus"]],
+            })
+            df_pws = pd.concat([df_pws, df], ignore_index=True)
+            
+    df_pws = df_pws.astype(str)
+    return df_pws
+
+
 if __name__ == "__main__":
     with open("tests/combined_weather_data.json", "r") as f:
         data = json.load(f)

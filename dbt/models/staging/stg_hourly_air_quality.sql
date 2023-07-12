@@ -11,6 +11,7 @@ WITH hourly_air_quality AS (
     SELECT DISTINCT datetime, location, value FROM
     {% if var('test_run', default=true) %}
         {{source('dev', 'hourly_air_quality')}}
+        LIMIT 1000
     {% else %}
         {{source('prod', 'hourly_air_quality')}}
     {% endif %}
@@ -22,9 +23,9 @@ SELECT
     DATETIME(datetime) as datetime,
     location,
     CAST(pollutant_value as NUMERIC) as pollutant_value,
-    pollutant_symbol
+    CASE pollutant_symbol
+        WHEN '' THEN '-'
+        WHEN NULL THEN '-'
+        ELSE pollutant_symbol
+    END as pollutant_symbol
 FROM hourly_air_quality
-
-{% if var('test_run', default=true) %}
-  LIMIT 100
-{% endif %}

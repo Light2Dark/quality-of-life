@@ -13,10 +13,10 @@ seeds:
         tests:
           - not_null
 
-  - name: state_locations
-    description: Certain MCAQM stations do not have accurate lat & long values, eg. Kota Kinabalu Station
+  - name: city_places
+    description: Mapping of places and their cities
     columns:
-      - name: identifying_location
+      - name: place
         tests:
           - unique
           - not_null
@@ -26,19 +26,46 @@ seeds:
           - relationships:
               field: city
               to: ref('city_states')
+
+  - name: state_locations
+    description: Certain MCAQM stations do not have accurate lat & long values, eg. Kota Kinabalu Station
+    columns:
+      - name: identifying_location
+        tests:
+          - unique
+          - not_null
+      - name: place
+        tests:
+          - not_null
+          - relationships:
+              field: place
+              to: ref('city_places')
       - name: latitude
         tests:
           - not_null
       - name: longitude
         tests:
           - not_null
+      - name: postcode
       - name: ICAO
         description: "The airport code of this location"
+      - name: pwstation
+        description: "Personal weather station code"
+      - name: address
+        description: "Address of the location in dictionary / json format"
 
   - name: air_quality_warning
     columns:
-      - name: limit
-        description: "Represents the upper limit of air quality value of this polutant. Eg: 0-50, 51-100, 101-150, 151-200, 201-300, 301-500"
+      - name: label
+        description: "Represents the severity of the pollution value"
+        tests:
+          - accepted_values:
+              values: ["Good", "Moderate", "Unhealthy", "Unhealthy for sensitive groups", "Very unhealthy", "Hazardous"]
+      - name: pollutant
+        description: Pollutant type
+        tests:
+          - accepted_values:
+              values: ["PM2.5", "PM10", "SO2", "CO2", "O3", "NO2", "Unidentified", "multi-pollutant", "CO"]
       - name: should_report
         description: "If true, an air quality value at this level should be notified to authorities and users"
           

@@ -1,9 +1,11 @@
-{{config(materialized='view')}}
+{{config(materialized='table')}}
 
 select distinct
     datetime,
-    sl.identifying_location as location,
+    identifying_location as location,
+    place,
     city,
+    state,
     temperature,
     feels_like_temperature,
     pressure,
@@ -18,8 +20,5 @@ select distinct
     clouds,
     visibility,
     day_indicator
-from {{ref('stg_hourly_weather')}} as stg_hw left join {{ref('state_locations')}} as sl
-on stg_hw.weather_station = sl.ICAO
-{% if var('test_run', default=true) %}
-  limit 100
-{% endif %}
+from {{ref('stg_hourly_weather')}} as stg_hw left join {{ref('full_locations')}} as fl
+on stg_hw.weather_station = fl.ICAO

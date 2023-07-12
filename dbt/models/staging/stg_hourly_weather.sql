@@ -30,12 +30,9 @@ WITH formatted_hourly_weather AS
     FROM
     {% if var('test_run', default=true) %}
         {{source('dev', 'hourly_weather')}}
+        LIMIT 1000
     {% else %}
         {{source('prod', 'hourly_weather')}}
-    {% endif %}
-
-    {% if var('test_run', default=true) %}
-    LIMIT 100
     {% endif %}
 )
 

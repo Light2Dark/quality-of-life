@@ -1,4 +1,4 @@
-{{config(materialized='view')}}
+{{config(materialized='table')}}
 
 -- There are no common locations between aq and weather table. Thus, it is better to aggregate over the city rather than use locations.
 
@@ -20,6 +20,3 @@ from {{ref('weather')}} as w
 full join {{ref('air_quality')}} as aq
 ON w.datetime = aq.datetime AND w.city = aq.city
 GROUP BY datetime, city
-{% if var('test_run', default=true) %}
-  limit 100
-{% endif %}

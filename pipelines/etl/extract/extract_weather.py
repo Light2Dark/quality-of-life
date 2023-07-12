@@ -3,7 +3,7 @@ from prefect.tasks import exponential_backoff
 from dotenv import load_dotenv
 # from infra.prefect_infra import WEATHER_API_SECRET_BLOCK
 # from prefect.blocks.system import Secret
-import datetime, requests, os, json, asyncio
+import datetime, requests, os, json, asyncio, pandas as pd
 
 load_dotenv()
 
@@ -90,7 +90,7 @@ async def request_data(date_start: str, date_end: str, weather_station: str) -> 
         response.raise_for_status()
     except:
         print(f"Error with {weather_station} on {date_start} to {date_end}")
-        with open("logs/unavailable_weather_urls.txt", "a") as f:
+        with open("logs/unavailable_weather_urls.log", "a") as f:
             request_url = request_url.replace(weather_api_key, "API_KEY")
             f.write(f"{request_url}\n")
         return None
@@ -109,6 +109,68 @@ async def request_data(date_start: str, date_end: str, weather_station: str) -> 
     
     return response_json
 
+    
+@flow(name="Extract Personal Weather Stations", log_prints=True)
+async def extract_pws(date: str, personal_weather_stations) -> dict:
+    """Extracts data from personal weather stations day by day and compiles them.
+
+    Args:
+        date (str): date of the data to be extracted. Format: YYYYMMDD
+        personal_weather_stations (List[str]): list of personal weather stations
+        
+    Returns:
+        dict: data from personal weather stations in dict format
+    """
+    coros = [request_pws_data(personal_weather_station, date) for personal_weather_station in personal_weather_stations]
+    responses = await asyncio.gather(*coros)
+    
+    combined_weather_data = {}
+    for response in responses:
+        if response is None:
+            continue
+        combined_weather_data[response["weather_station"]] = response
+        
+    return combined_weather_data
+
+
+def write_to_logs(filepath, text):
+    with open(filepath, "a") as f:
+        f.write(f"{text}\n")
+
+@task(name="Request personal weather station data", log_prints=True, retries=3, retry_delay_seconds=exponential_backoff(backoff_factor=30))
+async def request_pws_data(personal_weather_station: str, date: str) -> dict | None:
+    url = f"https://api.weather.com/v2/pws/history/all?stationId={personal_weather_station}&format=json&units=m&date={date}&numericPrecision=decimal&apiKey={weather_api_key}"
+    print(f"Requesting {url}")
+    response = requests.get(url)
+    
+    try:
+        response.raise_for_status()
+    except:
+        print(f"Error with {url}")
+        url = url.replace(weather_api_key, "API_KEY")
+        write_to_logs("logs/unavailable_weather_pws_urls.log", url)
+        return None
+    
+    if response.status_code == 204:
+        print(f"Empty response for {url}")
+        url = url.replace(weather_api_key, "API_KEY")
+        write_to_logs("logs/unavailable_weather_pws_urls.log", url)
+        return None
+    
+    # validate response
+    response_json = response.json()
+    
+    # check if empty
+    if len(response_json["observations"]) == 0:
+        print("Empty response")
+        with open("logs/unavailable_weather_pws_urls.log", "a") as f:
+            url = url.replace(weather_api_key, "API_KEY")
+            f.write(f"{url}\n")
+        return None
+
+    # add weather station name to response
+    response_json["weather_station"] = personal_weather_station
+    return response_json
 
 def extract_local(filepath: str) -> json:
     with open(filepath, "r") as f:
