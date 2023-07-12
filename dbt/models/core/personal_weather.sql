@@ -20,6 +20,3 @@ select
     wind_chill
 from {{ref('stg_hourly_pws_weather')}} w left join {{ref('full_locations')}} fl
 ON w.weather_station = fl.PWStation
-{% if var('test_run', default=true) %}
-limit 100
-{% endif %}

@@ -60,13 +60,12 @@ seeds:
         description: "Represents the severity of the pollution value"
         tests:
           - accepted_values:
-              values:
-                - ["Good", "Moderate", "Unhealthy", "Unhealthy for sensitive groups", "Very unhealthy", "Hazardous"]
+              values: ["Good", "Moderate", "Unhealthy", "Unhealthy for sensitive groups", "Very unhealthy", "Hazardous"]
       - name: pollutant
         description: Pollutant type
         tests:
           - accepted_values:
-              values: ["PM2.5", "PM10", "SO2", "CO2", "O3", "NO2"]
+              values: ["PM2.5", "PM10", "SO2", "CO2", "O3", "NO2", "Unidentified", "multi-pollutant", "CO"]
       - name: should_report
         description: "If true, an air quality value at this level should be notified to authorities and users"
           

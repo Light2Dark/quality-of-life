@@ -3,6 +3,7 @@
 WITH uv_stg AS (
     select 
         datetime,
+        location,
         place,
         city,
         state,
@@ -17,13 +18,11 @@ WITH uv_stg AS (
         END as exposure_category
     from
         {{ref('weather')}}
-    {% if var('test_run', default=true) %}
-    limit 100
-    {% endif %}
 )
 
 SELECT 
     datetime,
+    location,
     place,
     city,
     state,

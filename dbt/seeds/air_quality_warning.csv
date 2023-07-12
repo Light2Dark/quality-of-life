@@ -13,10 +13,16 @@ Very unhealthy,PM10,"People with heart or lung disease, older adults, and childr
 Hazardous,PM10,"Everyone should avoid all physical activity outdoors; people with heart or lung disease, older adults, and children should remain indoors and keep activity level slow",TRUE
 Good,CO2,No health effects reported,FALSE
 Moderate,CO2,No health effects reported,FALSE
-Unhealthy for sensitive groups,CO2,"People with heart disease, such as angina, should limit heavy exertion and avoid sources of CO2 such as heavy traffic",TRUE
-Unhealthy,CO2,"People with heart disease, such as angina, should limit moderate exertion and avoid sources of CO2 such as heavy traffic.",TRUE
-Very unhealthy,CO2,"People with heart disease, such as angina, should avoid exertion and sources of CO2 such as heavy traffic.",TRUE
-Hazardous,CO2,"People with heart disease, such as angina, should avoid exertion and sources of CO, such as heavy traffic; everyone else should limit heavy exertion",TRUE
+Unhealthy for sensitive groups,CO2,"People with heart disease, such as angina, should limit heavy exertion and avoid sources of CO2 such as fires and fires",TRUE
+Unhealthy,CO2,"People with heart disease, such as angina, should limit moderate exertion and avoid sources of CO2 such as fires.",TRUE
+Very unhealthy,CO2,"People with heart disease, such as angina, should avoid exertion and sources of CO2 such as fires.",TRUE
+Hazardous,CO2,"People with heart disease, such as angina, should avoid exertion and sources of CO2, such as fires; everyone else should limit heavy exertion",TRUE
+Good,CO,No health effects reported,FALSE
+Moderate,CO,No health effects reported,FALSE
+Unhealthy for sensitive groups,CO,"People with heart disease, such as angina, should limit heavy exertion and avoid sources of CO such as heavy traffic",TRUE
+Unhealthy,CO,"People with heart disease, such as angina, should limit moderate exertion and avoid sources of CO such as heavy traffic.",TRUE
+Very unhealthy,CO,"People with heart disease, such as angina, should avoid exertion and sources of CO such as heavy traffic.",TRUE
+Hazardous,CO,"People with heart disease, such as angina, should avoid exertion and sources of CO, such as heavy traffic; everyone else should limit heavy exertion",TRUE
 Good,SO2,No health effects reported,FALSE
 Moderate,SO2,No health effects reported,FALSE
 Unhealthy for sensitive groups,SO2,People with asthma should consider limiting outdoor exertion.,TRUE
@@ -35,3 +41,15 @@ Unhealthy for sensitive groups,O3,"People with lung disease, such as asthma, chi
 Unhealthy,O3,"People with lung disease, such as asthma, children, older adults, and outdoor workers should avoid prolonged or heavy outdoor exertion; everyone else should reduce prolonged or heavy outdoor exertion.",TRUE
 Very unhealthy,O3,"People with lung disease, such as asthma, children, older adults, and outdoor workers should avoid all outdoor exertion; everyone else should reduce outdoor exertion.",TRUE
 Hazardous,O3,Everyone should avoid all outdoor exertion.,TRUE
+Good,Unidentified,No health effects reported,FALSE
+Moderate,Unidentified,Unusually sensitive people should consider reducing prolonged or heavy exertion,FALSE
+Unhealthy for sensitive groups,Unidentified,"People with heart or lung disease, older adults, and children should reduce prolonged or heavy exertion",TRUE
+Unhealthy,Unidentified,"People with heart or lung disease, older adults, and children should avoid prolonged or heavy exertion; everyone else should reduce prolonged or heavy exertion.",TRUE
+Very unhealthy,Unidentified,"People with heart or lung disease, older adults, and children should avoid all physical activity outdoors. Everyone else should avoid prolonged or heavy exertion.",TRUE
+Hazardous,Unidentified,"Everyone should avoid all physical activity outdoors; people with heart or lung disease, older adults, and children should remain indoors and keep activity level slow",TRUE
+Good,multi-pollutant,No health effects reported,FALSE
+Moderate,multi-pollutant,Unusually sensitive people should consider reducing prolonged or heavy exertion,FALSE
+Unhealthy for sensitive groups,multi-pollutant,"People with heart or lung disease, older adults, and children should reduce prolonged or heavy exertion",TRUE
+Unhealthy,multi-pollutant,"People with heart or lung disease, older adults, and children should avoid prolonged or heavy exertion; everyone else should reduce prolonged or heavy exertion.",TRUE
+Very unhealthy,multi-pollutant,"People with heart or lung disease, older adults, and children should avoid all physical activity outdoors. Everyone else should avoid prolonged or heavy exertion.",TRUE
+Hazardous,multi-pollutant,"Everyone should avoid all physical activity outdoors; people with heart or lung disease, older adults, and children should remain indoors and keep activity level slow",TRUE

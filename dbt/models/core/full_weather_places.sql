@@ -25,7 +25,4 @@ ON w.datetime = aq.datetime AND w.city = aq.city
 full join {{ref('personal_weather')}} as pws
 ON pws.datetime = aq.datetime AND pws.place = aq.place
 GROUP BY datetime, place, city, state
-{% if var('test_run', default=true) %}
-  limit 100
-{% endif %}
     

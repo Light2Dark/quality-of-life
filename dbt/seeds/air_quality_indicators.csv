@@ -6,3 +6,4 @@ NO2,b,Nitrogen Dioxide,ppm
 O3,c,Ozone,ppm
 CO,d,Carbon Monoxide,ppm
 multi-pollutant,&,More than one pollutant,
+Unidentified,-,,

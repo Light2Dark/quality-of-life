@@ -2,6 +2,7 @@
 
 select distinct
     datetime,
+    identifying_location as location,
     place,
     city,
     state,
@@ -21,6 +22,3 @@ select distinct
     day_indicator
 from {{ref('stg_hourly_weather')}} as stg_hw left join {{ref('full_locations')}} as fl
 on stg_hw.weather_station = fl.ICAO
-{% if var('test_run', default=true) %}
-  limit 100
-{% endif %}

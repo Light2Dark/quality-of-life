@@ -78,8 +78,9 @@ models:
       - name: pollutant_symbol
         description: The station records several values from different sensors, only the highest value is recorded as air quality reading.
         tests:
+          - not_null
           - accepted_values:
-              values: ["*", "**", "a", "b", "c", "d", "&", null, ""]
+              values: ["*", "**", "a", "b", "c", "d", "&", "-"]
 
   - name: stg_hourly_weather
     description: Sets datatypes and ensures no extreme values
