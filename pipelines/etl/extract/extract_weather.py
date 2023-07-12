@@ -90,7 +90,7 @@ async def request_data(date_start: str, date_end: str, weather_station: str) -> 
         response.raise_for_status()
     except:
         print(f"Error with {weather_station} on {date_start} to {date_end}")
-        with open("logs/unavailable_weather_urls.txt", "a") as f:
+        with open("logs/unavailable_weather_urls.log", "a") as f:
             request_url = request_url.replace(weather_api_key, "API_KEY")
             f.write(f"{request_url}\n")
         return None
@@ -131,7 +131,11 @@ async def extract_pws(date: str, personal_weather_stations) -> dict:
         combined_weather_data[response["weather_station"]] = response
         
     return combined_weather_data
-        
+
+
+def write_to_logs(filepath, text):
+    with open(filepath, "a") as f:
+        f.write(f"{text}\n")
 
 @task(name="Request personal weather station data", log_prints=True, retries=3, retry_delay_seconds=exponential_backoff(backoff_factor=30))
 async def request_pws_data(personal_weather_station: str, date: str) -> dict | None:
@@ -143,9 +147,14 @@ async def request_pws_data(personal_weather_station: str, date: str) -> dict | N
         response.raise_for_status()
     except:
         print(f"Error with {url}")
-        with open("logs/unavailable_weather_pws_urls.txt", "a") as f:
-            url = url.replace(weather_api_key, "API_KEY")
-            f.write(f"{url}\n")
+        url = url.replace(weather_api_key, "API_KEY")
+        write_to_logs("logs/unavailable_weather_pws_urls.log", url)
+        return None
+    
+    if response.status_code == 204:
+        print(f"Empty response for {url}")
+        url = url.replace(weather_api_key, "API_KEY")
+        write_to_logs("logs/unavailable_weather_pws_urls.log", url)
         return None
     
     # validate response
@@ -154,7 +163,7 @@ async def request_pws_data(personal_weather_station: str, date: str) -> dict | N
     # check if empty
     if len(response_json["observations"]) == 0:
         print("Empty response")
-        with open("logs/unavailable_weather_pws_urls.txt", "a") as f:
+        with open("logs/unavailable_weather_pws_urls.log", "a") as f:
             url = url.replace(weather_api_key, "API_KEY")
             f.write(f"{url}\n")
         return None

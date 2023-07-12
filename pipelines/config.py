@@ -9,7 +9,7 @@ def timeit(func):
         result = func(*args, **kwargs)
         end_time = time.perf_counter()
         print(f"Time taken: {end_time - start_time}")
-        with open("benchmark.txt", "a") as f:
+        with open("benchmark.log", "a") as f:
             f.write(f"Time taken: {end_time - start_time}\n")
         return result
     return wrapper

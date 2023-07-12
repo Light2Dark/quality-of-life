@@ -120,6 +120,13 @@ def transform_pws_data(weather_data: dict, personal_weather_stations: List[str])
             pressure_max = obs["metric"]["pressureMax"]
             pressure_min = obs["metric"]["pressureMin"]
             
+            try:
+                epoch = datetime.fromtimestamp(obs["epoch"])
+            except Exception as e:
+                with open("logs/error.log", "a") as f:
+                    f.write(f"Unable to parse epoch {obs['epoch']} from {weather_station} with error {e}\n")
+                epoch = datetime.fromtimestamp(obs["epoch"] / 1000)
+                
             if pressure_max and pressure_min:
                 pressure_avg = (pressure_max + pressure_min) / 2
             elif pressure_max:
@@ -130,7 +137,7 @@ def transform_pws_data(weather_data: dict, personal_weather_stations: List[str])
                 pressure_avg = None
             
             df = pd.DataFrame({
-                "datetime": [datetime.fromtimestamp(obs["epoch"])],
+                "datetime": [epoch],
                 "weather_station": [weather_station],
                 "obsTimeUtc": [obs["obsTimeUtc"]],
                 "obsTimeLocal": [obs["obsTimeLocal"]],

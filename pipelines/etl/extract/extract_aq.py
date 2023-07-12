@@ -83,12 +83,12 @@ def extract_valid_timed_response(date: str, time: str, mobile_station: bool):
 
 @task(name="request_api", log_prints=True, retries=3, retry_delay_seconds=exponential_backoff(backoff_factor=20))
 def request_api(url: str) -> dict:
-    """Returns response.json() from a url. If the response is 404, it will write the url to a file called unavailable_urls.txt and return None"""
+    """Returns response.json() from a url. If the response is 404, it will write the url to a file called unavailable_urls.log and return None"""
     print(f"Fetching data from {url}")
     try:
         response = requests.get(url)
         if response.status_code == 404:
-            with open("/logs/unavailable_urls.txt", "a") as f:
+            with open("/logs/unavailable_urls.log", "a") as f:
                 f.write(f"{url}\n")
             return None
         return response.json()
@@ -106,6 +106,6 @@ def retry_diff_times(date: str, mobile_station: bool):
             data, timings = get_data_timings(response)
             if timings == IN_ORDER_TIMINGS:
                 return response
-    with open("flows/timing_errors.txt", "a") as f:
+    with open("flows/timing_errors.log", "a") as f:
         f.write(f"{date} {time} {request} \n")
     raise Exception(f"Could not find a valid timing response for {date}")
