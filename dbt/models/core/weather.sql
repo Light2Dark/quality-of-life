@@ -23,5 +23,5 @@ select distinct
 from {{ref('stg_hourly_weather')}} as stg_hw left join {{ref('full_locations')}} as fl
 on stg_hw.weather_station = fl.ICAO
 {% if is_incremental() %}
-    where datetime > max(datetime) from {{this}}
+    where datetime > (select max(datetime) from {{ this }})
 {% endif %}
