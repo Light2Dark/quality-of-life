@@ -172,3 +172,6 @@ models:
         description: Format of YYYY-MM-DD HH:MM:SS.
         tests:
           - not_null
+
+  - name: full_weather_city
+    description: Aggregation by cities

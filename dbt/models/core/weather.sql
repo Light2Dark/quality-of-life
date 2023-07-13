@@ -1,4 +1,4 @@
-{{config(materialized='table')}}
+{{config(materialized='incremental')}}
 
 select distinct
     datetime,
@@ -22,3 +22,6 @@ select distinct
     day_indicator
 from {{ref('stg_hourly_weather')}} as stg_hw left join {{ref('full_locations')}} as fl
 on stg_hw.weather_station = fl.ICAO
+{% if is_incremental() %}
+    where datetime > max(datetime) from {{this}}
+{% endif %}

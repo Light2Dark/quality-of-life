@@ -1,4 +1,4 @@
-{{config(materialized="table")}}
+{{config(materialized="view")}}
 
 WITH formatted_hourly_weather AS 
 (
