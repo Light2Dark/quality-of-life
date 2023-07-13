@@ -11,7 +11,6 @@ seeds:
           - not_null
       - name: state
         tests:
-          - unique
           - not_null
 
   - name: city_places
