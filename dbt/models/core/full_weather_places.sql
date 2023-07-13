@@ -34,7 +34,9 @@ WITH combined_data AS (
     full join {{ref('personal_weather')}} as pws
     ON pws.datetime = aq.datetime AND pws.city = aq.city
     {% if is_incremental() %}
-        where datetime > max(datetime) from {{this}}
+        where aq.datetime > (select max(aq.datetime) from {{ this }}) AND
+        w.datetime > (select max(w.datetime) from {{ this }}) AND
+        pws.datetime > (select max(pws.datetime) from {{ this }}) 
     {% endif %}
     GROUP BY datetime, place, city, state
 )

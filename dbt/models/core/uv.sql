@@ -3,7 +3,6 @@
 WITH uv_stg AS (
     select 
         datetime,
-        location,
         place,
         city,
         state,
@@ -17,15 +16,14 @@ WITH uv_stg AS (
             ELSE null
         END as exposure_category
     from
-        {{ref('weather')}}
+        {{ref('full_weather_places')}}
     {% if is_incremental() %}
-        where datetime > max(datetime) from {{this}}
+        where datetime > (select max(datetime) from {{ this }})
     {% endif %}
 )
 
 SELECT 
     datetime,
-    location,
     place,
     city,
     state,

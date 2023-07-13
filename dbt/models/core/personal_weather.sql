@@ -21,5 +21,5 @@ select
 from {{ref('stg_hourly_pws_weather')}} w left join {{ref('full_locations')}} fl
 ON w.weather_station = fl.PWStation
 {% if is_incremental() %}
-    where datetime > max(datetime) from {{this}}
+    where datetime > (select max(datetime) from {{ this }})
 {% endif %}

@@ -17,7 +17,7 @@ WITH aq AS (
     from {{ref('stg_hourly_air_quality')}}
     left join {{ref('air_quality_indicators')}} ON pollutant_symbol = symbol
     {% if is_incremental() %}
-        where datetime > max(datetime) from {{this}}
+        where datetime > (select max(datetime) from {{ this }})
     {% endif %}
 )
 select

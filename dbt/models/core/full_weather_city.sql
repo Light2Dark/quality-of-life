@@ -19,4 +19,7 @@ SELECT
     AVG(precipitation_rate) as precipitation_rate,
     AVG(precipitation_total) as precipitation_total
 FROM {{ref('full_weather_places')}}
+{% if is_incremental() %}
+    where datetime > (select max(datetime) from {{ this }})
+{% endif %}
 group by datetime, city, state

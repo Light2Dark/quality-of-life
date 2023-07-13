@@ -28,15 +28,15 @@ def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool
         testing (bool): If true, dev dataset is used. Else, prod dataset.
         air_quality_run (bool): If true, air quality data is requested from API and stored in GCS & BQ.
         weather_run (bool): If true, weather data is requested from API and stored in GCS & BQ.
-        start_date (str, optional): Date must be in YYYYMMDD format. Defaults to today/yesterday's date if not specified.
-        end_date (str, optional): Date must be in YYYYMMDD format. Defaults to today/yesterday's date if not specified.
+        start_date (str, optional): Date must be in YYYYMMDD format. Defaults to yesterday's date if not specified.
+        end_date (str, optional): Date must be in YYYYMMDD format. Defaults to yesterday's date if not specified.
         time (str, optional): Request to the api using the time parameter. Defaults to '0000'.
     """    
     if air_quality_run:
         if start_date is None or end_date is None:
             print("Start date or end date not specified, using default of today")
-            aq_start_date = get_datetime_today('%Y-%m-%d')
-            aq_end_date = get_datetime_today('%Y-%m-%d')
+            aq_start_date = get_datetime('%Y-%m-%d')
+            aq_end_date = get_datetime('%Y-%m-%d')
         else:        
             # convert YYYYMMDD to YYYY-MM-DD for aq pipeline
             aq_start_date = start_date[:4] + "-" + start_date[4:6] + "-" + start_date[6:]
@@ -52,8 +52,8 @@ def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool
     if weather_run:
         if start_date is None or end_date is None:
             print("Start date or end date not specified, using default of yesterday")
-        start_date = get_datetime_today('%Y%m%d', 1) if start_date is None else start_date.strip()
-        end_date = get_datetime_today('%Y%m%d', 1) if end_date is None else end_date.strip()
+        start_date = get_datetime('%Y%m%d', 1) if start_date is None else start_date.strip()
+        end_date = get_datetime('%Y%m%d', 1) if end_date is None else end_date.strip()
         
         if testing:
             print("Running weather pipeline on dev dataset")
@@ -83,8 +83,8 @@ def run_full_weather_parser():
     if args.air_quality:
         if args.start_date is None or args.end_date is None:
             print("Start date or end date not specified, using default of today")
-            aq_start_date = get_datetime_today('%Y-%m-%d')
-            aq_end_date = get_datetime_today('%Y-%m-%d')
+            aq_start_date = get_datetime('%Y-%m-%d')
+            aq_end_date = get_datetime('%Y-%m-%d')
         else:        
             # convert YYYYMMDD to YYYY-MM-DD for aq pipeline
             aq_start_date = args.start_date[:4] + "-" + args.start_date[4:6] + "-" + args.start_date[6:]
@@ -99,8 +99,8 @@ def run_full_weather_parser():
     if args.weather:
         if args.start_date is None or args.end_date is None:
             print("Start date or end date not specified, using default of today")
-        start_date = get_datetime_today('%Y%m%d', 1) if args.start_date is None else args.start_date.strip()
-        end_date = get_datetime_today('%Y%m%d', 1) if args.end_date is None else args.end_date.strip()
+        start_date = get_datetime('%Y%m%d', 1) if args.start_date is None else args.start_date.strip()
+        end_date = get_datetime('%Y%m%d', 1) if args.end_date is None else args.end_date.strip()
         
         if args.testing:
             print("Running weather pipeline on dev dataset")
@@ -112,7 +112,7 @@ def run_full_weather_parser():
             weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PROD_DATASET_PWS, start_date, end_date)
          
          
-def get_datetime_today(format_date: str, days_prior: int = 1) -> str:
+def get_datetime(format_date: str, days_prior: int = 1) -> str:
     """Returns datetime in the format specified in format_date. By default, returns yesterday's date at 1am.
     If days_prior is specified, returns the date x days prior to today's date.
     """

@@ -1,7 +1,7 @@
 City,State
 Alor Gajah,Melaka
 Alor Setar,Kedah
-Ayer Keroh, Melaka
+Ayer Keroh,Melaka
 Balik Pulau,Pulau Pinang
 Balok Baru Kuantan,Pahang
 Bandaraya Melaka,Melaka
@@ -10,7 +10,7 @@ Batu Berendam,Melaka
 Bukit Mertajam,Pulau Pinang
 Batu Muda,Kuala Lumpur
 Batu Pahat,Johor
-Bayan Lepas,Penang
+Bayan Lepas,Pulau Pinang
 Beranang,Selangor
 Besut,Terengganu
 Bintulu,Sarawak
@@ -22,7 +22,7 @@ Dungun,Terengganu
 George Town,Pulau Pinang
 Indera Mahkota Kuantan,Pahang
 Ipoh,Perak
-Johor Bahru, Johor
+Johor Bahru,Johor
 Jerantut,Pahang
 Kangar,Perlis
 Kajang,Selangor
@@ -37,7 +37,7 @@ Kota Bahru,Kelantan
 Kota Bharu,Kelantan
 Kota Kinabalu,Sabah
 Kota Samarahan,Sarawak
-Kota Setar, Kedah
+Kota Setar,Kedah
 Kuala Muda,Kedah
 Kuala Perlis,Perlis
 Kota Tinggi,Johor
@@ -82,7 +82,7 @@ Seberang Perai,Pulau Pinang
 Segamat,Johor
 Sematan,Sarawak
 Senai,Johor
-Kuala Lumpur, Kuala Lumpur
+Kuala Lumpur,Kuala Lumpur
 Sepang,Kuala Lumpur
 Seremban,Negeri Sembilan
 Seri Manjung,Perak
@@ -98,7 +98,7 @@ Sungai Petani,Kedah
 Taiping,Perak
 Tanah Merah,Kelantan
 Tangkak,Johor
-Timur Laut, Pulau Pinang
+Timur Laut,Pulau Pinang
 Tanjong Malim,Perak
 Tawau,Sabah
 Temerloh,Pahang
