@@ -1,4 +1,4 @@
-{{config(materialized='table')}}
+{{config(materialized='incremental')}}
 
 select
     datetime,
@@ -20,3 +20,6 @@ select
     wind_chill
 from {{ref('stg_hourly_pws_weather')}} w left join {{ref('full_locations')}} fl
 ON w.weather_station = fl.PWStation
+{% if is_incremental() %}
+    where datetime > (select max(datetime) from {{ this }})
+{% endif %}

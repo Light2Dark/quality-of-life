@@ -1,4 +1,4 @@
-{{config(materialized="table")}}
+{{config(materialized="view")}}
 
 WITH hourly_air_quality AS (
   SELECT
