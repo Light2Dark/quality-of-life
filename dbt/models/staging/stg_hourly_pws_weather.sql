@@ -1,4 +1,4 @@
-{{config(materialized="table")}}
+{{config(materialized="view")}}
 
 WITH formatted_hourly_weather AS 
 (
@@ -12,13 +12,13 @@ WITH formatted_hourly_weather AS
         SAFE_CAST(precipitation_total AS FLOAT64) as precipitation_total,
         SAFE_CAST(pressure_trend AS FLOAT64) as pressure_tend,
         SAFE_CAST(pressure AS FLOAT64) as pressure,
-        SAFE_CAST(wind_speed AS INT) as wind_speed,
-        SAFE_CAST(gust AS INT) as gust,
+        SAFE_CAST(wind_speed AS FLOAT64) as wind_speed,
+        SAFE_CAST(gust AS FLOAT64) as gust,
         SAFE_CAST(dew_point AS FLOAT64) as dew_point,
         SAFE_CAST(heat_index AS FLOAT64) as heat_index,
         SAFE_CAST(wind_direction AS INT) as wind_direction_degree,
         SAFE_CAST(wind_chill AS FLOAT64) as wind_chill,
-        SAFE_CAST(uv AS INT) as uv_index,
+        SAFE_CAST(SAFE_CAST(uv AS float64) AS INT) as uv_index,
     FROM
     {% if var('test_run', default=true) %}
         {{source('dev', 'hourly_pws_weather')}}

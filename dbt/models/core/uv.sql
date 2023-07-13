@@ -1,4 +1,4 @@
-{{config(materialized='table')}}
+{{config(materialized='incremental')}}
 
 WITH uv_stg AS (
     select 
@@ -18,6 +18,9 @@ WITH uv_stg AS (
         END as exposure_category
     from
         {{ref('weather')}}
+    {% if is_incremental() %}
+        where datetime > max(datetime) from {{this}}
+    {% endif %}
 )
 
 SELECT 
