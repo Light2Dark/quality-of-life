@@ -30,9 +30,9 @@ WITH combined_data AS (
         AVG(precipitation_total) as precipitation_total
     from {{ref('weather')}} as w
     full join {{ref('air_quality')}} as aq
-    ON w.datetime = aq.datetime AND w.city = aq.city
+    ON w.datetime = aq.datetime AND w.place = aq.place
     full join {{ref('personal_weather')}} as pws
-    ON pws.datetime = aq.datetime AND pws.city = aq.city
+    ON pws.datetime = aq.datetime AND pws.place = aq.place
     {% if is_incremental() %}
         where aq.datetime > (select max(aq.datetime) from {{ this }}) OR
         w.datetime > (select max(w.datetime) from {{ this }}) OR
