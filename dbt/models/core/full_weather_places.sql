@@ -1,4 +1,4 @@
-{{config(materialized='incremental')}}
+{{config(materialized='table')}}
 
 WITH combined_data AS (
     select

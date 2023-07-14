@@ -118,25 +118,6 @@ models:
         tests:
           - not_null
 
-  - name: full_weather
-    description: "Hourly data for all envinronmental factors, combining air quality & weather, grouped by city"
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - city
-            - datetime
-    columns:
-      - name: city
-        tests:
-          - not_null
-          - relationships:
-              field: city
-              to: ref('full_locations')
-      - name: datetime
-        description: Format of YYYY-MM-DD HH:MM:SS.
-        tests:
-          - not_null
-
   - name: full_weather_places
     description: "Hourly data for all envinronmental factors, combining air quality & weather, grouped by places"
     tests:
@@ -167,6 +148,3 @@ models:
         description: Format of YYYY-MM-DD HH:MM:SS.
         tests:
           - not_null
-
-  - name: full_weather_city
-    description: Aggregation by cities
