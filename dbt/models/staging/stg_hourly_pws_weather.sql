@@ -45,13 +45,13 @@ SELECT
 
     CASE
         WHEN dew_point <= 0 THEN NULL
-        WHEN dew_point >= 50 THEN NULL
+        WHEN dew_point >= 45 THEN NULL
         ELSE dew_point
     END as dew_point,
 
     CASE
         WHEN temperature <= 0 THEN NULL
-        WHEN temperature >= 50 THEN NULL
+        WHEN temperature >= 42 THEN NULL
         ELSE temperature
     END as temperature,
 
@@ -61,8 +61,8 @@ SELECT
     END as pressure_tend,
 
     CASE
-        WHEN pressure < 500 THEN NULL
-        WHEN pressure > 1500 THEN NULL
+        WHEN pressure < 850 THEN NULL
+        WHEN pressure > 1090 THEN NULL
         ELSE pressure
     END as pressure,
 
@@ -78,7 +78,7 @@ SELECT
 
     CASE
         WHEN heat_index <= 0 THEN NULL
-        WHEN heat_index >=50 THEN NULL
+        WHEN heat_index >= 45 THEN NULL
         ELSE heat_index
     END as heat_index,
 
@@ -90,7 +90,7 @@ SELECT
 
     CASE 
         WHEN wind_chill <= 0 THEN NULL
-        WHEN wind_chill >=50 THEN NULL
+        WHEN wind_chill >= 45 THEN NULL
         ELSE wind_chill
     END as wind_chill,
 
