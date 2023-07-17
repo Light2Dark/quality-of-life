@@ -88,7 +88,7 @@ def request_api(url: str) -> dict:
     try:
         response = requests.get(url)
         if response.status_code == 404:
-            with open("/logs/unavailable_urls.log", "a") as f:
+            with open("logs/unavailable_urls.log", "a") as f:
                 f.write(f"{url}\n")
             return None
         return response.json()
