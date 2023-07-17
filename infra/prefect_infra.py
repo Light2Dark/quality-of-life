@@ -18,12 +18,11 @@ def create_deployment():
     
     deployment_full = Deployment.build_from_flow(
         flow=prefect_full_weather,
-        name="Full Weather Pipeline",
+        name="Full Weather Pipeline Deployment",
         storage=github_block,
         work_queue_name="default"
     )
     deployment_full.apply()
-
 
 # PREFECT BLOCKS
 from prefect_gcp import GcpCredentials

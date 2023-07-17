@@ -21,13 +21,14 @@ PREPROCESSED_AQ_DATA_GCS_SAVEPATH = "daily_preprocessed_air_quality_data"
 
 
 @flow(name="prefect_full_weather",log_prints=True)
-def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool, start_date: str = None, end_date: str = None, time: str = '0000'):
+def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool, personal_weather_run: bool, start_date: str = None, end_date: str = None, time: str = '0000'):
     """Runs the full weather ELT flow using Prefect. Only 1 process will run.
 
     Args:
         testing (bool): If true, dev dataset is used. Else, prod dataset.
         air_quality_run (bool): If true, air quality data is requested from API and stored in GCS & BQ.
         weather_run (bool): If true, weather data is requested from API and stored in GCS & BQ.
+        personal_weather_run (bool): If true, personal weather data is requested from API and stored in GCS & BQ.
         start_date (str, optional): Date must be in YYYYMMDD format. Defaults to yesterday's date if not specified.
         end_date (str, optional): Date must be in YYYYMMDD format. Defaults to yesterday's date if not specified.
         time (str, optional): Request to the api using the time parameter. Defaults to '0000'.
@@ -48,28 +49,38 @@ def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool
         else:
             print("Running air quality pipeline on prod dataset")
             air_quality.elt_air_quality(RAW_AQ_DATA_GCS_SAVEPATH, PREPROCESSED_AQ_DATA_GCS_SAVEPATH, PROD_DATASET_AQ, aq_start_date, aq_end_date, time.strip())
-    
-    if weather_run:
+
+    def get_start_date_yesterday(start_date, end_date):
         if start_date is None or end_date is None:
             print("Start date or end date not specified, using default of yesterday")
         start_date = get_datetime('%Y%m%d', 1) if start_date is None else start_date.strip()
         end_date = get_datetime('%Y%m%d', 1) if end_date is None else end_date.strip()
-        
+        return (start_date, end_date)
+    
+    if weather_run:
+        start_date, end_date = get_start_date_yesterday(start_date, end_date)
         if testing:
             print("Running weather pipeline on dev dataset")
-            weather.elt_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_WEATHER, start_date, end_date)
-            weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_PWS, start_date, end_date)
+            weather.elt_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_WEATHER, start_date, end_date)  
         else:
             print("Running weather pipeline on prod dataset")
             weather.elt_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PROD_DATASET_WEATHER, start_date, end_date)
+            
+    if personal_weather_run:
+        start_date, end_date = get_start_date_yesterday(start_date, end_date)
+        if testing:
+            print("Running personal weather pipeline on dev dataset")
+            weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_PWS, start_date, end_date)
+        else:
+            print("Running personal weather pipeline on prod dataset")
             weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PROD_DATASET_PWS, start_date, end_date)
-        
         
 def run_full_weather_parser():
     parser = argparse.ArgumentParser(prog="Full Weather ELT", description="An ELT flow to get weather and air quality data from API and store in GCS & BQ", epilog="credits to Sham")
     parser.add_argument("-t", "--testing", action="store_true",help="If true, dev dataset is used. Else, prod dataset")
     parser.add_argument("-aq", "--air_quality", action="store_true", help="If true, air quality data is requested from API and stored in GCS & BQ")
     parser.add_argument("-w", "--weather", action="store_true", help="If true, weather data is requested from API and stored in GCS & BQ")
+    parser.add_argument("-pws", "--personal_weather", action="store_true", help="If true, personal weather data is requested from API and stored in GCS & BQ")
     parser.add_argument("-sd", "--start_date", type=str, help="Start date to request data from API. Format is YYYYMMDD. Defaults to today")
     parser.add_argument("-ed", "--end_date", type=str, help="End date to request data from API. Format is YYYYMMDD. Defaults to today") 
     parser.add_argument("-tm", "--time", type=str, help="Time to request data from API. Format is HHMM. Defaults to 12.00am", required=False, default="0000")
@@ -95,22 +106,31 @@ def run_full_weather_parser():
             air_quality_multiprocessing(aq_start_date, aq_end_date, RAW_AQ_DATA_GCS_SAVEPATH, PREPROCESSED_AQ_DATA_GCS_SAVEPATH, DEV_DATASET_AQ, num_processes, args.time.strip())
         else:
             air_quality_multiprocessing(aq_start_date, aq_end_date, RAW_AQ_DATA_GCS_SAVEPATH, PREPROCESSED_AQ_DATA_GCS_SAVEPATH, PROD_DATASET_AQ, num_processes, args.time.strip())
+            
+    def get_date(start_date, end_date):
+        if start_date is None or end_date is None:
+            print("Start date or end date not specified, using default of today")
+        start_date = get_datetime('%Y%m%d', 1) if start_date is None else start_date.strip()
+        end_date = get_datetime('%Y%m%d', 1) if end_date is None else end_date.strip()
+        return (start_date, end_date)
     
     if args.weather:
-        if args.start_date is None or args.end_date is None:
-            print("Start date or end date not specified, using default of today")
-        start_date = get_datetime('%Y%m%d', 1) if args.start_date is None else args.start_date.strip()
-        end_date = get_datetime('%Y%m%d', 1) if args.end_date is None else args.end_date.strip()
-        
+        start_date, end_date = get_date(args.start_date, args.end_date)
         if args.testing:
             print("Running weather pipeline on dev dataset")
             weather_multiprocessing(start_date, end_date, RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_WEATHER, num_processes)
-            weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_PWS, start_date, end_date)
         else:
             print("Running weather pipeline on prod dataset")
             weather_multiprocessing(start_date, end_date, RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PROD_DATASET_WEATHER, num_processes)
+            
+    if args.personal_weather:
+        start_date, end_date = get_date(args.start_date, args.end_date)
+        if args.testing:
+            print("Running personal weather pipeline on dev dataset")
+            weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_PWS, start_date, end_date)
+        else:
+            print("Running personal weather pipeline on prod dataset")
             weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PROD_DATASET_PWS, start_date, end_date)
-         
          
 def get_datetime(format_date: str, days_prior: int = 1) -> str:
     """Returns datetime in the format specified in format_date. By default, returns yesterday's date at 1am.
