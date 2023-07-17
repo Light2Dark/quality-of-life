@@ -148,3 +148,10 @@ models:
         description: Format of YYYY-MM-DD HH:MM:SS.
         tests:
           - not_null
+  
+  - name: livability_score
+    description: A table to derive livability score, takes into account temp, uv and air quality
+    columns:
+      - name: day
+        tests:
+          - not_null
