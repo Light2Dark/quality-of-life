@@ -67,11 +67,13 @@ SELECT
     END as pressure,
 
     CASE
+        WHEN weather_station = 'ISELANGO11' THEN NULL
         WHEN wind_speed < 0 THEN NULL
         ELSE wind_speed
     END as wind_speed,
 
     CASE 
+        WHEN weather_station = 'ISELANGO11' THEN NULL
         WHEN gust < 0 THEN NULL
         ELSE gust
     END as gust,
@@ -95,6 +97,7 @@ SELECT
     END as wind_chill,
 
     CASE 
+        WHEN weather_station = 'ISELANGO11' THEN NULL
         WHEN uv_index < 0 THEN NULL
         ELSE uv_index
     END as uv_index,
