@@ -32,7 +32,7 @@ GCS_AIR_QUALITY_BUCKET_BLOCK_NAME = "gcs-air-quality-bucket"
 GCS_WEATHER_BUCKET_BLOCK_NAME = "gcs-weather-bucket"
 WEATHER_API_SECRET_BLOCK = "weather-api-secret"
 
-def create_gcp_credentials_block(filepath: str = os.getenv("GCP_CREDENTIALS_FILEPATH", "google_creds.json")) -> GcpCredentials:
+def create_gcp_credentials_block(filepath: str = os.getenv("GCP_CREDENTIALS_FILEPATH")) -> GcpCredentials:
     with open(filepath, "r") as f:
         service_account_info = f.read()
 

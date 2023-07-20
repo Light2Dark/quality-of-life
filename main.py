@@ -87,8 +87,8 @@ def run_full_weather_parser():
     parser.add_argument("-p", "--parallel", type=int, help="Number of parallel processes to run. Defaults to cpu count - 1", required=False, default=mp.cpu_count() - 1)
     args = parser.parse_args()
     
-    # sets num of processes to run in parallel concurrently
-    num_processes = args.parallel // 2 if args.air_quality and args.weather else args.parallel
+    # as both air quality and weather pipelines can run in parallel, we split number of processes in half
+    num_processes = args.parallel // 2 if args.air_quality and args.weather and args.parallel >= 2 else args.parallel
     print(f"Number of processes available: {num_processes}")
     
     if args.air_quality:
