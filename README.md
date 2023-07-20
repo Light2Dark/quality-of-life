@@ -62,17 +62,19 @@ Access the dashboard here: [Looker Studio Report](https://lookerstudio.google.co
 
 ## Analyzing the data
 
-You can analyze the data in 2 ways.
-1. csv file `data/air_quality_2017-2023.zip`. This file is updated to 29/5/2023.
-2. BigQuery.
+You can obtain the datasets in 2 ways.
+1. Use BigQuery/SQL/Kaggle to get the dataset
+2. Request the csv files at (Sham9871@gmail.com), the files are too large and there are various tables so we can have a discussion on what sort of data you'd like. I'd love to help you out!
 
-This project uses BigQuery as a Data Warehouse, so you can use SQL to query data. All the tables in the prod dataset is public.
+This project uses BigQuery as a Data Warehouse, so you can use SQL to query data. All the tables in the prod dataset is public. You can star the dataset by doing the following:
+
+Star the dataset `quality-of-life-364309`
+
+<img width="600px" src = "https://github.com/Light2Dark/quality-of-life/assets/19585239/472ce9ae-9a0e-4832-b41a-effdc180b56d" />
+<img width = "300px" src = "https://github.com/Light2Dark/quality-of-life/assets/19585239/7b41bfbd-5f66-46fe-bda0-a56ef62ceb61" />
 
 `PROJECT_ID=quality-of-life-364309`
-
 `DATASET=prod`
-
-There are several tables in the `prod` dataset, you may want to use the `full_weather`, `air_quality`, `weather` and `uv` tables for queries.
 
 Example SQL Statements
 
@@ -146,6 +148,7 @@ python main.py \
   --testing=True \
   --air_quality=True \
   --weather=True \
+  --personal_weather=True \
   --start_date=20200101 \
   --end_date=20200102 \
   --time=0000 \
