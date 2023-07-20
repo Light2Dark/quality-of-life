@@ -171,7 +171,7 @@ python main.py \
   --parallel=1
 ```
 
-6. Setup dbt. Firstly, modify the `dbt/profile_template.yml` file with your own project details.
+6. Setup dbt. Firstly, modify the `dbt/profile_template.yml` file with your own project details. Change the dataset to `prod` if your data is there.
 ```dbt/profile_template.yml
 fixed:
   dataset: dev
