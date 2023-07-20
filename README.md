@@ -105,7 +105,7 @@ Python 3 is required for this project. Additionally, the entire project runs dai
 - [Prefect Cloud Account](https://app.prefect.cloud/)
 - [dbt Cloud](https://cloud.getdbt.com/)
 
-1. Setup your environment
+1. Setup your environment [RealPython's tutorial](https://realpython.com/python-virtual-environments-a-primer/#create-it)
 ```bash
   git clone <url>
   cd <project-name>
@@ -115,7 +115,7 @@ Python 3 is required for this project. Additionally, the entire project runs dai
 
   pip install -r requirements.txt   # installing dependencies
 ```
-2. Download the service_account_json_file from GCP. Follow [service_account_file_download](https://github.com/wjuszczyk/dezoomcamp-project#step-2-setup-gcp)
+2. Download the service_account_json_file from GCP and store the json file in the root of this project. Follow [service_account_file_download](https://github.com/wjuszczyk/dezoomcamp-project#step-2-setup-gcp)
 3. Fill in the `.env.example` file and rename it to `.env`. Do not remove the # symbols!
 ```.env
 ## Prefect Config
@@ -128,7 +128,7 @@ PREFECT_API_KEY=<PREFECT_API_KEY>
 ## GCP Config
 PROJECT_ID=<PROJECT_ID>
 REGION=<REGION>
-GCP_CREDENTIALS_FILEPATH=<GCP_CREDENTIALS_FILEPATH>
+GCP_CREDENTIALS_FILEPATH=<GCP_SERVICE_ACCOUNT_FILENAME>
 #
 ## Weather API
 WEATHER_API=<WEATHER_API_KEY>
@@ -141,6 +141,16 @@ GITHUB_BRANCH=<GITHUB_BRANCH>
 GITHUB_BLOCK=<GITHUB_BLOCK>
 #
 ```
+Refer to the profile section of Prefect for the API Key and account id. 
+Refer to the GCP Console for the project id. You can choose a region for the storage of buckets and dataset [Regions and Zones in GCP)[https://cloud.google.com/compute/docs/regions-zones]
+For the weather API key, contact me if you require one.
+
+Next, fill in the `terraform.tfvars.example` file in the infra folder and rename it to `terraform.tfvars`.
+```
+google_credentials_file = "../GCP_SERVICE_ACCOUNT_FILENAME"
+project_id = "PROJECT_ID"
+```
+
 4. Setup the infrastructure
 In your terminal, from the root folder of this project, run the following command
 ```bash
@@ -148,13 +158,13 @@ In your terminal, from the root folder of this project, run the following comman
 bash setup_infra.sh
 ```
 
-5. You are ready to run the main elt pipeline. Run the following command to extract air quality and weather data from 2020-01-01 to 2020-01-02 using 1 process only.
+5. You are ready to run the main elt pipeline. Run the following command to extract air quality, weather and personal weather stations data from 2020-01-01 to 2020-01-02 using 1 process only. This will load the data into the `dev` dataset in BigQuery.
 ```python
 python main.py \
-  --testing=True \
-  --air_quality=True \
-  --weather=True \
-  --personal_weather=True \
+  --testing \
+  --air_quality \
+  --weather \
+  --personal_weather \
   --start_date=20200101 \
   --end_date=20200102 \
   --time=0000 \
