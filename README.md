@@ -54,6 +54,9 @@ The air quality data is extracted from the government website [APIMS Table](http
   <img height = "300px" src = "https://user-images.githubusercontent.com/19585239/195292738-30a6ae22-a266-4456-9634-fc5ee7217ebc.png" />
 </p>
 
+Historical air quality data:
+Big thanks to [YoungShung's API Project](https://github.com/ynshung/api-malaysia) for this data. You can donwload the data from that repo and give him a star too!
+
 ### Dashboard
 Access the dashboard here: [Looker Studio Report](https://lookerstudio.google.com/reporting/f0bac475-b860-4d01-8ac0-7dceae960daf)
 
