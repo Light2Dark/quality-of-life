@@ -195,6 +195,30 @@ def pressure_update():
                 [date for date in date_list]
             )
 
+def stats():
+    df = pd.read_csv("pws.csv")
+    pws_stations = pd.read_csv("dbt/seeds/state_locations.csv")
+    pws_stations = pws_stations['PWStation'].dropna().unique()
+    
+    def print_stats(df, factor: str):
+        min_factor = df[factor].min()
+        avg_factor = df[factor].mean()
+        max_factor = df[factor].max()
+        if avg_factor == 0:
+            print("BRO")
+        print(f"Station: {station}, Average {factor}: {avg_factor}, Max {factor}: {max_factor}, Min {factor}: {min_factor}")
+    
+    # print average uv reading for each station
+    for station in pws_stations:
+        df_station = df[df['weather_station'] == station]
+        # avg_uv = df_station['uv'].mean()
+        # max_uv = df_station['uv'].max()
+        
+        # print_stats(df_station, 'pressure')
+        print_stats(df_station, 'uv')
+
+        # print(f"Station: {station}, Average UV: {avg_uv}, Max UV: {max_uv}")
+
     
 if __name__ == "__main__":
     # extract_personal_weather_stations()
