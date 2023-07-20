@@ -28,18 +28,18 @@ Weather data is collected from weather stations throughout Malaysia. Government 
 - **Data Visualization:** Google Looker Studio
 
 ### Data Transformation:
-<img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/b56672ad-9957-44c8-a131-dbb4840b4e3a" width="80%" />
+<img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/034b8698-eb4c-484c-afa7-c03ba4297d44" width="80%" />
 
 Both pandas and dbt is used to clean, transform and model the data
 
 ### Schema
-![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/1a95389e-9c5e-4aa6-8a8d-c6945aef1b1c)
+![image](https://github.com/Light2Dark/quality-of-life/assets/19585239/420d06a8-46d6-42fd-b83f-721c453f0ed8)
 
 **Clustering:** TODO [recommended here](https://cloud.google.com/bigquery/docs/clustered-tables).
 
-**Partitioning:** It may be more efficient to partition by states however BigQuery does not allow partitions by String fields. Some workarounds exist (adding an int as an additional column) but the pros and cons needs to be examined.
+**Partitioning:** It may be more efficient to partition by states / city. However BigQuery does not allow partitions by String fields. Some workarounds exist that could help as suggested in [Medium Article by Guillaume](https://medium.com/google-cloud/partition-on-any-field-with-bigquery-840f8aa1aaab). More consideration is needed for now.
 
-**Normalization:** TODO. There are duplicated city fields, changing them would require reconnecting the dashboard which is a pain.
+**Normalization:** Some tables are denormalized to speed up queries for the dashboard. Eg, the city field is duplicated many times. Data integrity remains intact however as we use dbt to form the tables and ensure the downstream tables always follow the upstream tables.
 
 ### Data Sources
 The Weather data is proprietary and unfortunately this code is not reproducible without the API key. Credits to [Weather Underground](https://www.wunderground.com/) for the data. Contact me for more details regarding this.
@@ -57,7 +57,7 @@ The air quality data is extracted from the government website [APIMS Table](http
 ### Dashboard
 Access the dashboard here: [Looker Studio Report](https://lookerstudio.google.com/reporting/f0bac475-b860-4d01-8ac0-7dceae960daf)
 
-<img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/4183283e-c191-4d46-9672-85187fcda9f9" height="400px" />
+<img src="https://github.com/Light2Dark/quality-of-life/assets/19585239/2cd84c10-ae28-4ea2-97cc-b680246c5a8c" height="400px" />
 
 
 ## Analyzing the data
