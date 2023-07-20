@@ -1,0 +1,2 @@
+google_credentials_file = "../GCP_SERVICE_ACCOUNT_FILENAME"
+project_id = "PROJECT_ID"

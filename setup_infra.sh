@@ -4,7 +4,7 @@
 cd infra
 
 terraform init
-terraform plan
+terraform plan --var-file=terraform.tfvars
 terraform apply
 
 # Activate source variables
