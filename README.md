@@ -64,24 +64,27 @@ Access the dashboard here: [Looker Studio Report](https://lookerstudio.google.co
 
 You can obtain the datasets in 2 ways.
 1. Use BigQuery/SQL/Kaggle to get the dataset
-2. Request the csv files at (Sham9871@gmail.com), the files are too large and there are various tables so we can have a discussion on what sort of data you'd like. I'd love to help you out!
+2. Request the csv files from me at (sham9871@gmail.com). The files are too large and there are various tables so we can have a discussion on what sort of data you'd like. I'd love to help you out!
 
 This project uses BigQuery as a Data Warehouse, so you can use SQL to query data. All the tables in the prod dataset is public. You can star the dataset by doing the following:
 
 Star the dataset `quality-of-life-364309`
 
 <img width="600px" src = "https://github.com/Light2Dark/quality-of-life/assets/19585239/472ce9ae-9a0e-4832-b41a-effdc180b56d" />
-<img width = "300px" src = "https://github.com/Light2Dark/quality-of-life/assets/19585239/7b41bfbd-5f66-46fe-bda0-a56ef62ceb61" />
-
-`PROJECT_ID=quality-of-life-364309`
-`DATASET=prod`
+<img width = "200px" src = "https://github.com/Light2Dark/quality-of-life/assets/19585239/7b41bfbd-5f66-46fe-bda0-a56ef62ceb61" />
 
 Example SQL Statements
 
 ```bash
   SELECT *
-  FROM `quality-of-life-364309.prod.full_weather`
+  FROM `quality-of-life-364309.prod.full_weather_places`
   LIMIT 1000
+
+# Other available datasets
+`quality-of-life-364309.prod.air_quality`
+`quality-of-life-364309.prod.uv`
+`quality-of-life-364309.prod.weather`
+`quality-of-life-364309.prod.personal_weather`
 ```
 
 You can play around with BigQuery SQL using Kaggle. A sample notebook: [Shahmir's AQ Kaggle Notebook](https://www.kaggle.com/datasets/shahmirvarqha/air-quality-malaysia-2017-present)
@@ -194,7 +197,7 @@ Contributions are always welcome!
 #### Improvements (To-Do):
 
 - It might be good to partition and cluster based on certain attributes to provide long term scalability
-- Queries are slow, SQL used in dbt models may deserve improvement
+- Check for more outliers in the data and report them
 
 ## Credits
 Thank you to everyone who made the [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp)
