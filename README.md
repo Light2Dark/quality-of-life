@@ -105,7 +105,7 @@ Python 3 is required for this project. Additionally, the entire project runs dai
 - [Prefect Cloud Account](https://app.prefect.cloud/)
 - [dbt Cloud](https://cloud.getdbt.com/)
 
-1. Setup your environment [RealPython's tutorial](https://realpython.com/python-virtual-environments-a-primer/#create-it)
+1. Setup your environment ([RealPython's tutorial](https://realpython.com/python-virtual-environments-a-primer/#create-it))
 ```bash
   git clone <url>
   cd <project-name>
@@ -141,9 +141,9 @@ GITHUB_BRANCH=<GITHUB_BRANCH>
 GITHUB_BLOCK=<GITHUB_BLOCK>
 #
 ```
-Refer to the profile section of Prefect for the API Key and account id. 
-Refer to the GCP Console for the project id. You can choose a region for the storage of buckets and dataset [Regions and Zones in GCP)[https://cloud.google.com/compute/docs/regions-zones]
-For the weather API key, contact me if you require one.
+-  Refer to the profile section of Prefect for the API Key and Account ID.
+- Refer to the GCP Console for the project id. You can choose a region for the storage of buckets and dataset ([Regions and Zones in GCP][https://cloud.google.com/compute/docs/regions-zones])
+- For the weather API key, contact me if you require one.
 
 Next, fill in the `terraform.tfvars.example` file in the infra folder and rename it to `terraform.tfvars`.
 ```
@@ -200,6 +200,7 @@ dbt init    # answer the prompts
 dbt deps
 dbt seed
 dbt run
+dbt test    # run tests against data models
 ```
 
 
