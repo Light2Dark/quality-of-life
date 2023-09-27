@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 jobs:
   send_email:
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Send mail
         uses: dawidd6/action-send-mail@v3
