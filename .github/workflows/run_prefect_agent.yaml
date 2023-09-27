@@ -30,6 +30,8 @@ jobs:
 
       - name: Keep workflow alive (if > 50days)
         uses: gautamkrishnar/keepalive-workflow@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Python
         uses: actions/setup-python@v4
