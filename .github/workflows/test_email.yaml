@@ -1,0 +1,20 @@
+name: Test email service
+on:
+  workflow_dispatch:
+jobs:
+  send_email:
+    runs_on: ubuntu-latest
+    steps:
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.GMAIL_USERNAME }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: Github Actions job result
+          # Recipients' addresses:
+          to: sham9871@gmail.com
+          from: Qualatay Life
+          body: Test run email service!
+          priority: high

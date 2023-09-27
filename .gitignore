@@ -10,6 +10,7 @@ note.txt
 archi.excalidraw
 google_creds.json
 data/apims-2005-2017.csv
+data
 
 # Terraform
 *.tfvars
