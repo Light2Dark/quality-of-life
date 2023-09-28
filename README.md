@@ -97,6 +97,12 @@ You can play around with BigQuery SQL using Kaggle. A sample notebook: [Shahmir'
 
 **GitHub Actions:** Before merging into main, a CI/CD pipeline checks to see if the unittests work.
 
+## Adding new weather/aq stations
+Edit the following files:
+- `dbt/seeds/state_locations.csv`
+- `dbt/seeds/city_places.csv`
+- `dbt/seeds/city_states.csv`
+Make sure the the `identifying_location` is unique, you can refer to the `pipelines/etl/utils/util_weather.py` for geocoding new locations.
 
 ## Installation
 
