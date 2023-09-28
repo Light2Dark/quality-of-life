@@ -4,6 +4,7 @@ import pandas as pd
 from geopy.geocoders import Nominatim
 from google.cloud import bigquery
 from datetime import datetime
+from typing import List
 
 load_dotenv()
 
@@ -37,45 +38,10 @@ def stations_csv():
     df.to_csv("stations.csv", index=False)
     print(df)
 
-def extract_personal_weather_stations():
-    stations = [
-        "ISELANGO11",
-        "IPETAL1",
-        "IPETAL3",
-        "IKUALA16",
-        "IKUALA6",
-        "IKUALA23",
-        "IAMPAN2",
-        "IHULUL1",
-        "IPUCHO2",
-        "IPUCHO4",
-        "IPUTRA2",
-        "IKAJAN7",
-        "IKAJAN12",
-        "IKAJAN6",
-        "IKAJAN4",
-        "ISEMEN3",
-        "INILAI8",
-        "ITEMER1",
-        "ITANJO2",
-        "IRAUB2",
-        "IBUKIT1",
-        "IPENAN2",
-        "IAYERI1",
-        "IPENAN3",
-        "IKUALA18",
-        "IPADAN6",
-        "IKUANT6",
-        "IPEKAN1",
-        "ISELAN1",
-        "IMALAC2",
-        "ITANGK1",
-        "IPAGOH1",
-        "IJOHORBA4"
-    ]
-    
-    api_key = os.getenv("WEATHER_API_KEY")
+def extract_personal_weather_stations(stations: List, save_path: str):
+    api_key = os.getenv("WEATHER_API")
     urls = [f"https://api.weather.com/v2/pws/observations/all/1day?apiKey={api_key}&stationId={station}&numericPrecision=decimal&format=json&units=m" for station in stations]
+    df = pd.DataFrame()
     
     for url in urls:
         response = requests.get(url)
@@ -88,19 +54,21 @@ def extract_personal_weather_stations():
         geolocator = Nominatim(user_agent="weather_app")
         location = geolocator.reverse(f"{lat}, {long}")
         
-        df = pd.DataFrame({
+        new_df = pd.DataFrame({
             "station_id": [station_id],
-            "lat": [lat],
-            "long": [long],
+            "Latitude": [lat],
+            "Longitude": [long],
             "address": [location.address]
         })
+        df = pd.concat([df, new_df], axis=0, ignore_index=True)
         
-        df.to_csv("pws.csv", mode="a", header=False, index=False)
+    df.to_csv(save_path, index=False)
         
-def geocode():
-    df = pd.read_csv("dbt/seeds/state_locations.csv")
+def geocode(locations_list_csv_path = "dbt/seeds/state_locations.csv", new_csv_path = "new_sl.csv"):
+    locations_df = pd.read_csv(locations_list_csv_path)
 
     geolocator = Nominatim(user_agent="weather_app")
+    new_df = pd.DataFrame()
     
     def breakdown_address(row):
         raw_add = geolocator.reverse(f"{row['Latitude']}, {row['Longitude']}").raw['address']
@@ -109,7 +77,7 @@ def geocode():
         city = next((raw_add[key] for key in ['city', 'district', 'state_district', 'county', 'region', 'suburb'] if raw_add.get(key)), None)
         
         df = pd.DataFrame({
-            "Identifying_Location": [row["Identifying_Location"]],
+            "Identifying_Location": [row.get("Identifying_Location")],
             "town": [town],
             "city": [city],
             "state": [raw_add.get('state')],
@@ -118,10 +86,13 @@ def geocode():
             "postcode": [raw_add.get('postcode')],
             "address": [raw_add]
         })
-        
-        df.to_csv("new_sl.csv", mode="a", header=False, index=False)
-        
-    df.apply(breakdown_address, axis=1)
+        return df
+    
+    for index, row in locations_df.iterrows():
+        df = breakdown_address(row)
+        new_df = pd.concat([new_df, df], axis=0, ignore_index=True)
+    
+    new_df.to_csv(new_csv_path, index=False)
     
 def make_pressure_df(file_str: str) -> pd.DataFrame:
     """
@@ -222,4 +193,64 @@ def stats():
     
 if __name__ == "__main__":
     # extract_personal_weather_stations()
+    stations = [
+        "ISELANGO11",
+        "IPETAL1",
+        "IPETAL3",
+        "IKUALA16",
+        "IKUALA6",
+        "IKUALA23",
+        "IAMPAN2",
+        "IHULUL1",
+        "IPUCHO2",
+        "IPUCHO4",
+        "IPUTRA2",
+        "IKAJAN7",
+        "IKAJAN12",
+        "IKAJAN6",
+        "IKAJAN4",
+        "ISEMEN3",
+        "INILAI8",
+        "ITEMER1",
+        "ITANJO2",
+        "IRAUB2",
+        "IBUKIT1",
+        "IPENAN2",
+        "IAYERI1",
+        "IPENAN3",
+        "IKUALA18",
+        "IPADAN6",
+        "IKUANT6",
+        "IPEKAN1",
+        "ISELAN1",
+        "IMALAC2",
+        "ITANGK1",
+        "IPAGOH1",
+        "IJOHORBA4"
+    ]  
+    new_stations = [
+        "IDENGK2",
+        "INILAI4",
+        "ISERIK8",
+        "IKAJAN12",
+        "IKUALA28",
+        "ISHAHA4",
+        "IBRINC1",
+        "IGUAMU4",
+        "IBANDA27",
+        "ISUNGA4",
+        "IKULAI5",
+        "IKUCHI6",
+        "IKUCHI10",
+        "IKUCHI7",
+        "ISIBU11",
+        "INIAH2",
+        "IPAPAR3",
+        "ITAMPA3",
+        "IKOTAB5",
+        "IBELURAN3",
+        "IBELURAN2"
+    ]
+
+    
     pass
