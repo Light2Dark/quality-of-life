@@ -218,6 +218,7 @@ Contributions are always welcome!
 
 - It might be good to partition and cluster based on certain attributes to provide long term scalability
 - Check for more outliers in the data and report them
+- The repo alive checker is not working, causing missed pipelines :')
 
 ## Credits
 Thank you to everyone who made the [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp).
