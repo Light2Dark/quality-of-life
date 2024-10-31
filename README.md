@@ -209,6 +209,8 @@ dbt run
 dbt test    # run tests against data models
 ```
 
+## Add addresses
+workbook.ipynb has some scripts to automate new locations identification
 
 ## Contributing
 
