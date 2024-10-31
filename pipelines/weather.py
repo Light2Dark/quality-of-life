@@ -40,9 +40,12 @@ def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, 
 
 
 @flow(name="ELT Personal Weather", log_prints=True)
-def elt_pws_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, start_date: str, end_date: str):
+def elt_pws_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, start_date: str, end_date: str, weather_stations: Optional[List[str]] = None):
     df = pd.read_csv("dbt/seeds/state_locations.csv", header=0)
     personal_weather_stations = df['PWStation'].dropna().unique()
+    
+    if weather_stations:
+        personal_weather_stations = weather_stations
     
     sd = datetime.strptime(start_date, "%Y%m%d")
     ed = datetime.strptime(end_date, "%Y%m%d")
