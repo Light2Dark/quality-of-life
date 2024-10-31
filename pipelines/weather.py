@@ -3,12 +3,12 @@ from pipelines.etl.transform import transform_weather
 from pipelines.etl.load import upload
 from infra.prefect_infra import GCS_WEATHER_BUCKET_BLOCK_NAME
 from prefect import flow
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 from datetime import datetime, timedelta
 import pandas as pd
 
 @flow(name="ELT Weather", log_prints=True)
-def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, start_date: str, end_date: str):
+def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, start_date: str, end_date: str, weather_stations: Optional[List[str]] = None):
     """Extract, transform and load weather data from start_date to end_date into BigQuery & GCS.
     Uploads raw and pre-processed data to GCS, and pre-processed data to BigQuery.
 
@@ -18,11 +18,16 @@ def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, 
         dataset (str, optional): Production or dev_dataset.
         start_date (str): Start date in YYYYMMDD format.
         end_date (str): End date in YYYYMMDD format. End date must be <31 days from start_date.
+        weather_stations (List[str], optional): List of weather stations to extract data from. If not provided, all ICAO weather stations in the state_locations.csv file will be used.
     """
     df = pd.read_csv("dbt/seeds/state_locations.csv")
     df.dropna(subset=["ICAO"], inplace=True)
-    weather_stations_df = df["ICAO"] + ":9:MY"
+    extension = ":9:MY"
+    weather_stations_df = df["ICAO"] + extension
     weather_stations_list = weather_stations_df.tolist()
+    
+    if weather_stations:
+        weather_stations_list = list(map(lambda x: x + extension, weather_stations))
     
     weather_data = extract_weather.extract(start_date, end_date, weather_stations_list)   
          

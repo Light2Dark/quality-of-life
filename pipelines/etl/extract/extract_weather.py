@@ -86,14 +86,7 @@ async def request_data(date_start: str, date_end: str, weather_station: str) -> 
     print(f"Requesting {request_url}")
     
     # check response
-    try:
-        response.raise_for_status()
-    except:
-        print(f"Error with {weather_station} on {date_start} to {date_end}")
-        with open("logs/unavailable_weather_urls.log", "a") as f:
-            request_url = request_url.replace(weather_api_key, "API_KEY")
-            f.write(f"{request_url}\n")
-        return None
+    response.raise_for_status()
     
     # validate response
     response_json = response.json()
@@ -143,13 +136,7 @@ async def request_pws_data(personal_weather_station: str, date: str) -> dict | N
     print(f"Requesting {url}")
     response = requests.get(url)
     
-    try:
-        response.raise_for_status()
-    except:
-        print(f"Error with {url}")
-        url = url.replace(weather_api_key, "API_KEY")
-        write_to_logs("logs/unavailable_weather_pws_urls.log", url)
-        return None
+    response.raise_for_status()
     
     if response.status_code == 204:
         print(f"Empty response for {url}")

@@ -3,7 +3,7 @@ import multiprocessing as mp
 from prefect import flow
 from pipelines import air_quality, weather, historical_aq
 from datetime import datetime, timedelta
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from infra import prefect_infra
 from pipelines.config import timeit
 
@@ -21,7 +21,7 @@ PREPROCESSED_AQ_DATA_GCS_SAVEPATH = "daily_preprocessed_air_quality_data"
 
 
 @flow(name="prefect_full_weather",log_prints=True)
-def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool, personal_weather_run: bool, start_date: str = None, end_date: str = None, time: str = '0000'):
+def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool, personal_weather_run: bool, start_date: str = None, end_date: str = None, time: str = '0000', stations: Optional[List[str]] = None):
     """Runs the full weather ELT flow using Prefect. Only 1 process will run.
 
     Args:
@@ -61,10 +61,10 @@ def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool
         start_date, end_date = get_start_date_yesterday(start_date, end_date)
         if testing:
             print("Running weather pipeline on dev dataset")
-            weather.elt_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_WEATHER, start_date, end_date)  
+            weather.elt_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_WEATHER, start_date, end_date, stations)  
         else:
             print("Running weather pipeline on prod dataset")
-            weather.elt_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PROD_DATASET_WEATHER, start_date, end_date)
+            weather.elt_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PROD_DATASET_WEATHER, start_date, end_date, stations)
             
     if personal_weather_run:
         start_date, end_date = get_start_date_yesterday(start_date, end_date)
@@ -84,12 +84,18 @@ def run_full_weather_parser():
     parser.add_argument("-sd", "--start_date", type=str, help="Start date to request data from API. Format is YYYYMMDD. Defaults to today")
     parser.add_argument("-ed", "--end_date", type=str, help="End date to request data from API. Format is YYYYMMDD. Defaults to today") 
     parser.add_argument("-tm", "--time", type=str, help="Time to request data from API. Format is HHMM. Defaults to 12.00am", required=False, default="0000")
+    parser.add_argument("-st", "--stations", nargs="*", help="List of stations to run the pipeline in. Format is --stations WBGN WXMXX. Defaults to seed csv", required=False, default=None)
     parser.add_argument("-p", "--parallel", type=int, help="Number of parallel processes to run. Defaults to cpu count - 1", required=False, default=mp.cpu_count() - 1)
     args = parser.parse_args()
     
     # as both air quality and weather pipelines can run in parallel, we split number of processes in half
     num_processes = args.parallel // 2 if args.air_quality and args.weather and args.parallel >= 2 else args.parallel
     print(f"Number of processes available: {num_processes}")
+    
+    WEATHER_DATASET = PROD_DATASET_WEATHER
+    if args.testing:
+        print("Executing the pipeline on dev dataset")
+        WEATHER_DATASET = DEV_DATASET_WEATHER
     
     if args.air_quality:
         if args.start_date is None or args.end_date is None:
@@ -116,12 +122,7 @@ def run_full_weather_parser():
     
     if args.weather:
         start_date, end_date = get_date(args.start_date, args.end_date)
-        if args.testing:
-            print("Running weather pipeline on dev dataset")
-            weather_multiprocessing(start_date, end_date, RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, DEV_DATASET_WEATHER, num_processes)
-        else:
-            print("Running weather pipeline on prod dataset")
-            weather_multiprocessing(start_date, end_date, RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PROD_DATASET_WEATHER, num_processes)
+        weather_multiprocessing(start_date, end_date, RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, WEATHER_DATASET, num_processes, args.stations)
             
     if args.personal_weather:
         start_date, end_date = get_date(args.start_date, args.end_date)
@@ -148,7 +149,7 @@ def pickled_aq(*args, **kwargs):
 
 
 # @timeit
-def weather_multiprocessing(start_date: str, end_date: str, raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, num_processes: int):
+def weather_multiprocessing(start_date: str, end_date: str, raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, num_processes: int, stations: Optional[List[str]]):
     # Run weather ELT in parallel
     # Execute the max number of processes concurrently until all date chunks are processed
     # TODO: Unittest this
@@ -159,22 +160,22 @@ def weather_multiprocessing(start_date: str, end_date: str, raw_gcs_savepath: st
     if num_processes >= len(date_chunks):
         print("Running weather ELT in 1 run")
         print(date_chunks)
-        run_weather_flows(raw_gcs_savepath, preproc_gcs_savepath, dataset, date_chunks, len(date_chunks))
+        run_weather_flows(raw_gcs_savepath, preproc_gcs_savepath, dataset, date_chunks, len(date_chunks), stations)
     else:
         print(f"Total date chunks: {len(date_chunks)}")
         remaining_chunks = len(date_chunks) % num_processes
         if remaining_chunks > 0:
             print(f"Odd number of date chunks. Running remainder chunks: 0-{remaining_chunks}")
             print(date_chunks[:remaining_chunks])
-            run_weather_flows(raw_gcs_savepath, preproc_gcs_savepath, dataset, date_chunks[:remaining_chunks], remaining_chunks)
+            run_weather_flows(raw_gcs_savepath, preproc_gcs_savepath, dataset, date_chunks[:remaining_chunks], remaining_chunks, stations)
         
         for i in range(remaining_chunks, len(date_chunks), num_processes):
             print(f"Running date chunks {i}-{i+num_processes}")
             print(date_chunks[i:i+num_processes])
-            run_weather_flows(raw_gcs_savepath, preproc_gcs_savepath, dataset, date_chunks[i:i+num_processes], num_processes)
+            run_weather_flows(raw_gcs_savepath, preproc_gcs_savepath, dataset, date_chunks[i:i+num_processes], num_processes, stations)
         
 
-def run_weather_flows(raw_gcs_savepath, preproc_gcs_savepath, dataset, date_chunks, num_processes):
+def run_weather_flows(raw_gcs_savepath, preproc_gcs_savepath, dataset, date_chunks, num_processes, stations):
     with concurrent.futures.ProcessPoolExecutor(num_processes) as executor:
         executor.map(
             pickled_weather, 
@@ -182,7 +183,8 @@ def run_weather_flows(raw_gcs_savepath, preproc_gcs_savepath, dataset, date_chun
             [preproc_gcs_savepath] * num_processes, 
             [dataset] * num_processes, 
             [date[0] for date in date_chunks], 
-            [date[1] for date in date_chunks]
+            [date[1] for date in date_chunks],
+            [stations] * num_processes
         )
         
 def run_aq_flows(raw_gcs_savepath, preproc_gcs_savepath, dataset, date_chunks, time, num_processes):
