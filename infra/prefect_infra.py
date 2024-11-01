@@ -18,7 +18,7 @@ def create_deployment():
         entrypoint="main.py:prefect_full_weather"
     ).deploy(
         name="Full Weather Pipeline Deployment v2",
-        work_pool_name="default-agent-pool",
+        work_pool_name="process-pool",
         cron="0 0 * * *",
     )
 

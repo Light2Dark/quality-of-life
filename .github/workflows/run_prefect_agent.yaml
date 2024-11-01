@@ -48,7 +48,7 @@ jobs:
           service_account: "data-owner@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com"
 
       - name: Run prefect agent
-        run: prefect worker start --run-once --pool default-agent-pool
+        run: prefect worker start --run-once --pool process-pool
 
       - name: Send mail
         if: ${{ failure() }}
