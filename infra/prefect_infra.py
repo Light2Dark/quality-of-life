@@ -1,6 +1,5 @@
-from prefect import get_client
-from prefect.deployments import Deployment 
-from prefect.filesystems import GitHub
+from prefect import get_client, flow
+from prefect_github import GitHubRepository
 from prefect_gcp.cloud_storage import GcsBucket
 from prefect.blocks.system import Secret
 import os
@@ -11,18 +10,17 @@ client = get_client()
 
 # PREFECT DEPLOYMENT 
 def create_deployment():
-    from main import prefect_full_weather
-    
     # Creates a prefect deployment
-    github_block = GitHub.load(os.getenv("GITHUB_BLOCK"))
+    # github_block = GitHub.load(os.getenv("GITHUB_BLOCK"))
     
-    deployment_full = Deployment.build_from_flow(
-        flow=prefect_full_weather,
-        name="Full Weather Pipeline Deployment",
-        storage=github_block,
-        work_queue_name="default"
+    flow.from_source(
+        source="https://github.com/Light2Dark/quality-of-life.git",
+        entrypoint="main.py:prefect_full_weather"
+    ).deploy(
+        name="Full Weather Pipeline Deployment v2",
+        work_pool_name="default-agent-pool",
+        cron="0 0 * * *",
     )
-    deployment_full.apply()
 
 # PREFECT BLOCKS
 from prefect_gcp import GcpCredentials
@@ -57,7 +55,7 @@ def create_email_block(email: str):
     
 def create_github_block():
     # Use this if you are forking the repo and using your own as storage
-    GitHub(
+    GitHubRepository(
         repository=os.environ.get("GITHUB_REPO"),
         reference=os.environ.get("GITHUB_BRANCH"),
         include_git_objects=True
