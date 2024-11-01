@@ -154,11 +154,15 @@ async def request_pws_data(personal_weather_station: str, date: str) -> dict | N
     return response_json
 
 
-@task(name="Call API and Validate", retries = 3, retry_delay_seconds=exponential_backoff(backoff_factor=30))
+@task(name="Call API and Validate", retries = 3, retry_delay_seconds=[10,30,60])
 async def request_url(url: str) -> dict | None:
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.json()
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print("Error in getting request from", url)
+        raise e
     
 
 def extract_local(filepath: str) -> json:
