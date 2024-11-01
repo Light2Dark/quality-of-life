@@ -283,6 +283,9 @@ def pws_multiprocessing(raw_gcs_savepath, preproc_gcs_savepath, dataset, start_d
             [date[1] for date in date_chunks],
         )
 
+@flow(name="Asyncio run for pipeline")
+def async_run():
+    asyncio.run(prefect_full_weather)
 
 if __name__ == "__main__":
     ## Running the elt_historical_air_quality_pipeline
