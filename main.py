@@ -22,7 +22,7 @@ PREPROCESSED_AQ_DATA_GCS_SAVEPATH = "daily_preprocessed_air_quality_data"
 
 
 @flow(name="prefect_full_weather",log_prints=True)
-async def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool, personal_weather_run: bool, start_date: str = None, end_date: str = None, time: str = '0000', stations: Optional[List[str]] = None):
+def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool, personal_weather_run: bool, start_date: str = None, end_date: str = None, time: str = '0000', stations: Optional[List[str]] = None):
     """Runs the full weather ELT flow using Prefect. Only 1 process will run.
 
     Args:
@@ -74,9 +74,9 @@ async def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run
     if personal_weather_run:
         print("Running personal weather pipeline")
         start_date, end_date = get_start_date_yesterday(start_date, end_date)
-        await weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PERSONAL_WEATHER_DATASET, start_date, end_date, stations)
+        asyncio.run(weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PERSONAL_WEATHER_DATASET, start_date, end_date, stations))
         
-async def run_full_weather_parser():
+def run_full_weather_parser():
     parser = argparse.ArgumentParser(prog="Full Weather ELT", description="An ELT flow to get weather and air quality data from API and store in GCS & BQ", epilog="credits to Sham")
     parser.add_argument("-t", "--testing", action="store_true",help="If true, dev dataset is used. Else, prod dataset")
     parser.add_argument("-aq", "--air_quality", action="store_true", help="If true, air quality data is requested from API and stored in GCS & BQ")
@@ -131,7 +131,7 @@ async def run_full_weather_parser():
     if args.personal_weather:
         print("Running personal weather pipeline")
         start_date, end_date = get_date(args.start_date, args.end_date)
-        await weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PERSONAL_WEATHER_DATASET, start_date, end_date, args.stations)
+        asyncio.run(weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PERSONAL_WEATHER_DATASET, start_date, end_date, args.stations))
          
 def get_datetime(format_date: str, days_prior: int = 1) -> str:
     """Returns datetime in the format specified in format_date. By default, returns yesterday's date at 1am.
@@ -283,9 +283,6 @@ def pws_multiprocessing(raw_gcs_savepath, preproc_gcs_savepath, dataset, start_d
             [date[1] for date in date_chunks],
         )
 
-@flow(name="Asyncio run for pipeline")
-def async_run():
-    asyncio.run(prefect_full_weather)
 
 if __name__ == "__main__":
     ## Running the elt_historical_air_quality_pipeline
@@ -294,4 +291,4 @@ if __name__ == "__main__":
     # prefect_infra.create_deployment()  ## Run this only once to create prefect deployment
     
     # main flow
-    asyncio.run(run_full_weather_parser())
+    run_full_weather_parser()

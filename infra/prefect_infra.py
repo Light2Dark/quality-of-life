@@ -15,7 +15,7 @@ def create_deployment():
     
     flow.from_source(
         source="https://github.com/Light2Dark/quality-of-life.git",
-        entrypoint="main.py:async_run"
+        entrypoint="main.py:prefect_full_weather"
     ).deploy(
         name="Full Weather Pipeline Deployment v2",
         work_pool_name="process-pool",
