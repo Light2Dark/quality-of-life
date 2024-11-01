@@ -11,6 +11,24 @@ DEFAULT_URLS = [
     "http://apims.doe.gov.my/data/public_v2/MCAQM/lastmcaqm24hours.json",
 ]
 
+
+@task(name="extract_aq", log_prints=True)
+def extract_aq(state_id: int, time: str) -> dict:
+    """Extracts air quality data from the APIMS API.
+
+    Args:
+        time (str): Date string in the format YYYY-MM-DD
+    """
+    
+    url = f"https://eqmp.doe.gov.my/api2/publicportalapims/apitablehourly?stateid={state_id}&datetime={time}"
+    print("Requesting", url)
+    response = requests.get(url, verify=False)
+    response.raise_for_status()
+    
+    data = response.json()
+    return data
+    
+
 def build_request(date: str, time: str, mobile_station: bool) -> str:
     """Returns url for the APIs, based on date and time string applied.
 
@@ -88,9 +106,7 @@ def request_api(url: str) -> dict:
     try:
         response = requests.get(url)
         if response.status_code == 404:
-            with open("logs/unavailable_urls.log", "a") as f:
-                f.write(f"{url}\n")
-            return None
+            print("Data not found")
         return response.json()
     except Exception as e:
         raise Exception(f"Error in getting request from {url}. Error {e}")

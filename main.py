@@ -22,7 +22,7 @@ PREPROCESSED_AQ_DATA_GCS_SAVEPATH = "daily_preprocessed_air_quality_data"
 
 
 @flow(name="prefect_full_weather",log_prints=True)
-def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool, personal_weather_run: bool, start_date: str = None, end_date: str = None, time: str = '0000', stations: Optional[List[str]] = None):
+def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool, personal_weather_run: bool, start_date: Optional[str] = None, end_date: Optional[str] = None, time: str = '0000', stations: Optional[List[str]] = None):
     """Runs the full weather ELT flow using Prefect. Only 1 process will run.
 
     Args:
@@ -291,3 +291,5 @@ if __name__ == "__main__":
     
     # main flow
     run_full_weather_parser()
+    
+    # air_quality.elt_air_quality(RAW_AQ_DATA_GCS_SAVEPATH, PREPROCESSED_AQ_DATA_GCS_SAVEPATH, DEV_DATASET_AQ, '2024-05-01', '2024-05-01', '0000')

@@ -20,27 +20,39 @@ def transform_data(response: dict, date:str) -> pd.DataFrame:
     """
     print("Transforming data to hourly aq dataframe")
     
-    data, timings = get_data_timings(response)
-    assert timings == IN_ORDER_TIMINGS, "Timings are not in order"
+    if 'api_table_hourly' not in response:
+        print("Error, api_table_hourly not found")
+        return
+        
+    readings = response['api_table_hourly']
+    if len(readings) == 0:
+        print(f"Error, no readings found for {date}")
+        return
     
     df_aq = pd.DataFrame()
-    df_states = pd.Series(dtype=str)
-    for state_data in data[1:]:
-        state = str(state_data[0]).strip().lower().capitalize()
-        station_location = str(state_data[1]).strip()
-        for index in range(2, len(state_data)):
-            value = state_data[index]
-            df = pd.DataFrame(
-                {
-                    "location": [station_location],
-                    "datetime": [transforming_dates(date, timings[index])],
-                    "value": [value]
-                },
-            )
-            df = df.astype(str) # bigquery doesn't accept datetime
-            df_aq = pd.concat([df_aq, df], ignore_index=True)
-            df_states = pd.concat([df_states, pd.Series(state)], ignore_index=True)
     
+    for reading in readings:
+        if not isinstance(reading, dict) or (reading['DATETIME'] is None or reading['API'] is None):
+            print("Reading is missing information", reading)
+            continue
+        
+        reading_time = reading['DATETIME']
+        reading_time = datetime.strptime(reading_time, "%Y-%m-%dT%H:%M:%S")
+            
+        location = reading['STATION_LOCATION']
+        if ',' not in location:
+            print(f"Station location does not contain ',', location:{location}")
+        else:
+            location = location.split(',')[0]
+        
+        df = pd.DataFrame({
+            "location": [location],
+            "datetime": [reading_time],
+            "value": [reading['API']]
+        })
+        df = df.astype(str) # bigquery doesn't accept datetime
+        df_aq = pd.concat([df_aq, df], ignore_index=True)
+        
     return df_aq
 
 
