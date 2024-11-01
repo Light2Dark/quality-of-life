@@ -171,8 +171,8 @@ python main.py \
   --air_quality \
   --weather \
   --personal_weather \
-  --start_date=20200101 \
-  --end_date=20200102 \
+  --start_date=20241001 \
+  --end_date=20241002 \
   --time=0000 \
   --parallel=1
 ```

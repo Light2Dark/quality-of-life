@@ -1,4 +1,5 @@
 import traceback, json, pandas as pd
+import pandas_gbq
 from io import BytesIO
 from typing import List
 from prefect import task
@@ -34,7 +35,7 @@ def upload_to_gcs(data, filename: str, savepath: str, prefect_gcs_block: str, mo
                 to_path = save_path
             )
         else:
-            raise Exception("Data format is wrong to save")
+            raise Exception("Data format is wrong to save", type(data))
     except Exception:
         print(traceback.format_exc())
         raise Exception("Error saving to GCS")
@@ -49,7 +50,8 @@ def load_to_bq(df: pd.DataFrame,  to_path_upload: str, table_schema: List[dict] 
     load_method = "append" if append else "replace"
     print(f"Loading to bq {to_path_upload} with method {load_method}")
     gcp_credentials_block = GcpCredentials.load(GCP_CREDENTIALS_BLOCK_NAME)
-    df.to_gbq(
+    pandas_gbq.to_gbq(
+        df,
         destination_table=to_path_upload,
         project_id=os.getenv("PROJECT_ID"),
         credentials=gcp_credentials_block.get_credentials_from_service_account(),

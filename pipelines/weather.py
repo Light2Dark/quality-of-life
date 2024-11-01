@@ -40,7 +40,7 @@ def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, 
 
 
 @flow(name="ELT Personal Weather", log_prints=True)
-def elt_pws_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, start_date: str, end_date: str, weather_stations: Optional[List[str]] = None):
+async def elt_pws_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, start_date: str, end_date: str, weather_stations: Optional[List[str]] = None):
     df = pd.read_csv("dbt/seeds/state_locations.csv", header=0)
     personal_weather_stations = df['PWStation'].dropna().unique()
     
@@ -52,7 +52,7 @@ def elt_pws_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: s
     
     while sd <= ed:
         date = sd.strftime("%Y%m%d")
-        weather_data = extract_weather.extract_pws(date, personal_weather_stations)
+        weather_data = await extract_weather.extract_pws(date, personal_weather_stations)
         if bool(weather_data) == False:
             print(f"No data for {date}")
             sd += timedelta(days=1)

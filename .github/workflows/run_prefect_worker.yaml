@@ -1,4 +1,4 @@
-name: Python to run prefect-agent daily at 1.00am Malaysian time
+name: Python to run prefect-worker daily at 1.00am Malaysian time
 on: 
   schedule:
     # Cron jobs are in UTC time, which is 8 hours b4 Malaysia time, hence 1am is 5pm in UTC.
@@ -47,7 +47,7 @@ jobs:
           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: "data-owner@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com"
 
-      - name: Run prefect agent
+      - name: Run prefect worker
         run: prefect worker start --run-once --pool process-pool
 
       - name: Send mail
