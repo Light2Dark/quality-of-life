@@ -29,7 +29,11 @@ def elt_air_quality(raw_gcs_savepath: str, preproc_gcs_savepath: str,dataset: st
         transformed_df = pd.DataFrame()
         
         for state_id in range(1, 16):
-            data = extract_aq(state_id, date)
+            try:
+                data = extract_aq(state_id, date)
+            except Exception as e:
+                print(f"Error extracting data for state {state_id} at {date} {time}. Error: {e}")
+                continue
             
             # opting to not store raw data since it has been low value so far
             # raw_datas.append(data)

@@ -1,5 +1,6 @@
 import requests, json
 import regex as re
+from typing import Optional
 from prefect import task
 from prefect.tasks import exponential_backoff
 
@@ -12,8 +13,8 @@ DEFAULT_URLS = [
 ]
 
 
-@task(name="extract_aq", log_prints=True)
-def extract_aq(state_id: int, time: str) -> dict:
+@task(name="extract_aq", log_prints=True, retries=3, retry_delay_seconds=exponential_backoff(backoff_factor=30))
+def extract_aq(state_id: int, time: str) -> Optional[dict]:
     """Extracts air quality data from the APIMS API.
 
     Args:

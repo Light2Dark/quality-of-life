@@ -82,14 +82,14 @@ async def request_data(date_start: str, date_end: str, weather_station: str) -> 
     """
     
     request_url = build_request(weather_station, date_start, date_end, "m")
-    response = requests.get(request_url)
     print(f"Requesting {request_url}")
     
-    # check response
-    response.raise_for_status()
-    
-    # validate response
-    response_json = response.json()
+    try:
+        response_json = await request_url(request_url)
+    except Exception as e:
+        print(f"Error in getting request from {request_url}. Error {e}")
+        return None
+
     if response_json["metadata"]["status_code"] != 200:
         raise ValueError("API response unsuccessful.")
     elif response_json["metadata"]["language"] != "en-US":
@@ -130,22 +130,16 @@ def write_to_logs(filepath, text):
     with open(filepath, "a") as f:
         f.write(f"{text}\n")
 
-@task(name="Request personal weather station data", log_prints=True, retries=3, retry_delay_seconds=exponential_backoff(backoff_factor=30))
+@task(name="Request personal weather station data")
 async def request_pws_data(personal_weather_station: str, date: str) -> dict | None:
     url = f"https://api.weather.com/v2/pws/history/all?stationId={personal_weather_station}&format=json&units=m&date={date}&numericPrecision=decimal&apiKey={weather_api_key}"
     print(f"Requesting {url}")
-    response = requests.get(url)
     
-    response.raise_for_status()
-    
-    if response.status_code == 204:
-        print(f"Empty response for {url}")
-        url = url.replace(weather_api_key, "API_KEY")
-        write_to_logs("logs/unavailable_weather_pws_urls.log", url)
+    try:
+        response_json = await request_url(url)
+    except Exception as e:
+        print(f"Error in getting request from {url}. Error {e}")
         return None
-    
-    # validate response
-    response_json = response.json()
     
     # check if empty
     if len(response_json["observations"]) == 0:
@@ -158,6 +152,14 @@ async def request_pws_data(personal_weather_station: str, date: str) -> dict | N
     # add weather station name to response
     response_json["weather_station"] = personal_weather_station
     return response_json
+
+
+@task(name="Call API and Validate", retries = 3, retry_delay_seconds=exponential_backoff(backoff_factor=30))
+async def request_url(url: str) -> dict | None:
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.json()
+    
 
 def extract_local(filepath: str) -> json:
     with open(filepath, "r") as f:
