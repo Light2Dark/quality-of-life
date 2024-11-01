@@ -37,10 +37,12 @@ def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool
     """    
     WEATHER_DATASET = PROD_DATASET_WEATHER
     PERSONAL_WEATHER_DATASET = PROD_DATASET_PWS
+    AIR_QUALITY_DATASET = PROD_DATASET_AQ
     if testing:
         print("Running pipeline on dev dataset")
         WEATHER_DATASET = DEV_DATASET_WEATHER
         PERSONAL_WEATHER_DATASET = DEV_DATASET_PWS
+        AIR_QUALITY_DATASET = DEV_DATASET_AQ
     
     if air_quality_run:
         if start_date is None or end_date is None:
@@ -51,13 +53,9 @@ def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool
             # convert YYYYMMDD to YYYY-MM-DD for aq pipeline
             aq_start_date = start_date[:4] + "-" + start_date[4:6] + "-" + start_date[6:]
             aq_end_date = end_date[:4] + "-" + end_date[4:6] + "-" + end_date[6:]
-        
-        if testing:
-            print("Running air quality pipeline on dev dataset")
-            air_quality.elt_air_quality(RAW_AQ_DATA_GCS_SAVEPATH, PREPROCESSED_AQ_DATA_GCS_SAVEPATH, DEV_DATASET_AQ, aq_start_date, aq_end_date, time.strip())
-        else:
-            print("Running air quality pipeline on prod dataset")
-            air_quality.elt_air_quality(RAW_AQ_DATA_GCS_SAVEPATH, PREPROCESSED_AQ_DATA_GCS_SAVEPATH, PROD_DATASET_AQ, aq_start_date, aq_end_date, time.strip())
+            
+        print(f"Running air quality pipeline on {AIR_QUALITY_DATASET}")
+        air_quality.elt_air_quality(RAW_AQ_DATA_GCS_SAVEPATH, PREPROCESSED_AQ_DATA_GCS_SAVEPATH, AIR_QUALITY_DATASET, aq_start_date, aq_end_date, time.strip())
 
     def get_start_date_yesterday(start_date, end_date):
         if start_date is None or end_date is None:
@@ -67,12 +65,12 @@ def prefect_full_weather(testing: bool, air_quality_run: bool, weather_run: bool
         return (start_date, end_date)
     
     if weather_run:
-        print("Running weather pipeline")
+        print(f"Running weather pipeline on {WEATHER_DATASET}")
         start_date, end_date = get_start_date_yesterday(start_date, end_date)
-        weather.elt_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, WEATHER_DATASET, start_date, end_date, stations)
+        asyncio.run(weather.elt_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, WEATHER_DATASET, start_date, end_date, stations))
             
     if personal_weather_run:
-        print("Running personal weather pipeline")
+        print(f"Running personal weather pipeline on {PERSONAL_WEATHER_DATASET}")
         start_date, end_date = get_start_date_yesterday(start_date, end_date)
         asyncio.run(weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PERSONAL_WEATHER_DATASET, start_date, end_date, stations))
         
@@ -95,10 +93,12 @@ def run_full_weather_parser():
     
     WEATHER_DATASET = PROD_DATASET_WEATHER
     PERSONAL_WEATHER_DATASET = PROD_DATASET_PWS
+    AIR_QUALITY_DATASET = PROD_DATASET_AQ
     if args.testing:
         print("Executing the pipeline on dev dataset")
         WEATHER_DATASET = DEV_DATASET_WEATHER
         PERSONAL_WEATHER_DATASET = DEV_DATASET_PWS
+        AIR_QUALITY_DATASET = DEV_DATASET_AQ
     
     if args.air_quality:
         if args.start_date is None or args.end_date is None:
@@ -109,12 +109,9 @@ def run_full_weather_parser():
             # convert YYYYMMDD to YYYY-MM-DD for aq pipeline
             aq_start_date = args.start_date[:4] + "-" + args.start_date[4:6] + "-" + args.start_date[6:]
             aq_end_date = args.end_date[:4] + "-" + args.end_date[4:6] + "-" + args.end_date[6:]
-        
-        if args.testing:
-            print("Running air quality pipeline on dev dataset")
-            air_quality_multiprocessing(aq_start_date, aq_end_date, RAW_AQ_DATA_GCS_SAVEPATH, PREPROCESSED_AQ_DATA_GCS_SAVEPATH, DEV_DATASET_AQ, num_processes, args.time.strip())
-        else:
-            air_quality_multiprocessing(aq_start_date, aq_end_date, RAW_AQ_DATA_GCS_SAVEPATH, PREPROCESSED_AQ_DATA_GCS_SAVEPATH, PROD_DATASET_AQ, num_processes, args.time.strip())
+            
+        print(f"Running air quality pipeline on {AIR_QUALITY_DATASET}")
+        air_quality_multiprocessing(aq_start_date, aq_end_date, RAW_AQ_DATA_GCS_SAVEPATH, PREPROCESSED_AQ_DATA_GCS_SAVEPATH, AIR_QUALITY_DATASET, num_processes, args.time.strip())
             
     def get_date(start_date, end_date):
         if start_date is None or end_date is None:
@@ -124,12 +121,14 @@ def run_full_weather_parser():
         return (start_date, end_date)
     
     if args.weather:
-        print("Running weather pipeline")
+        print(f"Running weather pipeline on {WEATHER_DATASET}")
         start_date, end_date = get_date(args.start_date, args.end_date)
+        
+        # asyncio is run from the pickled_weather func
         weather_multiprocessing(start_date, end_date, RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, WEATHER_DATASET, num_processes, args.stations)
             
     if args.personal_weather:
-        print("Running personal weather pipeline")
+        print(f"Running personal weather pipeline on {PERSONAL_WEATHER_DATASET}")
         start_date, end_date = get_date(args.start_date, args.end_date)
         asyncio.run(weather.elt_pws_weather(RAW_WEATHER_DATA_GCS_SAVEPATH, PREPROCESSED_WEATHER_DATA_GCS_SAVEPATH, PERSONAL_WEATHER_DATASET, start_date, end_date, args.stations))
          
@@ -141,7 +140,7 @@ def get_datetime(format_date: str, days_prior: int = 1) -> str:
             
 def pickled_weather(*args, **kwargs):
     # allows multiprocessing to work with weather.elt_weather
-    weather.elt_weather(*args, **kwargs)
+    asyncio.run(weather.elt_weather(*args, **kwargs))
     
 def pickled_aq(*args, **kwargs):
     # allows multiprocessing to work with air_quality.elt_flow

@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 @flow(name="ELT Weather", log_prints=True)
-def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, start_date: str, end_date: str, weather_stations: Optional[List[str]] = None):
+async def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, start_date: str, end_date: str, weather_stations: Optional[List[str]] = None):
     """Extract, transform and load weather data from start_date to end_date into BigQuery & GCS.
     Uploads raw and pre-processed data to GCS, and pre-processed data to BigQuery.
 
@@ -29,7 +29,7 @@ def elt_weather(raw_gcs_savepath: str, preproc_gcs_savepath: str, dataset: str, 
     if weather_stations:
         weather_stations_list = list(map(lambda x: x + extension, weather_stations))
     
-    weather_data = extract_weather.extract(start_date, end_date, weather_stations_list)   
+    weather_data = await extract_weather.extract(start_date, end_date, weather_stations_list)   
          
     filename = f"{start_date}_{end_date}"
     upload.upload_to_gcs(weather_data, filename, raw_gcs_savepath, GCS_WEATHER_BUCKET_BLOCK_NAME)
