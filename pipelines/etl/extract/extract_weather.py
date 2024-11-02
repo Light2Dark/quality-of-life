@@ -1,3 +1,4 @@
+from typing import Optional
 from prefect import task, flow
 from prefect.tasks import exponential_backoff
 from dotenv import load_dotenv
@@ -81,13 +82,16 @@ async def request_data(date_start: str, date_end: str, weather_station: str) -> 
         List[dict] | None: An array of observations from Weather API. An observation starts from 12.00am on start_date and the next observation is 1 hour after and keeps continuing. If no data, return None
     """
     
-    request_url = build_request(weather_station, date_start, date_end, "m")
-    print(f"Requesting {request_url}")
+    url = build_request(weather_station, date_start, date_end, "m")
+    print(f"Requesting {url}")
     
     try:
-        response_json = await request_url(request_url)
+        response_json = await request_url(url)
+        if response_json is None:
+            print("Empty response for", url)
+            return None
     except Exception as e:
-        print(f"Error in getting request from {request_url}. Error {e}")
+        print(f"Error in getting request from {url} . Error {e}")
         return None
 
     if response_json["metadata"]["status_code"] != 200:
@@ -131,12 +135,15 @@ def write_to_logs(filepath, text):
         f.write(f"{text}\n")
 
 @task(name="Request personal weather station data")
-async def request_pws_data(personal_weather_station: str, date: str) -> dict | None:
+async def request_pws_data(personal_weather_station: str, date: str) -> Optional[dict]:
     url = f"https://api.weather.com/v2/pws/history/all?stationId={personal_weather_station}&format=json&units=m&date={date}&numericPrecision=decimal&apiKey={weather_api_key}"
     print(f"Requesting {url}")
     
     try:
         response_json = await request_url(url)
+        if response_json is None:
+            print("Empty response for", url)
+            return None
     except Exception as e:
         print(f"Error in getting request from {url}. Error {e}")
         return None
@@ -155,13 +162,16 @@ async def request_pws_data(personal_weather_station: str, date: str) -> dict | N
 
 
 @task(name="Call API and Validate", retries = 3, retry_delay_seconds=[10,30,60])
-async def request_url(url: str) -> dict:
+async def request_url(url: str) -> Optional[dict]:
     try:
         response = requests.get(url)
-        response.raise_for_status()
         
+        if response.status_code in [400, 404, 204]:
+            return None
         if response.status_code != 200:
             raise ValueError("API response unsuccessful, response status_code:", response.status_code)
+        
+        response.raise_for_status()
         return response.json()
     except Exception as e:
         print("Error in getting request from", url)

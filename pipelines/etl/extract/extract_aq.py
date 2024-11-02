@@ -24,6 +24,10 @@ def extract_aq(state_id: int, time: str) -> Optional[dict]:
     url = f"https://eqmp.doe.gov.my/api2/publicportalapims/apitablehourly?stateid={state_id}&datetime={time}"
     print("Requesting", url)
     response = requests.get(url, verify=False)
+    
+    if response.status_code in [404, 204, 400]:
+        print("Data not found")
+        return None
     response.raise_for_status()
     
     data = response.json()

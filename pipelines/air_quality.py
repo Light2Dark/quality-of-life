@@ -31,6 +31,9 @@ def elt_air_quality(raw_gcs_savepath: str, preproc_gcs_savepath: str,dataset: st
         for state_id in range(1, 16):
             try:
                 data = extract_aq(state_id, date)
+                if data is None:
+                    print(f"No data for state {state_id} at {date} {time}")
+                    continue
             except Exception as e:
                 print(f"Error extracting data for state {state_id} at {date} {time}. Error: {e}")
                 continue
