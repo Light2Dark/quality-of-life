@@ -16,6 +16,11 @@ class TestRelationships(unittest.TestCase):
     def test_city_rltship_state(self):
         for city in self.df_city_places['City']:
             self.assertTrue(city in self.df_city_states['City'].values, f'City {city} not in city_states')
+            
+    def test_unique_pws_station(self):
+        df = self.df_state_locations
+        unique_len = len(df[df['PWStation'].duplicated() & df['PWStation'].notna()])
+        self.assertTrue(unique_len == 0, 'PWStation is not unique')
         
         
 if __name__ == "__main__":
