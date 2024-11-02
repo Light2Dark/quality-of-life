@@ -204,3 +204,4 @@ Jalan Timur,Kampung Asam Kumbang,4.86042,100.73221,34000,,ITAIPI2,,"{'road': 'Ja
 Taman Bukit Anggerik,Cheras,3.05908,101.74822,56000,,ICHERAS7,,"{'road': 'Jalan 31/154', 'neighbourhood': 'Taman Bukit Anggerik', 'suburb': 'Cheras', 'city': 'Kuala Lumpur', 'ISO3166-2-lvl4': 'MY-14', 'postcode': '56000', 'country': 'Malaysia', 'country_code': 'my'}"
 Kampung Rahmat,Kayu Ara Pasong,1.65905,103.49144,,,IKULAI13,,"{'district': 'Kulai', 'state': 'Johor', 'ISO3166-2-lvl4': 'MY-01', 'country': 'Malaysia', 'country_code': 'my'}"
 Penang Hill,Air Itam,5.454050,100.302391,,,IPENAN5,,
+Cheras,Cheras,3.007658,101.764646,43000,,IKAJAN6,,"old aq stations have cheras as the location so this is needed"
