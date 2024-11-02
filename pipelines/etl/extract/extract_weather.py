@@ -155,10 +155,13 @@ async def request_pws_data(personal_weather_station: str, date: str) -> dict | N
 
 
 @task(name="Call API and Validate", retries = 3, retry_delay_seconds=[10,30,60])
-async def request_url(url: str) -> dict | None:
+async def request_url(url: str) -> dict:
     try:
         response = requests.get(url)
         response.raise_for_status()
+        
+        if response.status_code != 200:
+            raise ValueError("API response unsuccessful, response status_code:", response.status_code)
         return response.json()
     except Exception as e:
         print("Error in getting request from", url)
