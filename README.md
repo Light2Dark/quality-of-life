@@ -1,3 +1,6 @@
+> [!WARNING]
+> This project is no longer maintained. The datasets are still available.
+
 # Malaysia Weather Data Pipeline
 
 Weather data is collected from weather stations throughout Malaysia. Government or third party providers collect this data. Unfortunately, these datasets are not publicly accessible and are error-prone. This project aims to create an automated end-to-end data pipeline and a dashboard on Malaysian weather.
