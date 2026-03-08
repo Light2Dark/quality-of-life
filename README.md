@@ -68,9 +68,7 @@ Access the dashboard here: [Looker Studio Report](https://lookerstudio.google.co
 
 ## Analyzing the data
 
-You can obtain the datasets in 2 ways.
-1. Use BigQuery/SQL/Kaggle to get the dataset
-2. Request the csv files from me at (sham9871@gmail.com). The files are too large and there are various tables so we can have a discussion on what sort of data you'd like. I'd love to help you out!
+You can obtain the datasets by using BigQuery/SQL/Kaggle.
 
 This project uses BigQuery as a Data Warehouse, so you can use SQL to query data. All the tables in the prod dataset is public. You can star the dataset by doing the following:
 
